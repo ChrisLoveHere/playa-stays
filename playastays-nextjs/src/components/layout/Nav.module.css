@@ -1,0 +1,214 @@
+/* Nav.module.css — scoped nav styles */
+
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+  transition: background var(--t) var(--ease), box-shadow var(--t) var(--ease);
+}
+.nav.scrolled { background: var(--white); box-shadow: var(--sh-sm); }
+
+.inner {
+  display: flex; align-items: center;
+  height: 68px; max-width: 1200px; margin: 0 auto; padding: 0 24px; gap: 4px;
+}
+
+.logo {
+  font-family: var(--font-display); font-size: 1.6rem; font-weight: 600;
+  color: var(--white); letter-spacing: 0.01em;
+  transition: color var(--t); flex-shrink: 0; margin-right: 16px;
+}
+.scrolled .logo { color: var(--deep); }
+
+.links {
+  display: flex; align-items: center; gap: 2px; flex: 1;
+}
+.links a {
+  font-size: 0.85rem; font-weight: 500; color: rgba(255,255,255,0.86);
+  padding: 7px 11px; border-radius: var(--r-sm);
+  transition: color var(--t), background var(--t);
+  display: block; white-space: nowrap;
+}
+.scrolled .links a { color: var(--mid); }
+.links a:hover { color: var(--white); background: rgba(255,255,255,0.1); }
+.scrolled .links a:hover { color: var(--teal); background: var(--sand); }
+.links a[aria-current="page"] { font-weight: 600; color: var(--white) !important; }
+.scrolled .links a[aria-current="page"] { color: var(--teal) !important; background: var(--sand); }
+
+/* Dropdown */
+.dropdown { position: relative; }
+.primary > .trigger { color: var(--gold-light) !important; font-weight: 600; }
+.scrolled .primary > .trigger { color: var(--gold) !important; }
+
+.trigger {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 0.85rem; font-weight: 600; color: var(--gold-light);
+  padding: 7px 11px; border-radius: var(--r-sm);
+  background: none; border: none; cursor: pointer;
+  transition: color var(--t), background var(--t);
+  white-space: nowrap; line-height: 1;
+}
+.scrolled .trigger { color: var(--gold); }
+.trigger:hover, .trigger.open { color: var(--white); background: rgba(255,255,255,0.1); }
+.scrolled .trigger:hover, .scrolled .trigger.open { color: var(--teal); background: var(--sand); }
+
+.chevron { width: 12px; height: 12px; flex-shrink: 0; transition: transform var(--t) var(--ease); }
+.rotated { transform: rotate(180deg); }
+
+.panel {
+  position: absolute; top: calc(100% + 8px); left: 0;
+  background: var(--white); border-radius: var(--r-lg);
+  box-shadow: var(--sh-lg); border: 1px solid var(--sand-dark);
+  min-width: 260px; z-index: 950; padding: 8px;
+}
+
+.item {
+  display: flex; align-items: flex-start; gap: 11px;
+  padding: 11px 12px; border-radius: var(--r-md);
+  transition: background var(--t); cursor: pointer; text-decoration: none;
+}
+.item:hover { background: var(--sand); }
+.itemPrimary { border-bottom: 1px solid var(--sand-dark); margin-bottom: 4px; padding-bottom: 13px; }
+
+.itemIcon {
+  width: 32px; height: 32px; border-radius: var(--r-sm);
+  background: var(--sand); display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0; color: var(--teal);
+  transition: background var(--t), color var(--t);
+}
+.item:hover .itemIcon { background: var(--teal); color: var(--white); }
+.itemPrimary .itemIcon { background: var(--gold-pale); color: var(--gold); }
+.itemPrimary:hover .itemIcon { background: var(--gold); color: var(--deep); }
+
+.itemLabel { font-size: 0.82rem; font-weight: 600; color: var(--charcoal); line-height: 1.25; margin-bottom: 2px; }
+.itemDesc  { font-size: 0.73rem; color: var(--light); line-height: 1.4; }
+.item[aria-current="page"] .itemLabel { color: var(--teal); }
+
+/* Language */
+.lang {
+  display: flex; align-items: center;
+  background: rgba(255,255,255,0.1); border-radius: var(--r-pill);
+  overflow: hidden; border: 1px solid rgba(255,255,255,0.2);
+  flex-shrink: 0; margin-left: 4px;
+}
+.scrolled .lang { background: var(--sand); border-color: var(--sand-dark); }
+.lang a {
+  font-size: 0.72rem !important; font-weight: 700 !important;
+  letter-spacing: 0.06em; padding: 5px 10px !important;
+  color: rgba(255,255,255,0.6) !important;
+  border-radius: 0 !important; background: transparent !important;
+}
+.scrolled .lang a { color: var(--light) !important; }
+.langSep { width: 1px; height: 16px; background: rgba(255,255,255,0.2); flex-shrink: 0; }
+
+/* CTA */
+.cta {
+  background: var(--gold); color: var(--deep);
+  padding: 8px 18px; border-radius: var(--r-pill);
+  font-weight: 700; font-size: 0.82rem;
+  transition: all var(--t); margin-left: 10px;
+  flex-shrink: 0; white-space: nowrap;
+}
+.cta:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+/* Hamburger */
+.hamburger {
+  display: none; background: none; border: none; cursor: pointer;
+  padding: 6px; flex-direction: column; justify-content: center;
+  gap: 5px; flex-shrink: 0; margin-left: 8px;
+}
+.hamburger span {
+  display: block; width: 22px; height: 2px;
+  background: var(--white); border-radius: 2px;
+  transition: all 0.3s var(--ease); transform-origin: center;
+}
+.scrolled .hamburger span { background: var(--charcoal); }
+.topOpen { transform: translateY(7px) rotate(45deg) !important; }
+.midOpen { opacity: 0 !important; transform: scaleX(0) !important; }
+.botOpen { transform: translateY(-7px) rotate(-45deg) !important; }
+
+/* Mobile menu */
+.mobileMenu {
+  position: fixed; inset: 0; z-index: 800; pointer-events: none;
+}
+.mobileOverlay {
+  position: absolute; inset: 0;
+  background: rgba(10,43,47,0.65); opacity: 0;
+  transition: opacity var(--t-slow) var(--ease);
+  backdrop-filter: blur(3px);
+}
+.mobilePanel {
+  position: absolute; top: 0; right: 0;
+  width: min(360px, 100%); height: 100%;
+  background: var(--white); padding: 0 0 32px;
+  transform: translateX(100%);
+  transition: transform var(--t-slow) var(--ease);
+  display: flex; flex-direction: column; overflow-y: auto;
+}
+.mobileOpen { pointer-events: all; }
+.mobileOpen .mobileOverlay { opacity: 1; }
+.mobileOpen .mobilePanel  { transform: translateX(0); }
+
+.mobilePanelHead {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 24px; border-bottom: 1px solid var(--sand-dark);
+}
+.mobileLogo  { font-family: var(--font-display); font-size: 1.4rem; font-weight: 600; color: var(--deep); }
+.mobileClose {
+  width: 36px; height: 36px; background: var(--sand); border: none;
+  border-radius: var(--r-sm); cursor: pointer; display: flex;
+  align-items: center; justify-content: center; color: var(--mid);
+}
+
+.mobileNavList { padding: 8px 0; border-bottom: 1px solid var(--sand-dark); }
+.mobileNavList li a {
+  display: block; padding: 14px 24px;
+  font-size: 0.97rem; font-weight: 500; color: var(--mid);
+  transition: color var(--t), background var(--t);
+  border-left: 3px solid transparent;
+}
+.mobileNavList li a:hover { color: var(--teal); background: var(--sand); }
+.mobileNavList li a[aria-current="page"] { color: var(--teal); font-weight: 600; border-left-color: var(--teal); }
+.mobileNavPrimary a { font-weight: 700 !important; color: var(--teal) !important; font-size: 1rem !important; }
+
+.mobileLang {
+  display: flex; align-items: center; gap: 8px;
+  padding: 14px 24px; border-bottom: 1px solid var(--sand-dark);
+}
+.mobileLangLabel  { font-size: 0.76rem; font-weight: 600; color: var(--light); letter-spacing: 0.1em; text-transform: uppercase; }
+.mobileLangToggle { display: flex; border: 1.5px solid var(--border); border-radius: var(--r-pill); overflow: hidden; }
+.mobileLangToggle a { padding: 5px 13px; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.06em; color: var(--light); transition: all var(--t); }
+
+.mobileCta { padding: 20px 24px; display: flex; flex-direction: column; gap: 10px; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .links    { display: none; }
+  .hamburger { display: flex; }
+}
+
+/* ── Language toggle active state (added for i18n) ────── */
+.langItem {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 4px 8px;
+  border-radius: var(--r-pill);
+  transition: all var(--t);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+.langActive {
+  background: rgba(255,255,255,0.18);
+  color: var(--white) !important;
+}
+.nav.scrolled .langActive {
+  background: var(--teal);
+}
+.mobileLangActive {
+  padding: 5px 16px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  background: var(--teal);
+  color: var(--white);
+  border-radius: var(--r-pill);
+}
