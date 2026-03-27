@@ -1,9 +1,10 @@
+'use client'
 // ============================================================
 // PropertyDetailTemplate — server component
 // Used by: app/rentals/[slug]/page.tsx
 // ============================================================
 
-'use client'
+
 
 import { useState } from 'react'
 import Image from 'next/image'

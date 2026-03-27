@@ -1,3 +1,4 @@
+'use client'
 // ============================================================
 // Breadcrumb — server component
 // ============================================================
@@ -30,7 +31,7 @@ export function Breadcrumb({ crumbs }: { crumbs: BreadcrumbItem[] }) {
 // ============================================================
 // PreviewBar — client component, shown only in Draft Mode
 // ============================================================
-'use client'
+
 
 import { useRouter } from 'next/navigation'
 
