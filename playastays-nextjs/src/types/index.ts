@@ -1,10 +1,10 @@
 // ============================================================
-// PlayaStays — TypeScript Types
+// PlayaStays â TypeScript Types
 // All WP REST API responses are typed here.
 // ps_computed fields are resolved server-side in the WP plugin.
 // ============================================================
 
-// ── Shared primitives ─────────────────────────────────────
+// ââ Shared primitives âââââââââââââââââââââââââââââââââââââ
 
 export interface WPImage {
   id: number
@@ -24,7 +24,7 @@ export interface CtaLink {
   href: string
 }
 
-// ── Property ─────────────────────────────────────────────
+// ââ Property âââââââââââââââââââââââââââââââââââââââââââââ
 
 export interface BookingLinks {
   airbnb?: string
@@ -80,7 +80,7 @@ export interface Property {
   ps_neighborhood: number[]
 }
 
-// ── City ─────────────────────────────────────────────────
+// ââ City âââââââââââââââââââââââââââââââââââââââââââââââââ
 
 export interface Neighborhood {
   name: string
@@ -124,7 +124,7 @@ export interface City {
   ps_computed: CityComputed
 }
 
-// ── Service ───────────────────────────────────────────────
+// ââ Service âââââââââââââââââââââââââââââââââââââââââââââââ
 
 export type ServiceSlug =
   | 'property-management'
@@ -157,6 +157,8 @@ export interface ServiceMeta {
   ps_schema_type: string
   ps_seo_title: string
   ps_seo_desc: string
+  ps_seo_title_es: string
+  ps_seo_desc_es: string
   ps_hero_headline_es: string
   ps_hero_subheadline_es: string
   ps_content_es: string
@@ -182,7 +184,7 @@ export interface Service {
   ps_city_tag: number[]
 }
 
-// ── FAQ ───────────────────────────────────────────────────
+// ââ FAQ âââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 export interface FAQMeta {
   ps_answer: string
@@ -198,7 +200,7 @@ export interface FAQ {
   meta: FAQMeta
 }
 
-// ── Testimonial ───────────────────────────────────────────
+// ââ Testimonial âââââââââââââââââââââââââââââââââââââââââââ
 
 export interface TestimonialMeta {
   ps_author_name: string
@@ -218,7 +220,7 @@ export interface Testimonial {
   meta: TestimonialMeta
 }
 
-// ── Blog Post ─────────────────────────────────────────────
+// ââ Blog Post âââââââââââââââââââââââââââââââââââââââââââââ
 
 export interface BlogPostMeta {
   ps_seo_title: string
@@ -245,7 +247,7 @@ export interface BlogPost {
   }
 }
 
-// ── Lead form ─────────────────────────────────────────────
+// ââ Lead form âââââââââââââââââââââââââââââââââââââââââââââ
 
 export interface LeadFormData {
   first_name: string
@@ -260,7 +262,7 @@ export interface LeadFormData {
   notes?: string
 }
 
-// ── Site config (from WP Options API) ────────────────────
+// ââ Site config (from WP Options API) ââââââââââââââââââââ
 
 export interface SiteConfig {
   phone: string
