@@ -192,6 +192,7 @@ export interface FAQMeta {
   ps_city_ids: string      // JSON int[]
   ps_sort_order: number
   ps_answer_es: string
+  ps_question_es: string
 }
 
 export interface FAQ {
