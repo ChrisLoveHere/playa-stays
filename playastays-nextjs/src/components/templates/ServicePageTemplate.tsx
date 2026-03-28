@@ -88,10 +88,10 @@ export function ServicePageTemplate({
   const schema = serviceSchema(service, city, faqs)
 
   const relatedLinks = relatedServices.map(s => ({
-    label: isEs ? \`\${s.title.rendered} en \${cityName}\` : \`\${s.title.rendered} in \${cityName}\`,
+    label: isEs ? `${s.title.rendered} en ${cityName}` : `${s.title.rendered} in ${cityName}`,
     href:  isEs
-      ? \`/es/\${citySlug}/\${SERVICE_SLUG_EN_TO_ES[s.meta.ps_service_slug] ?? s.meta.ps_service_slug}/\`
-      : \`/\${citySlug}/\${s.meta.ps_service_slug}/\`,
+      ? `/es/${citySlug}/${SERVICE_SLUG_EN_TO_ES[s.meta.ps_service_slug] ?? s.meta.ps_service_slug}/`
+      : `/${citySlug}/${s.meta.ps_service_slug}/`,
   }))
 
   // Default pricing plans for PM/Airbnb management pages
