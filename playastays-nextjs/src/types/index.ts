@@ -95,6 +95,7 @@ export interface CityMeta {
   ps_lat: number
   ps_lng: number
   ps_market_note: string
+  ps_market_note_es?: string
   ps_best_for: string
   ps_peak_season: string
   ps_avg_nightly: string
