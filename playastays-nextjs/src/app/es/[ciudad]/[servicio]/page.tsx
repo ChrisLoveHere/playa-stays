@@ -47,11 +47,12 @@ export async function generateMetadata(
 
   const canonical  = `https://www.playastays.com/es/${params.ciudad}/${params.servicio}/`
   const enHref     = `https://www.playastays.com/${params.ciudad}/${enServiceSlug}/`
-  const hasSeoEs   = Boolean(service.meta.ps_seo_title_es || service.meta.ps_hero_headline_es)
+  const meta = service.meta as any
+  const hasSeoEs = Boolean(meta.ps_seo_title_es || meta.ps_hero_headline_es)
 
   if (!hasSeoEs) {
     return buildMetadata({
-      title:    service.title.rendered,
+      title:       service.title.rendered,
       description: service.excerpt.rendered.replace(/<[^>]*>/g, ''),
       canonical,
       noindex: true,
@@ -59,8 +60,8 @@ export async function generateMetadata(
   }
 
   return buildMetadata({
-    title:       service.meta.ps_seo_title_es || `${service.meta.ps_hero_headline_es} | PlayaStays`,
-    description: service.meta.ps_seo_desc    || service.meta.ps_hero_subheadline_es || service.excerpt.rendered.replace(/<[^>]*>/g, ''),
+    title:       meta.ps_seo_title_es || `${meta.ps_hero_headline_es} | PlayaStays`,
+    description: service.meta.ps_seo_desc || meta.ps_hero_subheadline_es || service.excerpt.rendered.replace(/<[^>]*>/g, ''),
     canonical,
     hreflangEn: enHref,
   })
