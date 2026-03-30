@@ -67,9 +67,13 @@ export function ServicePageTemplate({
   const headline  = isEs && meta.ps_hero_headline_es   ? meta.ps_hero_headline_es   : (meta.ps_hero_headline || service.title.rendered)
   const subhead   = isEs && meta.ps_hero_subheadline_es ? meta.ps_hero_subheadline_es : (meta.ps_hero_subheadline || service.excerpt.rendered.replace(/<[^>]*>/g, ''))
   const content   = isEs && meta.ps_content_es          ? meta.ps_content_es          : service.content.rendered
-  const faqItems  = faqs.map(f => ({
-    question: isEs && f.meta.ps_question_es ? f.meta.ps_question_es : f.title.rendered,
-    answer:   isEs && f.meta.ps_answer_es   ? f.meta.ps_answer_es   : f.meta.ps_answer,
+  const faqItems = faqs.map(f => ({
+    question: isEs && (f.meta as any)['ps_question_es']
+      ? (f.meta as any)['ps_question_es']
+      : f.title.rendered,
+    answer:   isEs && (f.meta as any)['ps_answer_es']
+      ? (f.meta as any)['ps_answer_es']
+      : f.meta.ps_answer,
   }))
 
   // Locale-correct hrefs
@@ -91,7 +95,7 @@ export function ServicePageTemplate({
     label: isEs
       ? `${s.title.rendered} en ${cityName}`
       : `${s.title.rendered} in ${cityName}`,
-    href: isEs
+    href:  isEs
       ? `/es/${citySlug}/${SERVICE_SLUG_EN_TO_ES[s.meta.ps_service_slug] ?? s.meta.ps_service_slug}/`
       : `/${citySlug}/${s.meta.ps_service_slug}/`,
   }))

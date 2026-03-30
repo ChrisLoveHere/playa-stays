@@ -57,11 +57,12 @@ export default async function PublicaTuPropiedadPage() {
     },
   ]
 
-  // Use ES answers when available, fall back to EN
-  const faqItems = faqs.map(f => ({
-    question: f.meta.ps_question_es || f.title.rendered,
-    answer:   f.meta.ps_answer_es   || f.meta.ps_answer,
-  }))
+  //// Use ES answers when available, fall back to EN
+const faqItems = faqs.map(f => ({
+  // cast meta to any and use bracket notation for Spanish fields
+  question: (f.meta as any)['ps_question_es'] || f.title.rendered,
+  answer:   (f.meta as any)['ps_answer_es']   || f.meta.ps_answer,
+}))
 
   return (
     <>
