@@ -1,0 +1,155 @@
+/* Contact page — form + channels + location (premium, calm spacing) */
+
+.mainGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+@media (min-width: 960px) {
+  .mainGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+  }
+}
+
+.channelTitle {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--charcoal);
+  margin: 0.75rem 0 2rem;
+}
+
+.channelList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.channelCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: var(--white);
+  border-radius: var(--r-md);
+  border: 1.5px solid var(--sand-dark);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color var(--t) var(--ease),
+    box-shadow var(--t) var(--ease);
+}
+
+.channelCard:hover {
+  border-color: rgba(24, 104, 112, 0.35);
+  box-shadow: var(--sh-xs);
+}
+
+.channelCardIcon {
+  font-size: 1.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.channelCardTitle {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--charcoal);
+}
+
+.channelCardSub {
+  font-size: 0.8rem;
+  color: var(--mid);
+  margin-top: 2px;
+}
+
+/* Location + map */
+.locationSection {
+  border-top: 1px solid rgba(221, 213, 190, 0.65);
+}
+
+.locationGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .locationGrid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+    gap: clamp(2rem, 4vw, 3rem);
+    align-items: stretch;
+  }
+}
+
+.locationGridSingle {
+  max-width: 40rem;
+}
+
+.locationTitle {
+  font-size: clamp(1.75rem, 3vw, 2.35rem);
+  margin: 0.75rem 0 1rem;
+}
+
+.locationLead {
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--mid);
+  margin: 0 0 1.25rem;
+  max-width: 36rem;
+}
+
+.locationAddress {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--charcoal);
+  font-style: normal;
+  margin: 0 0 1rem;
+  max-width: 28rem;
+}
+
+.locationDirections {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--teal);
+  text-decoration: none;
+  transition: color var(--t) var(--ease);
+}
+
+.locationDirections:hover {
+  color: var(--teal-mid);
+}
+
+.mapShell {
+  min-width: 0;
+}
+
+.mapFrame {
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  border: 1px solid rgba(221, 213, 190, 0.95);
+  box-shadow: var(--sh-sm);
+  background: var(--sand);
+}
+
+.mapFrame iframe {
+  display: block;
+  width: 100%;
+  height: min(300px, 42vw);
+  min-height: 200px;
+  border: 0;
+}
+
+@media (max-width: 899px) {
+  .mapFrame iframe {
+    height: 240px;
+    min-height: 200px;
+  }
+}

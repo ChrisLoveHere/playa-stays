@@ -1,54 +1,85 @@
 /* Nav.module.css — scoped nav styles */
 
+/* Solid header from first paint (matches previous .scrolled look)
+   z-index above tag-manager / ad iframes (~9–10k) and mobile drawer; below PreviewBar (11100). */
 .nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 900;
-  transition: background var(--t) var(--ease), box-shadow var(--t) var(--ease);
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 11000;
+  background: var(--white);
+  box-shadow: var(--sh-sm);
+  transition: background var(--t) var(--ease), box-shadow var(--t) var(--ease), top var(--t) var(--ease);
+  pointer-events: auto;
 }
-.nav.scrolled { background: var(--white); box-shadow: var(--sh-sm); }
+/* Draft Preview bar is z-index 11100 — sit nav just below it (see globals --preview-bar-h). */
+.navDraftOffset {
+  top: var(--preview-bar-h, 44px);
+}
+.nav.scrolled {
+  background: var(--white);
+  box-shadow: var(--sh-sm);
+}
 
 .inner {
   display: flex; align-items: center;
   height: 68px; max-width: 1200px; margin: 0 auto; padding: 0 24px; gap: 4px;
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
 }
 
 .logo {
   font-family: var(--font-display); font-size: 1.6rem; font-weight: 600;
-  color: var(--white); letter-spacing: 0.01em;
+  color: var(--deep);
+  letter-spacing: 0.01em;
   transition: color var(--t); flex-shrink: 0; margin-right: 16px;
 }
-.scrolled .logo { color: var(--deep); }
 
+/* Stack above .lang / .cta (later flex siblings) so dropdown panels stay clickable.
+   Inner z-index alone doesn’t lift abs .panel above those siblings — sibling paint order wins. */
 .links {
   display: flex; align-items: center; gap: 2px; flex: 1;
+  position: relative;
+  z-index: 3;
 }
 .links a {
-  font-size: 0.85rem; font-weight: 500; color: rgba(255,255,255,0.86);
+  font-size: 0.85rem; font-weight: 500; color: var(--mid);
   padding: 7px 11px; border-radius: var(--r-sm);
   transition: color var(--t), background var(--t);
   display: block; white-space: nowrap;
 }
-.scrolled .links a { color: var(--mid); }
-.links a:hover { color: var(--white); background: rgba(255,255,255,0.1); }
-.scrolled .links a:hover { color: var(--teal); background: var(--sand); }
-.links a[aria-current="page"] { font-weight: 600; color: var(--white) !important; }
-.scrolled .links a[aria-current="page"] { color: var(--teal) !important; background: var(--sand); }
+.links a:hover {
+  color: var(--teal);
+  background: var(--sand);
+}
+.links a[aria-current="page"] {
+  font-weight: 600;
+  color: var(--teal) !important;
+  background: var(--sand);
+}
 
-/* Dropdown */
-.dropdown { position: relative; }
-.primary > .trigger { color: var(--gold-light) !important; font-weight: 600; }
-.scrolled .primary > .trigger { color: var(--gold) !important; }
+/* Dropdown — raise stacking context when open so panels stay above .lang / .cta */
+.dropdown {
+  position: relative;
+  z-index: 1;
+}
+.dropdownOpen {
+  z-index: 400;
+}
+.primary > .trigger { color: var(--gold) !important; font-weight: 600; }
 
 .trigger {
   display: flex; align-items: center; gap: 4px;
-  font-size: 0.85rem; font-weight: 600; color: var(--gold-light);
+  font-size: 0.85rem; font-weight: 600; color: var(--gold);
   padding: 7px 11px; border-radius: var(--r-sm);
   background: none; border: none; cursor: pointer;
   transition: color var(--t), background var(--t);
   white-space: nowrap; line-height: 1;
 }
-.scrolled .trigger { color: var(--gold); }
-.trigger:hover, .trigger.open { color: var(--white); background: rgba(255,255,255,0.1); }
-.scrolled .trigger:hover, .scrolled .trigger.open { color: var(--teal); background: var(--sand); }
+.trigger:hover,
+.trigger.open {
+  color: var(--teal);
+  background: var(--sand);
+}
 
 .chevron { width: 12px; height: 12px; flex-shrink: 0; transition: transform var(--t) var(--ease); }
 .rotated { transform: rotate(180deg); }
@@ -57,7 +88,10 @@
   position: absolute; top: calc(100% + 8px); left: 0;
   background: var(--white); border-radius: var(--r-lg);
   box-shadow: var(--sh-lg); border: 1px solid var(--sand-dark);
-  min-width: 260px; z-index: 950; padding: 8px;
+  min-width: 260px;
+  z-index: 1;
+  padding: 8px;
+  pointer-events: auto;
 }
 
 .item {
@@ -85,19 +119,17 @@
 /* Language */
 .lang {
   display: flex; align-items: center;
-  background: rgba(255,255,255,0.1); border-radius: var(--r-pill);
-  overflow: hidden; border: 1px solid rgba(255,255,255,0.2);
+  background: var(--sand);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+  border: 1px solid var(--sand-dark);
   flex-shrink: 0; margin-left: 4px;
 }
-.scrolled .lang { background: var(--sand); border-color: var(--sand-dark); }
-.lang a {
-  font-size: 0.72rem !important; font-weight: 700 !important;
-  letter-spacing: 0.06em; padding: 5px 10px !important;
-  color: rgba(255,255,255,0.6) !important;
-  border-radius: 0 !important; background: transparent !important;
+.langSep {
+  width: 1px; height: 16px;
+  background: var(--sand-dark);
+  flex-shrink: 0;
 }
-.scrolled .lang a { color: var(--light) !important; }
-.langSep { width: 1px; height: 16px; background: rgba(255,255,255,0.2); flex-shrink: 0; }
 
 /* CTA */
 .cta {
@@ -117,17 +149,19 @@
 }
 .hamburger span {
   display: block; width: 22px; height: 2px;
-  background: var(--white); border-radius: 2px;
+  background: var(--charcoal); border-radius: 2px;
   transition: all 0.3s var(--ease); transform-origin: center;
 }
-.scrolled .hamburger span { background: var(--charcoal); }
 .topOpen { transform: translateY(7px) rotate(45deg) !important; }
 .midOpen { opacity: 0 !important; transform: scaleX(0) !important; }
 .botOpen { transform: translateY(-7px) rotate(-45deg) !important; }
 
-/* Mobile menu */
+/* Mobile menu — below .nav bar so header stays usable; above <main> content. */
 .mobileMenu {
-  position: fixed; inset: 0; z-index: 800; pointer-events: none;
+  position: fixed; inset: 0; z-index: 10990;
+}
+.mobileMenu:not(.mobileOpen) {
+  display: none;
 }
 .mobileOverlay {
   position: absolute; inset: 0;
@@ -143,9 +177,12 @@
   transition: transform var(--t-slow) var(--ease);
   display: flex; flex-direction: column; overflow-y: auto;
 }
-.mobileOpen { pointer-events: all; }
-.mobileOpen .mobileOverlay { opacity: 1; }
-.mobileOpen .mobilePanel  { transform: translateX(0); }
+.mobileOpen .mobileOverlay {
+  opacity: 1;
+}
+.mobileOpen .mobilePanel {
+  transform: translateX(0);
+}
 
 .mobilePanelHead {
   display: flex; align-items: center; justify-content: space-between;
@@ -185,7 +222,7 @@
   .hamburger { display: flex; }
 }
 
-/* ── Language toggle active state (added for i18n) ────── */
+/* ── Language toggle (desktop) ────── */
 .langItem {
   font-size: 0.72rem;
   font-weight: 700;
@@ -195,14 +232,15 @@
   transition: all var(--t);
   cursor: pointer;
   text-decoration: none;
-  color: inherit;
+  color: var(--light) !important;
+  background: transparent !important;
+}
+a.langItem:hover {
+  color: var(--mid) !important;
 }
 .langActive {
-  background: rgba(255,255,255,0.18);
+  background: var(--teal) !important;
   color: var(--white) !important;
-}
-.nav.scrolled .langActive {
-  background: var(--teal);
 }
 .mobileLangActive {
   padding: 5px 16px;

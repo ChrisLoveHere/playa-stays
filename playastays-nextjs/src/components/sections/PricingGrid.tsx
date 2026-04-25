@@ -5,17 +5,9 @@
 // ============================================================
 
 import Link from 'next/link'
+import type { PricingPlan } from '@/types'
 
-export interface PricingPlan {
-  tier: string         // e.g. "Essential"
-  name: string         // e.g. "15%" or "Launch"
-  unit?: string        // e.g. "of gross revenue"
-  desc: string
-  features: string[]
-  cta: { label: string; href: string }
-  featured?: boolean
-  badge?: string       // e.g. "Most Popular"
-}
+export type { PricingPlan } from '@/types'
 
 interface PricingGridProps {
   plans: PricingPlan[]

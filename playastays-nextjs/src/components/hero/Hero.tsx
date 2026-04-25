@@ -4,6 +4,8 @@
 // All content comes from props — nothing hardcoded.
 // ============================================================
 
+import type { Locale } from '@/lib/i18n'
+import { localizeTrustStatKey } from '@/lib/i18n'
 import type { Stat, CtaLink } from '@/types'
 import { Breadcrumb, type BreadcrumbItem } from '@/components/layout/Breadcrumb'
 
@@ -13,8 +15,13 @@ interface HeroProps {
   headline: string                // supports <em> via dangerouslySetInnerHTML
   sub?: string
   stats?: Stat[]
+  locale?: Locale
   primaryCta?: CtaLink
   secondaryCta?: CtaLink
+  /** Optional — e.g. WhatsApp (split + centred) */
+  tertiaryCta?: CtaLink
+  /** Optional — e.g. Call us (split only), after tertiary */
+  phoneCta?: CtaLink
   breadcrumbs?: BreadcrumbItem[]
   // split variant only
   formSlot?: React.ReactNode
@@ -32,10 +39,13 @@ export function Hero({
   stats,
   primaryCta,
   secondaryCta,
+  tertiaryCta,
+  phoneCta,
   breadcrumbs,
   formSlot,
   backgroundImageUrl,
   subtitle,
+  locale = 'en',
 }: HeroProps) {
 
   if (variant === 'split') {
@@ -61,10 +71,16 @@ export function Hero({
                   {sub}
                 </p>
               )}
-              {(primaryCta || secondaryCta) && (
+              {(primaryCta || secondaryCta || tertiaryCta || phoneCta) && (
                 <div className="hero-btns fade-4" style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: stats ? 0 : undefined }}>
                   {primaryCta  && <a href={primaryCta.href}  className="btn btn-gold btn-lg">{primaryCta.label}</a>}
                   {secondaryCta && <a href={secondaryCta.href} className="btn btn-outline">{secondaryCta.label}</a>}
+                  {tertiaryCta && (
+                    <a href={tertiaryCta.href} className="btn btn-wa" target="_blank" rel="noopener noreferrer">{tertiaryCta.label}</a>
+                  )}
+                  {phoneCta && (
+                    <a href={phoneCta.href} className="btn btn-outline btn-sm">{phoneCta.label}</a>
+                  )}
                 </div>
               )}
               {stats && stats.length > 0 && (
@@ -72,7 +88,7 @@ export function Hero({
                   {stats.map((s, i) => (
                     <div key={i}>
                       <div className="stat-val">{s.val}</div>
-                      <div className="stat-key">{s.key}</div>
+                      <div className="stat-key">{localizeTrustStatKey(s.key, locale)}</div>
                     </div>
                   ))}
                 </div>
@@ -118,12 +134,17 @@ export function Hero({
                 {secondaryCta && <a href={secondaryCta.href} className="btn btn-outline">{secondaryCta.label}</a>}
               </div>
             )}
+            {tertiaryCta && (
+              <div className="fade-4" style={{ marginTop: 12 }}>
+                <a href={tertiaryCta.href} className="btn btn-wa" target="_blank" rel="noopener noreferrer">{tertiaryCta.label}</a>
+              </div>
+            )}
             {stats && stats.length > 0 && (
               <div className="hero-inline-stats fade-5">
                 {stats.map((s, i) => (
                   <div key={i}>
                     <div className="stat-val">{s.val}</div>
-                    <div className="stat-key">{s.key}</div>
+                    <div className="stat-key">{localizeTrustStatKey(s.key, locale)}</div>
                   </div>
                 ))}
               </div>

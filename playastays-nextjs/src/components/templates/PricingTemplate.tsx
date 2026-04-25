@@ -32,7 +32,7 @@ import {
   getValueItems,
   type CityPricingData,
 } from '@/lib/pricing-data'
-import { COMPARISON_ROWS } from '@/lib/calculator-data'
+import { ComparisonTable } from '@/components/content/ComparisonTable'
 import { PerformanceProof } from '@/components/trust/PerformanceProof'
 import { OwnerDashboardPreview } from '@/components/trust/OwnerDashboardPreview'
 import { TransparencySection } from '@/components/trust/TransparencySection'
@@ -84,12 +84,10 @@ function copy(locale: Locale) {
       : `Management fees in ${city} range from 10% to 25% of gross revenue. PlayaStays-managed properties earn 22–38% more net income on average than self-managed — even after the fee.`,
     heroCtaLabel:   isEs ? 'Obtener estimado de ingresos gratis →' : 'Get Free Revenue Estimate →',
     trustStats: [
-      { val: '200+', key: isEs ? 'Propiedades administradas' : 'Properties managed' },
-      { val: '4.9★', key: isEs ? 'Satisfacción del propietario' : 'Owner satisfaction' },
-      { val: '22%+', key: isEs ? 'Aumento de ingresos netos' : 'Net income uplift' },
-      { val: '24/7', key: isEs ? 'Soporte local' : 'Local support' },
-      { val: 'ES/EN', key: isEs ? 'Equipo bilingüe' : 'Bilingual team' },
-      { val: '<5min', key: isEs ? 'Respuesta a huéspedes' : 'Guest inquiry response' },
+      { val: '4.9★', key: 'Owner satisfaction' },
+      { val: '22%+', key: 'Net income uplift' },
+      { val: '24/7', key: 'Local support' },
+      { val: 'ES/EN', key: 'Bilingual team' },
     ],
     pricingEyebrow: isEs ? 'Planes de Administración' : 'Management Plans',
     pricingH2:      isEs ? 'Tarifas claras. Sin sorpresas.' : 'Clear fees. No surprises.',
@@ -128,6 +126,9 @@ function copy(locale: Locale) {
     ctaBtn:         isEs ? 'Obtener mi estimado gratis →' : 'Get My Free Estimate →',
     pmLinkLabel:    isEs ? 'Ver servicios completos de administración →' : 'See full management services →',
     pricingLinkLabel: isEs ? '¿Qué cuesta la gestión?' : 'What does management cost?',
+    depthWhyTitle:    isEs ? 'Por qué importa la gestión profesional aquí' : 'Why professional management matters here',
+    depthInvTitle:    isEs ? 'Condominios vs villas y qué encaja' : 'Condos vs villas & what fits this market',
+    depthSeasonTitle: isEs ? 'Estacionalidad y demanda local' : 'Seasonality & local demand',
   }
 }
 
@@ -139,8 +140,10 @@ export function PricingTemplate({
   const c           = copy(locale)
   const cityName    = city.title.rendered
   const plans       = getPricingPlans(locale, cityName, estimateHref)
-  const faqs        = getPricingFAQs(locale, cityName)
+  const faqs        = getPricingFAQs(locale, cityName, city.slug)
   const valueItems  = getValueItems(locale)
+  const pricingHubHref = locale === 'es' ? '/es/precios-administracion-propiedades/' : '/property-management-pricing/'
+  const cityHubHref    = locale === 'es' ? `/es/${city.slug}/` : `/${city.slug}/`
   const faqSchema   = buildFaqSchema(faqs)
   const portfolioStats = getDisplayStats(properties, city.slug)
 
@@ -228,7 +231,93 @@ export function PricingTemplate({
       </section>
 
       {/* ── TRUST BAR ──────────────────────────────────── */}
-      <TrustBar stats={c.trustStats} />
+      <TrustBar stats={c.trustStats} locale={locale} />
+
+      {/* ── LOCAL CONTEXT + PARENT HUB (city pages only) ─ */}
+      {!isGlobalHub && (
+        <section className="pad-lg bg-ivory">
+          <div className="container" style={{ maxWidth: 880 }}>
+            <div className="eyebrow mb-8">
+              {locale === 'es' ? 'Guía de precios Riviera Maya' : 'Riviera Maya pricing guide'}
+            </div>
+            <p className="body-text mb-24" style={{ maxWidth: 720 }}>
+              {locale === 'es' ? (
+                <>Esta página profundiza en <strong>{cityName}</strong>. Para la vista regional, la calculadora y la comparativa de mercados, visita la </>
+              ) : (
+                <>This page focuses on <strong>{cityName}</strong>. For the regional overview, calculator, and how fees work across markets, see the </>
+              )}
+              <Link href={pricingHubHref} style={{ color: 'var(--teal)', fontWeight: 600 }}>
+                {locale === 'es' ? 'guía principal de precios de administración' : 'property management pricing hub'}
+              </Link>
+              {locale === 'es' ? '.' : '.'}
+            </p>
+
+            <h2 className="section-title mt-12 mb-16" style={{ fontSize: 'clamp(1.35rem,2.5vw,1.85rem)' }}>
+              {locale === 'es'
+                ? `Cómo se determina la comisión en ${cityName}`
+                : `How management pricing works in ${cityName}`}
+            </h2>
+            <ul style={{ margin: '0 0 28px', paddingLeft: 22, color: 'var(--mid)', lineHeight: 1.7, fontSize: '0.92rem' }}>
+              {(locale === 'es' ? cityData.whatAffectsPricingEs : cityData.whatAffectsPricing).map((line, i) => (
+                <li key={i} style={{ marginBottom: 10 }}>{line}</li>
+              ))}
+            </ul>
+
+            <h2 className="section-title mt-12 mb-16" style={{ fontSize: 'clamp(1.35rem,2.5vw,1.85rem)' }}>
+              {locale === 'es' ? 'Contexto del mercado' : 'Local market snapshot'}
+            </h2>
+            <p className="body-text" style={{ maxWidth: 720, marginBottom: 28 }}>
+              {locale === 'es' ? cityData.marketNoteEs : cityData.marketNote}
+            </p>
+
+            <h2 className="section-title mt-12 mb-16" style={{ fontSize: 'clamp(1.35rem,2.5vw,1.85rem)' }}>
+              {c.depthWhyTitle}
+            </h2>
+            <p className="body-text" style={{ maxWidth: 720, marginBottom: 28 }}>
+              {locale === 'es' ? cityData.whyMgmtValueEs : cityData.whyMgmtValue}
+            </p>
+
+            <h2 className="section-title mt-12 mb-16" style={{ fontSize: 'clamp(1.35rem,2.5vw,1.85rem)' }}>
+              {c.depthInvTitle}
+            </h2>
+            <p className="body-text" style={{ maxWidth: 720, marginBottom: 28 }}>
+              {locale === 'es' ? cityData.inventoryCondoVillaEs : cityData.inventoryCondoVilla}
+            </p>
+
+            <h2 className="section-title mt-12 mb-16" style={{ fontSize: 'clamp(1.35rem,2.5vw,1.85rem)' }}>
+              {c.depthSeasonTitle}
+            </h2>
+            <p className="body-text" style={{ maxWidth: 720, marginBottom: 12 }}>
+              {locale === 'es' ? cityData.seasonalityDemandEs : cityData.seasonalityDemand}
+            </p>
+            <p className="body-sm" style={{ maxWidth: 720, marginBottom: 28, color: 'var(--light)' }}>
+              <strong style={{ color: 'var(--mid)' }}>{c.peakSeasonLabel}:</strong>{' '}
+              {locale === 'es' ? cityData.peakSeasonEs : cityData.peakSeason}
+            </p>
+
+            <div style={{
+              display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center',
+              paddingTop: 8, borderTop: '1px solid var(--sand-dark)',
+            }}>
+              <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--light)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                {locale === 'es' ? 'Enlaces útiles' : 'Related'}
+              </span>
+              <Link href={pricingHubHref} className="btn btn-ghost btn-sm">
+                {locale === 'es' ? 'Guía de precios (región)' : 'Regional pricing hub →'}
+              </Link>
+              <Link href={cityHubHref} className="btn btn-ghost btn-sm">
+                {locale === 'es' ? `Guía ${cityName}` : `${cityName} city guide →`}
+              </Link>
+              <Link href={pmPageHref} className="btn btn-ghost btn-sm">
+                {locale === 'es' ? 'Administración de propiedades' : 'Property management →'}
+              </Link>
+              <Link href={estimateHref} className="btn btn-ghost btn-sm">
+                {locale === 'es' ? 'Estimado gratuito' : 'Free estimate →'}
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── SECTION 2: PRICING CARDS ────────────────────── */}
       <PricingGrid
@@ -452,81 +541,7 @@ export function PricingTemplate({
             </p>
           </div>
 
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0, fontSize: '0.83rem' }}>
-              <thead>
-                <tr>
-                  <th style={{
-                    textAlign: 'left', padding: '12px 16px',
-                    background: 'var(--sand)', fontFamily: 'var(--font-display)',
-                    fontSize: '0.78rem', fontWeight: 600, color: 'var(--mid)',
-                    borderBottom: '2px solid var(--sand-dark)',
-                    borderRadius: 'var(--r-sm) 0 0 0',
-                  }}>
-                    {locale === 'es' ? 'Criterio' : 'Criteria'}
-                  </th>
-                  <th style={{
-                    textAlign: 'center', padding: '12px 16px',
-                    background: 'var(--sand)', fontFamily: 'var(--font-display)',
-                    fontSize: '0.78rem', fontWeight: 600, color: 'var(--mid)',
-                    borderBottom: '2px solid var(--sand-dark)',
-                  }}>
-                    {locale === 'es' ? 'Empresa típica' : 'Typical Manager'}
-                  </th>
-                  <th style={{
-                    textAlign: 'center', padding: '12px 16px',
-                    background: 'var(--deep)', fontFamily: 'var(--font-display)',
-                    fontSize: '0.78rem', fontWeight: 700, color: 'var(--gold-light)',
-                    borderBottom: '2px solid var(--teal)',
-                    borderRadius: '0 var(--r-sm) 0 0',
-                  }}>
-                    PlayaStays
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {COMPARISON_ROWS.map((row, i) => (
-                  <tr key={i}>
-                    <td style={{
-                      padding: '12px 14px',
-                      background: 'var(--white)',
-                      borderBottom: '1px solid var(--sand-dark)',
-                      fontWeight: 600, color: 'var(--charcoal)',
-                      minWidth: 110, fontSize: '0.8rem',
-                    }}>
-                      {locale === 'es' ? row.featureEs : row.feature}
-                    </td>
-                    <td style={{
-                      padding: '12px 14px',
-                      background: 'var(--white)',
-                      borderBottom: '1px solid var(--sand-dark)',
-                      color: 'var(--mid)',
-                      textAlign: 'center',
-                      wordBreak: 'break-word',
-                      hyphens: 'auto',
-                      fontSize: '0.8rem',
-                    }}>
-                      {locale === 'es' ? row.typicalEs : row.typical}
-                    </td>
-                    <td style={{
-                      padding: '12px 14px',
-                      background: row.highlight ? 'rgba(24,104,112,0.07)' : 'var(--white)',
-                      borderBottom: '1px solid var(--sand-dark)',
-                      color: row.highlight ? 'var(--teal)' : 'var(--charcoal)',
-                      fontWeight: row.highlight ? 700 : 500,
-                      textAlign: 'center',
-                      borderLeft: '2px solid var(--teal)',
-                      wordBreak: 'break-word',
-                      hyphens: 'auto',
-                      fontSize: '0.8rem',
-                    }}>
-                      {locale === 'es' ? row.playastaysEs : row.playastays}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ComparisonTable locale={locale} />
         </div>
       </section>
 

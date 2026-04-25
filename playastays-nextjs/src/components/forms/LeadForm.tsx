@@ -19,7 +19,29 @@ interface LeadFormProps {
   locale?:   Locale
 }
 
-function formCopy(locale: Locale = 'en') {
+/** All strings used by the form — explicit keys catch typos at compile time. */
+interface FormCopy {
+  firstName: string
+  email: string
+  phone: string
+  propType: string
+  status: string
+  city: string
+  selectCity: string
+  select: string
+  types: Array<{ value: string; label: string }>
+  statuses: Array<{ value: string; label: string }>
+  cities: string[]
+  submit: string
+  submitting: string
+  disclaimer: string
+  successTitle: string
+  successSub: string
+  errorMsg: string
+  errorLink: string
+}
+
+function formCopy(locale: Locale = 'en'): FormCopy {
   const es = locale === 'es'
   return {
     firstName:    es ? 'Nombre'                  : 'First Name',
@@ -43,8 +65,13 @@ function formCopy(locale: Locale = 'en') {
       { value: 'pre-con',      label: es ? 'Preventa / comprando pronto'  : 'Pre-construction / buying soon' },
     ],
     cities: [
-      'Playa del Carmen', 'Tulum', 'Akumal',
-      'Puerto Morelos', 'Xpu-Ha', 'Chetumal',
+      'Playa del Carmen',
+      'Tulum',
+      'Puerto Morelos',
+      'Akumal',
+      'Xpu-Ha',
+      'Cozumel',
+      'Isla Mujeres',
     ],
     submit:      es ? 'Obtener mi estimado gratis →' : 'Get My Free Estimate →',
     submitting:  es ? 'Enviando…'                    : 'Sending…',
@@ -88,10 +115,34 @@ export function LeadForm({
 
     startTransition(async () => {
       try {
+        const pageUrl =
+          typeof window !== 'undefined' ? window.location.href : ''
+        const referrer =
+          typeof document !== 'undefined' ? document.referrer : ''
+        const sp =
+          typeof window !== 'undefined'
+            ? new URLSearchParams(window.location.search)
+            : null
+        const utm = {
+          utm_source: sp?.get('utm_source') ?? undefined,
+          utm_medium: sp?.get('utm_medium') ?? undefined,
+          utm_campaign: sp?.get('utm_campaign') ?? undefined,
+          utm_term: sp?.get('utm_term') ?? undefined,
+          utm_content: sp?.get('utm_content') ?? undefined,
+        }
+
         const res = await fetch('/api/lead', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...data, city: city || data.city, source }),
+          body: JSON.stringify({
+            ...data,
+            city: city || data.city,
+            source,
+            locale,
+            page_url: pageUrl || undefined,
+            referrer: referrer || undefined,
+            ...utm,
+          }),
         })
         if (!res.ok) throw new Error('failed')
         setStatus('success')
@@ -110,17 +161,13 @@ export function LeadForm({
 
   if (status === 'success') {
     return (
-      <div style={{ textAlign: 'center', padding: '32px 0' }}>
-        <div style={{ fontSize: '2rem', marginBottom: 12 }}>✓</div>
-        <div style={{
-          fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 600,
-          color: variant === 'dark' ? 'var(--white)' : 'var(--charcoal)', marginBottom: 6,
-        }}>
-          {cp.successTitle}
-        </div>
-        <p style={{ fontSize: '0.82rem', color: variant === 'dark' ? 'rgba(255,255,255,0.45)' : 'var(--mid)' }}>
-          {cp.successSub}
-        </p>
+      <div
+        className={[formClass, 'lead-form-success'].filter(Boolean).join(' ')}
+        style={{ textAlign: 'center', padding: '32px 0' }}
+      >
+        <div className="lead-form-success-icon" aria-hidden>✓</div>
+        <div className="lead-form-success-title">{cp.successTitle}</div>
+        <p className="lead-form-success-sub">{cp.successSub}</p>
       </div>
     )
   }
@@ -150,14 +197,14 @@ export function LeadForm({
         <div className="form-row">
           <div className="form-group">
             <label className="form-label" htmlFor={id('type')}>{cp.propType}</label>
-            <select id={id('type')} className="form-input" name="property_type">
+            <select id={id('type')} className="form-input" name="property_type" required>
               <option value="">{cp.select}</option>
               {cp.types.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
             </select>
           </div>
           <div className="form-group">
             <label className="form-label" htmlFor={id('status')}>{cp.status}</label>
-            <select id={id('status')} className="form-input" name="current_status">
+            <select id={id('status')} className="form-input" name="current_status" required>
               <option value="">{cp.select}</option>
               {cp.statuses.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
             </select>
@@ -167,7 +214,7 @@ export function LeadForm({
         {!city && (
           <div className="form-group">
             <label className="form-label" htmlFor={id('city')}>{cp.city}</label>
-            <select id={id('city')} className="form-input" name="city">
+            <select id={id('city')} className="form-input" name="city" required>
               <option value="">{cp.selectCity}</option>
               {cp.cities.map(c => <option key={c} value={c}>{c}</option>)}
             </select>

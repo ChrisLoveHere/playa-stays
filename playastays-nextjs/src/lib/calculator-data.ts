@@ -152,6 +152,54 @@ export const CALC_RANGES: Record<string, Record<PropertySize, CalcRange>> = {
     },
   },
 
+  'cozumel': {
+    studio: {
+      nightlyLo: 100, nightlyHi: 160,
+      occupancyLo: 0.62, occupancyHi: 0.80,
+      selfManagedLo: 1500, selfManagedHi: 2300,
+      managedLo: 2300, managedHi: 3500,
+      typicalFeeRate: 0.15,
+    },
+    '2br': {
+      nightlyLo: 160, nightlyHi: 240,
+      occupancyLo: 0.64, occupancyHi: 0.82,
+      selfManagedLo: 2400, selfManagedHi: 3600,
+      managedLo: 3600, managedHi: 5200,
+      typicalFeeRate: 0.15,
+    },
+    '3br': {
+      nightlyLo: 220, nightlyHi: 420,
+      occupancyLo: 0.60, occupancyHi: 0.78,
+      selfManagedLo: 3800, selfManagedHi: 6000,
+      managedLo: 5500, managedHi: 8000,
+      typicalFeeRate: 0.15,
+    },
+  },
+
+  'isla-mujeres': {
+    studio: {
+      nightlyLo: 120, nightlyHi: 190,
+      occupancyLo: 0.65, occupancyHi: 0.84,
+      selfManagedLo: 1700, selfManagedHi: 2600,
+      managedLo: 2600, managedHi: 3900,
+      typicalFeeRate: 0.15,
+    },
+    '2br': {
+      nightlyLo: 190, nightlyHi: 280,
+      occupancyLo: 0.65, occupancyHi: 0.84,
+      selfManagedLo: 2800, selfManagedHi: 4200,
+      managedLo: 4200, managedHi: 6200,
+      typicalFeeRate: 0.15,
+    },
+    '3br': {
+      nightlyLo: 280, nightlyHi: 520,
+      occupancyLo: 0.62, occupancyHi: 0.80,
+      selfManagedLo: 4500, selfManagedHi: 7200,
+      managedLo: 6200, managedHi: 9800,
+      typicalFeeRate: 0.15,
+    },
+  },
+
   'chetumal': {
     studio: {
       nightlyLo: 55, nightlyHi: 90,

@@ -3,11 +3,12 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3010",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "screenshots:site-review": "node scripts/screenshot-site-review.mjs"
   },
   "dependencies": {
     "next": "^14.2.35",
@@ -20,6 +21,7 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "^14.2.35",
+    "playwright": "^1.49.1",
     "typescript": "^5"
   }
 }

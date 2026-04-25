@@ -1,78 +1,75 @@
 // ============================================================
 // /es/blog/page.tsx  →  https://www.playastays.com/es/blog/
-// Spanish blog index. Renders ES title/excerpt from post meta
-// when available; falls back to EN content.
 // ============================================================
 
 import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
-import Link from 'next/link'
-import { getBlogPosts } from '@/lib/wordpress'
+import {
+  getBlogPosts,
+  getBlogTopicTerms,
+  getBlogAreaTerms,
+} from '@/lib/wordpress'
 import { buildMetadata } from '@/lib/seo'
-import { EsBlogCard } from '@/components/content/Cards'
-import { Hero } from '@/components/hero/Hero'
+import { SITE_URL } from '@/lib/site-url'
+import { BlogHubView } from '@/components/blog/BlogHubView'
 import { CtaStrip } from '@/components/sections'
 
 export const revalidate = 3600
 
 export const metadata: Metadata = buildMetadata({
   title: 'Blog de Administración de Propiedades | PlayaStays',
-  description: 'Estrategias de Airbnb, guías de inversión, datos de mercado y consejos operativos para propietarios en la Riviera Maya.',
-  canonical: 'https://www.playastays.com/es/blog/',
-  hreflangEn: 'https://www.playastays.com/blog/',
+  description:
+    'Estrategias de Airbnb, guías de inversión, datos de mercado y consejos operativos para propietarios en la Riviera Maya.',
+  canonical: `${SITE_URL}/es/blog/`,
+  hreflangEn: `${SITE_URL}/blog/`,
 })
 
 interface Props {
-  searchParams: { page?: string }
+  searchParams: { page?: string; q?: string; topic?: string; area?: string }
 }
 
 export default async function EsBlogPage({ searchParams }: Props) {
   const { isEnabled: preview } = draftMode()
-  const page = Number(searchParams.page ?? 1)
+  const page = Math.max(1, Number(searchParams.page ?? 1) || 1)
+  const q = searchParams.q ?? ''
+  const topicSlug = searchParams.topic?.trim() ?? ''
+  const areaSlug = searchParams.area?.trim() ?? ''
 
-  const posts = await getBlogPosts({ perPage: 9, page, preview })
+  const [posts, topicTerms, areaTerms] = await Promise.all([
+    getBlogPosts({
+      perPage: 9,
+      page,
+      preview,
+      topicSlug: topicSlug || null,
+      areaSlug: areaSlug || null,
+      search: q || null,
+    }),
+    getBlogTopicTerms(),
+    getBlogAreaTerms(),
+  ])
+
+  const hasTaxonomies = topicTerms.length > 0 && areaTerms.length > 0
 
   return (
     <>
-      <Hero
-        variant="centred"
+      <BlogHubView
+        posts={posts}
+        page={page}
+        locale="es"
         breadcrumbs={[
           { label: 'Inicio', href: '/es/' },
           { label: 'Blog', href: null },
         ]}
-        tag="Información para Propietarios"
-        headline="Conocimiento de gestión de rentas,<br /><em>directo desde Playa del Carmen</em>"
-        sub="Estrategias de Airbnb, guías de inversión, datos de mercado y consejos operativos para propietarios en la Riviera Maya."
-        primaryCta={{ label: 'Obtener estimado gratis', href: '/es/publica-tu-propiedad/' }}
+        kicker="Perspectivas y guías"
+        title="Revista PlayaStays"
+        intro="Perspectivas locales, guías para propietarios, el mercado y artículos prácticos sobre administración de propiedades, rentas vacacionales y ser dueño en Playa del Carmen y la Riviera Maya."
+        q={q}
+        topicSlug={topicSlug}
+        areaSlug={areaSlug}
+        topicTerms={topicTerms}
+        areaTerms={areaTerms}
+        hasTaxonomies={hasTaxonomies}
       />
-
-      <section className="pad-lg bg-ivory">
-        <div className="container">
-          {posts.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--light)' }}>
-              Aún no hay artículos. Vuelve pronto.
-            </div>
-          ) : (
-            <div className="blog-grid">
-              {posts.map(p => <EsBlogCard key={p.id} post={p} />)}
-            </div>
-          )}
-
-          {/* Pagination */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 10, marginTop: 48 }}>
-            {page > 1 && (
-              <Link href={`/es/blog/?page=${page - 1}`} className="btn btn-ghost btn-sm">
-                ← Anterior
-              </Link>
-            )}
-            {posts.length === 9 && (
-              <Link href={`/es/blog/?page=${page + 1}`} className="btn btn-ghost btn-sm">
-                Siguiente →
-              </Link>
-            )}
-          </div>
-        </div>
-      </section>
 
       <CtaStrip
         eyebrow="¿Tienes una propiedad en la Riviera Maya?"

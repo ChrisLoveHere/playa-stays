@@ -1,0 +1,571 @@
+/* Editorial blog article — PlayaStays */
+
+.wrap {
+  background: var(--ivory);
+  /* Top offset: global .ps-chrome-pad-top on the same element (see globals.css) */
+}
+
+/* Named `articleHeader` (not `hero`) so we never inherit the global homepage `.hero` block styles from globals.css. */
+.articleHeader {
+  padding: clamp(0.35rem, 1.2vw, 0.55rem) 0 clamp(0.75rem, 2vw, 1.15rem);
+  border-bottom: 1px solid rgba(221, 213, 190, 0.45);
+}
+
+.articleHeaderInner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.breadcrumbWrap {
+  margin-bottom: clamp(0.45rem, 1.5vw, 0.65rem);
+  opacity: 1;
+}
+
+/* globals.css `.breadcrumb` defaults to dark-hero (near-white) links. Win specificity so trails read on ivory. */
+.breadcrumbWrap :global(nav[aria-label='Breadcrumb'] .breadcrumb) {
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  color: var(--mid);
+  padding-bottom: 0;
+}
+
+.breadcrumbWrap :global(nav[aria-label='Breadcrumb'] .breadcrumb a) {
+  color: var(--teal-mid);
+}
+
+.breadcrumbWrap :global(nav[aria-label='Breadcrumb'] .breadcrumb span[aria-current='page']) {
+  color: var(--charcoal);
+}
+
+.breadcrumbWrap :global(nav[aria-label='Breadcrumb'] .breadcrumb a:hover) {
+  color: var(--teal);
+}
+
+.breadcrumbWrap :global(nav[aria-label='Breadcrumb'] .breadcrumb-sep) {
+  color: rgba(138, 154, 160, 0.55);
+  margin: 0 0.35rem;
+}
+
+.tagPill {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--teal);
+  background: rgba(24, 104, 112, 0.08);
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--r-pill);
+  margin-bottom: 0.65rem;
+}
+
+.title {
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-size: clamp(1.75rem, 4.2vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--charcoal);
+  margin: 0 0 0.55rem;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.65rem 1.25rem;
+  font-size: 0.8rem;
+  color: var(--light);
+  margin-bottom: clamp(0.75rem, 2vw, 1.1rem);
+}
+
+.metaDot {
+  opacity: 0.45;
+}
+
+.deck {
+  font-size: clamp(1.02rem, 2.2vw, 1.15rem);
+  line-height: 1.65;
+  color: var(--mid);
+  font-weight: 400;
+  margin: 0 0 clamp(1rem, 2.8vw, 1.5rem);
+  max-width: 52ch;
+}
+
+.articleFigure {
+  margin: 0 0 1.35rem;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--sh-sm);
+  /* Match page bg so lazy image doesn’t flash a tall sand slab */
+  background: var(--ivory);
+  max-height: min(380px, 58vw);
+}
+
+.articleHeroImg {
+  width: 100%;
+  height: auto;
+  max-height: min(380px, 58vw);
+  object-fit: cover;
+  display: block;
+}
+
+.articleHeroCaption {
+  font-size: 0.75rem;
+  color: var(--light);
+  margin-top: 0.65rem;
+  line-height: 1.45;
+  padding: 0 0.15rem;
+}
+
+/* Single-column article — content-first */
+.bodySection {
+  padding: clamp(1rem, 2.6vw, 1.45rem) 0 clamp(2.25rem, 5vw, 3.25rem);
+}
+
+.articleWrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Table of contents — compact */
+.toc {
+  margin: 0 0 1.35rem;
+  padding: 0.85rem 1rem 0.95rem;
+  border-radius: var(--r-md);
+  background: rgba(250, 248, 242, 0.9);
+  border: 1px solid rgba(221, 213, 190, 0.65);
+  max-height: min(46vh, 14rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.tocTitle {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--light);
+  margin: 0 0 0.75rem;
+}
+
+.tocList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.tocLink {
+  display: block;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: var(--charcoal);
+  text-decoration: none;
+  border-bottom: none;
+  transition: color var(--t) var(--ease);
+}
+
+.tocLink:hover {
+  color: var(--teal);
+}
+
+.tocLinkL3 {
+  padding-left: 0.65rem;
+  font-size: 0.8rem;
+  color: var(--mid);
+}
+
+/* Prose (WordPress HTML) */
+.prose {
+  font-size: 1.02rem;
+  line-height: 1.78;
+  color: var(--charcoal);
+  max-width: 42rem;
+}
+
+.prose :global(> *:first-child) {
+  margin-top: 0;
+}
+
+.prose :global(p) {
+  margin: 0 0 1.35em;
+  color: var(--charcoal);
+}
+
+.prose :global(h2) {
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-size: clamp(1.45rem, 3vw, 1.85rem);
+  font-weight: 600;
+  line-height: 1.22;
+  color: var(--charcoal);
+  margin: 2.35rem 0 0.85rem;
+  letter-spacing: -0.015em;
+  scroll-margin-top: calc(var(--chrome-top-offset) + 20px);
+}
+
+.prose :global(h3) {
+  font-family: var(--font-body, 'DM Sans', system-ui, sans-serif);
+  font-size: 1.08rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--charcoal);
+  margin: 2rem 0 0.65rem;
+  scroll-margin-top: calc(var(--chrome-top-offset) + 20px);
+}
+
+.prose :global(ul),
+.prose :global(ol) {
+  margin: 0 0 1.35em;
+  padding-left: 1.35rem;
+  list-style: revert;
+}
+
+.prose :global(li) {
+  margin-bottom: 0.5em;
+  padding-left: 0.25rem;
+}
+
+.prose :global(li::marker) {
+  color: var(--teal);
+}
+
+.prose :global(ul) {
+  list-style-type: disc;
+}
+
+.prose :global(ol) {
+  list-style-type: decimal;
+}
+
+.prose :global(a) {
+  color: var(--teal);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  transition: color var(--t) var(--ease);
+}
+
+.prose :global(a:hover) {
+  color: var(--teal-mid);
+}
+
+.prose :global(strong) {
+  font-weight: 600;
+  color: var(--charcoal);
+}
+
+.prose :global(blockquote) {
+  margin: 1.75rem 0;
+  padding: 1rem 0 1rem 1.15rem;
+  border-left: 3px solid var(--gold);
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 1.08rem;
+  font-style: italic;
+  line-height: 1.65;
+  color: var(--mid);
+  background: linear-gradient(90deg, rgba(200, 164, 74, 0.06), transparent);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+}
+
+.prose :global(blockquote p) {
+  margin: 0;
+}
+
+.prose :global(img) {
+  border-radius: var(--r-md);
+  margin: 1.75rem 0;
+}
+
+.prose :global(figure) {
+  margin: 1.75rem 0;
+}
+
+.prose :global(figcaption) {
+  font-size: 0.8rem;
+  color: var(--light);
+  margin-top: 0.5rem;
+  line-height: 1.45;
+}
+
+.prose :global(.wp-block-image),
+.prose :global(.wp-block-embed) {
+  margin: 1.75rem 0;
+}
+
+.leadCard {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  padding: 1.65rem 1.5rem;
+  border: 1px solid rgba(221, 213, 190, 0.85);
+  box-shadow: var(--sh-xs);
+}
+
+.leadCardTitle {
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--charcoal);
+  margin: 0.35rem 0 0.75rem;
+  line-height: 1.25;
+}
+
+.endBanner {
+  margin-top: clamp(2.5rem, 5vw, 3.25rem);
+  padding: clamp(1.5rem, 4vw, 2rem) clamp(1.25rem, 3vw, 2rem);
+  background: var(--deep);
+  border-radius: var(--r-lg);
+  border: 1px solid rgba(200, 164, 74, 0.22);
+}
+
+.endBannerTitle {
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-size: clamp(1.25rem, 2.5vw, 1.45rem);
+  font-weight: 500;
+  color: var(--white);
+  margin: 0.5rem 0 0.65rem;
+  line-height: 1.3;
+}
+
+.endBannerText {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.65;
+  margin-bottom: 1.15rem;
+}
+
+.endBannerEyebrow {
+  margin-bottom: 0.35rem;
+}
+
+/* Injected inline CTA (after first paragraph) */
+.prose :global(.article-inline-cta) {
+  margin: 1.75rem 0;
+  padding: 1rem 1.15rem;
+  background: var(--sand);
+  border-radius: var(--r-md);
+  border-left: 3px solid var(--teal);
+}
+
+.prose :global(.article-inline-cta__eyebrow) {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 0.45rem;
+}
+
+.prose :global(.article-inline-cta__text) {
+  font-size: 0.9rem;
+  color: var(--mid);
+  margin: 0;
+  line-height: 1.65;
+}
+
+.prose :global(.article-inline-cta__link) {
+  color: var(--teal);
+  font-weight: 600;
+  margin-left: 0.25rem;
+  text-decoration: none;
+}
+
+.prose :global(.article-inline-cta__link:hover) {
+  text-decoration: underline;
+}
+
+/* Longform guide: “In this guide” callout */
+.prose :global(.article-guide-callout) {
+  margin: 2rem 0 2.25rem;
+  padding: 1.2rem 1.35rem 1.35rem;
+  background: linear-gradient(
+    145deg,
+    rgba(24, 104, 112, 0.07) 0%,
+    rgba(250, 248, 242, 0.95) 55%,
+    rgba(255, 255, 255, 0.98) 100%
+  );
+  border: 1px solid rgba(24, 104, 112, 0.18);
+  border-radius: var(--r-md);
+  border-left: 4px solid var(--teal);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+}
+
+.prose :global(.article-guide-callout__title) {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin: 0 0 0.9rem;
+}
+
+.prose :global(.article-guide-callout ul) {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.prose :global(.article-guide-callout li) {
+  margin-bottom: 0.4em;
+}
+
+/* Numbered workflow steps */
+.prose :global(.article-steps) {
+  margin: 1.5rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.prose :global(.article-step) {
+  margin: 0;
+  padding: 1.35rem 0 1.5rem;
+  border-left: 3px solid rgba(200, 164, 74, 0.55);
+  padding-left: 1.15rem;
+  margin-left: 0.15rem;
+}
+
+.prose :global(.article-step:first-child) {
+  padding-top: 0.35rem;
+}
+
+.prose :global(.article-step h3) {
+  margin-top: 0;
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-size: clamp(1.12rem, 2.2vw, 1.28rem);
+  font-weight: 600;
+  color: var(--charcoal);
+}
+
+.prose :global(.article-step p:last-child),
+.prose :global(.article-step ul:last-child) {
+  margin-bottom: 0;
+}
+
+/* Common mistakes — emphasized ordered list */
+.prose :global(.article-mistakes-list) {
+  margin: 1rem 0 1.75rem;
+  padding-left: 0;
+  list-style: none;
+  counter-reset: mistakes;
+}
+
+.prose :global(.article-mistakes-list > li) {
+  counter-increment: mistakes;
+  position: relative;
+  margin: 0 0 1.35rem;
+  padding: 1rem 1.05rem 1.05rem 3.15rem;
+  background: var(--white);
+  border: 1px solid rgba(221, 213, 190, 0.75);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-xs);
+}
+
+.prose :global(.article-mistakes-list > li::before) {
+  content: counter(mistakes);
+  position: absolute;
+  left: 0.85rem;
+  top: 1rem;
+  width: 1.65rem;
+  height: 1.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--teal);
+  border-radius: 50%;
+  line-height: 1;
+}
+
+.prose :global(.article-mistakes-list > li p) {
+  margin: 0 0 0.65em;
+}
+
+.prose :global(.article-mistakes-list > li p:last-child) {
+  margin-bottom: 0;
+}
+
+.prose :global(.article-mistakes-list > li p:first-of-type) {
+  margin-top: 0;
+}
+
+/* FAQ — native details/summary (no extra JS) */
+.prose :global(.article-faq) {
+  margin: 2.75rem 0 1.5rem;
+  padding: 0;
+}
+
+.prose :global(.article-faq > h2) {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.prose :global(.article-faq-item) {
+  margin-bottom: 0.5rem;
+  border: 1px solid rgba(221, 213, 190, 0.85);
+  border-radius: var(--r-md);
+  background: var(--white);
+  overflow: hidden;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.prose :global(.article-faq-item summary) {
+  cursor: pointer;
+  list-style: none;
+  padding: 0.95rem 1.1rem;
+  font-size: 1.01rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--charcoal);
+  position: relative;
+  padding-right: 2.5rem;
+  transition: background var(--t) var(--ease), color var(--t) var(--ease);
+}
+
+.prose :global(.article-faq-item summary::-webkit-details-marker) {
+  display: none;
+}
+
+.prose :global(.article-faq-item summary::after) {
+  content: '+';
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--teal);
+  border: 1px solid rgba(24, 104, 112, 0.25);
+  border-radius: var(--r-sm);
+  line-height: 1;
+}
+
+.prose :global(.article-faq-item[open] summary) {
+  background: rgba(24, 104, 112, 0.06);
+  border-bottom: 1px solid rgba(221, 213, 190, 0.65);
+}
+
+.prose :global(.article-faq-item[open] summary::after) {
+  content: '−';
+  background: var(--teal);
+  border-color: var(--teal);
+  color: var(--white);
+}
+
+.prose :global(.article-faq-item p) {
+  margin: 0;
+  padding: 0 1.1rem 1.05rem;
+  font-size: 0.98rem;
+  line-height: 1.75;
+  color: var(--mid);
+}

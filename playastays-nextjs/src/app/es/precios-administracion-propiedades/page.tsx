@@ -9,15 +9,15 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { draftMode } from 'next/headers'
-import { getCities, getSiteConfig } from '@/lib/wordpress'
+import { getCitiesForNavigation, getSiteConfig } from '@/lib/wordpress'
 import { buildMetadata } from '@/lib/seo'
 import { TrustBar, OwnerBanner, CtaStrip } from '@/components/sections'
 import { PricingGrid } from '@/components/sections/PricingGrid'
 import { FaqAccordion } from '@/components/content/FaqAccordion'
 import { LeadForm } from '@/components/forms/LeadForm'
 import { Breadcrumb } from '@/components/layout/Breadcrumb'
-import { getPricingPlans, getPricingFAQs, getValueItems, CITY_PRICING } from '@/lib/pricing-data'
-import { COMPARISON_ROWS } from '@/lib/calculator-data'
+import { getPricingPlans, getPricingFAQs, getValueItems, CITY_PRICING, PRICING_HUB_PRIMARY_SLUGS } from '@/lib/pricing-data'
+import { ComparisonTable } from '@/components/content/ComparisonTable'
 import { RevenueCalculator } from '@/components/forms/RevenueCalculator'
 import { PerformanceProof } from '@/components/trust/PerformanceProof'
 import { OwnerDashboardPreview } from '@/components/trust/OwnerDashboardPreview'
@@ -29,10 +29,11 @@ import { FALLBACK_PORTFOLIO_STATS } from '@/lib/portfolio-stats'
 export const revalidate = 86400
 
 export const metadata: Metadata = buildMetadata({
-  title: 'Precios de Administración de Propiedades en México — Tarifas | PlayaStays',
-  description: 'PlayaStays cobra entre el 10% y el 25% de los ingresos brutos por la administración de rentas vacacionales en Playa del Carmen, Tulum, Akumal y toda Quintana Roo. Ve ejemplos reales.',
+  title: 'Precios de Administración en Playa del Carmen y la Riviera Maya — Tarifas',
+  description:
+    'Tarifas transparentes de administración de rentas vacacionales (10–25% de ingresos brutos) en Playa del Carmen, Tulum, Puerto Morelos, Akumal, Xpu-Ha, Cozumel, Isla Mujeres y Quintana Roo. Compara mercados, usa la calculadora y revisa ejemplos locales.',
   canonical: 'https://www.playastays.com/es/precios-administracion-propiedades/',
-  hreflangEs: 'https://www.playastays.com/es/precios-administracion-propiedades/',
+  hreflangEn: 'https://www.playastays.com/property-management-pricing/',
 })
 
 const SCHEMA = {
@@ -43,10 +44,10 @@ const SCHEMA = {
       mainEntity: [
         {
           '@type': 'Question',
-          name: '¿Cuánto cuesta la administración de propiedades en México?',
+          name: '¿Cuánto cuesta la administración de rentas vacacionales en la Riviera Maya?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'En Quintana Roo, las tarifas de administración de propiedades generalmente oscilan entre el 10% y el 35% de los ingresos brutos de renta. PlayaStays cobra entre el 10% y el 25% dependiendo del plan, sin comisión de configuración ni contratos a largo plazo.',
+            text: 'En los mercados turísticos de Quintana Roo, las tarifas de administración suelen oscilar entre el 10% y el 35% de los ingresos brutos. PlayaStays cobra entre el 10% y el 25% según plan y propiedad, sin comisión de configuración ni contratos largos — basado en desempeño.',
           },
         },
         {
@@ -61,7 +62,7 @@ const SCHEMA = {
     },
     {
       '@type': 'Service',
-      name: 'Administración de Rentas Vacacionales — Quintana Roo',
+      name: 'Administración de Rentas Vacacionales — Riviera Maya y Quintana Roo',
       provider: { '@id': 'https://www.playastays.com/#org' },
       areaServed: { '@type': 'State', name: 'Quintana Roo' },
       offers: [
@@ -74,17 +75,15 @@ const SCHEMA = {
 }
 
 const TRUST_STATS = [
-  { val: '200+', key: 'Propiedades administradas' },
-  { val: '4.9★', key: 'Satisfacción del propietario' },
-  { val: '22%+', key: 'Aumento de ingresos netos' },
-  { val: '24/7', key: 'Soporte local' },
-  { val: 'ES/EN', key: 'Equipo bilingüe' },
-  { val: '<5min', key: 'Respuesta a huéspedes' },
+  { val: '4.9★', key: 'Owner satisfaction' },
+  { val: '22%+', key: 'Net income uplift' },
+  { val: '24/7', key: 'Local support' },
+  { val: 'ES/EN', key: 'Bilingual team' },
 ]
 
 export default async function EsPricingHubPage() {
   const { isEnabled: preview } = draftMode()
-  const [cities, config] = await Promise.all([getCities(preview), getSiteConfig()])
+  const [cities, config] = await Promise.all([getCitiesForNavigation(preview), getSiteConfig()])
 
   const plans     = getPricingPlans('es', 'Playa del Carmen', '/es/publica-tu-propiedad/')
   const faqs      = getPricingFAQs('es', 'Playa del Carmen / Riviera Maya')
@@ -110,15 +109,18 @@ export default async function EsPricingHubPage() {
               <div className="hero-tag fade-1">💰 Precios de Administración</div>
               <h1
                 className="display-title fade-2"
-                style={{ fontSize: 'clamp(2rem,4vw,3.4rem)', marginBottom: 18 }}
+                style={{ fontSize: 'clamp(1.65rem,3.5vw,2.85rem)', marginBottom: 18, lineHeight: 1.08 }}
               >
-                ¿Cuánto cuesta la administración<br /><em>de propiedades en México?</em>
+                Precios de administración en<br /><em>Playa del Carmen y la Riviera Maya</em>
               </h1>
               <p className="fade-3" style={{
                 fontSize: '1rem', color: 'rgba(255,255,255,0.68)',
-                lineHeight: 1.77, maxWidth: 440, marginBottom: 28,
+                lineHeight: 1.77, maxWidth: 480, marginBottom: 28,
               }}>
-                PlayaStays cobra entre el 10% y el 25% de los ingresos brutos — basado en desempeño, sin comisión de configuración, sin contrato a largo plazo. Las propiedades gestionadas en la Riviera Maya generan en promedio un 22–38% más de ingresos netos.
+                Las tarifas varían por mercado incluso dentro de Quintana Roo. PlayaStays cobra entre el 10% y el 25% de los ingresos brutos (basado en desempeño, sin comisión de configuración ni contrato largo).{' '}
+                Salta a la <a href="#revenue-calculator" style={{ color: 'rgba(255,255,255,0.85)', textDecoration: 'underline' }}>calculadora</a>,{' '}
+                <a href="#choose-your-market" style={{ color: 'rgba(255,255,255,0.85)', textDecoration: 'underline' }}>tu mercado</a> o{' '}
+                <a href="#management-plans" style={{ color: 'rgba(255,255,255,0.85)', textDecoration: 'underline' }}>los planes</a> — luego abre la página local para el contexto completo.
               </p>
               <div className="hero-inline-stats fade-4">
                 <div><div className="stat-val">10–25%</div><div className="stat-key">Rango de comisión</div></div>
@@ -151,33 +153,62 @@ export default async function EsPricingHubPage() {
         </div>
       </section>
 
-      <TrustBar stats={TRUST_STATS} />
+      <TrustBar stats={TRUST_STATS} locale="es" />
 
-      {/* ── PERFORMANCE PROOF ── */}
-      <PerformanceProof
-        stats={FALLBACK_PORTFOLIO_STATS}
-        cityName="Playa del Carmen"
-        locale="es"
-        estimateHref="/es/publica-tu-propiedad/"
-      />
+      {/* ── RESUMEN DE PRECIOS ───────────────────────────── */}
+      <section className="pad-sm bg-ivory" id="pricing-summary">
+        <div className="container" style={{ maxWidth: 920 }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: 24,
+            alignItems: 'center',
+          }}>
+            <div>
+              <div className="eyebrow mb-8">Cómo cobra PlayaStays</div>
+              <p className="body-text" style={{ marginBottom: 0 }}>
+                <strong>10–25%</strong> sobre ingresos brutos — basado en desempeño, sin comisión de configuración ni contrato largo. Misma banda en Quintana Roo; los{' '}
+                <Link href="#management-plans" style={{ color: 'var(--teal)', fontWeight: 600 }}>planes Core / Plus / Pro</Link>{' '}
+                reflejan profundidad de servicio, no un recargo oculto por ciudad.
+              </p>
+            </div>
+            <div style={{
+              background: 'var(--white)',
+              border: '1px solid var(--sand-dark)',
+              borderRadius: 'var(--r-lg)',
+              padding: '18px 22px',
+              fontSize: '0.88rem',
+              color: 'var(--mid)',
+              lineHeight: 1.65,
+            }}>
+              <strong style={{ color: 'var(--charcoal)' }}>Qué cambia por mercado:</strong> ADR y ocupación alcanzables, logística de huéspedes, intensidad de turnovers y competencia — no la lógica de la tarifa.
+            </div>
+          </div>
+        </div>
+      </section>
 
-      {/* ── OWNER DASHBOARD PREVIEW ── */}
-      <OwnerDashboardPreview
-        locale="es"
-        cityName="Playa del Carmen"
-        estimateHref="/es/publica-tu-propiedad/"
-      />
+      {/* ── CÓMO DIFIEREN LOS PRECIOS ───────────────────── */}
+      <section className="pad-sm bg-sand">
+        <div className="container" style={{ maxWidth: 880 }}>
+          <div className="eyebrow mb-8">Riviera Maya y Quintana Roo</div>
+          <h2 className="section-title mt-12 mb-16" style={{ fontSize: 'clamp(1.45rem,2.6vw,2rem)' }}>
+            Cómo difieren los precios según el mercado
+          </h2>
+          <p className="body-text mb-24" style={{ maxWidth: 720 }}>
+            PlayaStays usa una estructura transparente basada en desempeño en todas las zonas donde operamos — pero <strong>tu</strong> resultado neto depende de la demanda local, la estacionalidad y cuánto trabajo operativo requiere tu propiedad. Las páginas por ciudad existen para que elijas el mercado que coincide con tu casa, sin depender de un solo promedio genérico de &ldquo;México&rdquo;.
+          </p>
+          <ul className="pricing-hub-market-diff-list">
+            <li><strong>Playa del Carmen</strong> — mucho inventario, bandas de ADR profundas en zonas prime; la comisión premia calidad de anuncio y operación rápida.</li>
+            <li><strong>Tulum</strong> — rango nocturno amplio y estacionalidad marcada; distribución y posicionamiento importan tanto como la tarifa.</li>
+            <li><strong>Puerto Morelos</strong> — franja más tranquila, huéspedes recurrentes; la constancia supera perseguir volumen.</li>
+            <li><strong>Akumal y Xpu-Ha</strong> — menor oferta / mix distinto (condominios frente al mar hasta villas grandes); la carga operativa escala con tamaño y expectativas.</li>
+            <li><strong>Cozumel e Isla Mujeres</strong> — logística de isla (ferry, llegadas, salitre); mensajería y turnovers llevan más fricción que muchos condominios en tierra firme.</li>
+          </ul>
+        </div>
+      </section>
 
-      {/* ── PRICING PLANS ────────────────────────────────── */}
-      <PricingGrid
-        eyebrow="Planes de Administración"
-        headline="Tarifas claras. Sin sorpresas."
-        body="Todos los planes son basados en desempeño — ganamos cuando tú ganas. Sin cuota de instalación, sin retención mensual."
-        plans={plans}
-      />
-
-      {/* ── CALCULADORA DE INGRESOS ──────────────────────── */}
-      <section className="pad-lg bg-ivory">
+      {/* ── CALCULADORA (arriba) ─────────────────────────── */}
+      <section className="pad-lg bg-ivory" id="revenue-calculator">
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'start' }}>
             <div>
@@ -208,71 +239,99 @@ export default async function EsPricingHubPage() {
         </div>
       </section>
 
-      {/* ── MARKET COMPARISON TABLE ───────────────────────── */}
-      <section className="pad-lg bg-ivory">
+      {/* ── PRECIOS POR MERCADO ──────────────────────────── */}
+      <section className="pad-lg bg-ivory" id="choose-your-market">
         <div className="container">
-          <div style={{ textAlign: 'center', maxWidth: 560, margin: '0 auto 48px' }}>
-            <div className="eyebrow mb-8">Mercado por mercado</div>
-            <h2 className="section-title mt-12 mb-8">
-              Precios y potencial de ingresos en Quintana Roo
+          <div style={{ textAlign: 'center', maxWidth: 620, margin: '0 auto 40px' }}>
+            <div className="eyebrow mb-8">Elige tu mercado</div>
+            <h2 className="section-title mt-12 mb-8" style={{ fontSize: 'clamp(1.65rem,2.8vw,2.35rem)' }}>
+              Compara precios locales y rangos de ingresos
             </h2>
             <p className="body-text">
-              Cada mercado es diferente. Haz clic en cualquier ciudad para un desglose detallado de precios y ejemplos de ingresos.
+              Cada destino tiene una página dedicada: qué mueve la comisión, contexto de ocupación y ADR, y escenarios de ejemplo — sin promedios genéricos de &ldquo;México&rdquo;.
             </p>
           </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 20 }}>
-            {Object.values(CITY_PRICING).map(cityData => (
-              <Link
-                key={cityData.slug}
-                href={`/es/${cityData.slug}/costo-administracion-propiedades/`}
-                style={{ textDecoration: 'none' }}
-              >
-                <div style={{
-                  background: 'var(--white)',
-                  border: '1px solid var(--sand-dark)',
-                  borderRadius: 'var(--r-lg)',
-                  padding: 24,
-                  transition: 'all var(--t)',
-                  cursor: 'pointer',
-                }}>
-                  <div style={{
-                    fontFamily: 'var(--font-display)',
-                    fontSize: '1.1rem', fontWeight: 600,
-                    color: 'var(--charcoal)', marginBottom: 12,
-                  }}>
-                    {cityData.nameEs}
+          <div className="pricing-hub-market-grid">
+            {PRICING_HUB_PRIMARY_SLUGS.map(slug => {
+              const cityData = CITY_PRICING[slug]
+              if (!cityData) return null
+              return (
+                <Link
+                  key={cityData.slug}
+                  href={`/es/${cityData.slug}/costo-administracion-propiedades/`}
+                  className="pricing-hub-market-card"
+                >
+                  <div className="pricing-hub-market-card-inner">
+                    <div style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '1.1rem', fontWeight: 600,
+                      color: 'var(--charcoal)', marginBottom: 12,
+                    }}>
+                      {cityData.nameEs}
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
+                      <div>
+                        <div style={{ fontSize: '0.66rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--light)', fontWeight: 700 }}>Tarifa nocturna</div>
+                        <div style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', fontWeight: 600, color: 'var(--teal)' }}>{cityData.avgNightly}</div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.66rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--light)', fontWeight: 700 }}>Ocupación</div>
+                        <div style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', fontWeight: 600, color: 'var(--teal)' }}>{cityData.avgOccupancy}</div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.66rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--light)', fontWeight: 700 }}>Competencia</div>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--charcoal)' }}>{cityData.competitionLevelEs}</div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.66rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--light)', fontWeight: 700 }}>Comisión</div>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--charcoal)' }}>10–25%</div>
+                      </div>
+                    </div>
+                    <div style={{
+                      fontSize: '0.78rem', fontWeight: 600, color: 'var(--teal)',
+                      display: 'flex', alignItems: 'center', gap: 4,
+                    }}>
+                      Ver desglose local completo →
+                    </div>
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
-                    <div>
-                      <div style={{ fontSize: '0.66rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--light)', fontWeight: 700 }}>Tarifa nocturna</div>
-                      <div style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', fontWeight: 600, color: 'var(--teal)' }}>{cityData.avgNightly}</div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '0.66rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--light)', fontWeight: 700 }}>Ocupación</div>
-                      <div style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', fontWeight: 600, color: 'var(--teal)' }}>{cityData.avgOccupancy}</div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '0.66rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--light)', fontWeight: 700 }}>Competencia</div>
-                      <div style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--charcoal)' }}>{cityData.competitionLevelEs}</div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '0.66rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--light)', fontWeight: 700 }}>Comisión</div>
-                      <div style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--charcoal)' }}>10–25%</div>
-                    </div>
-                  </div>
-                  <div style={{
-                    fontSize: '0.78rem', fontWeight: 600, color: 'var(--teal)',
-                    display: 'flex', alignItems: 'center', gap: 4,
-                  }}>
-                    Ver desglose completo de precios →
-                  </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              )
+            })}
           </div>
+          <p className="body-sm" style={{ textAlign: 'center', marginTop: 28, maxWidth: 560, marginLeft: 'auto', marginRight: 'auto', color: 'var(--light)' }}>
+            ¿Buscas{' '}
+            <Link href="/es/chetumal/costo-administracion-propiedades/" style={{ color: 'var(--teal)', fontWeight: 600 }}>
+              Chetumal
+            </Link>
+            ? Tiene un perfil de demanda distinto al corredor turístico — mantenemos un desglose aparte.
+          </p>
         </div>
       </section>
+
+      {/* ── PERFORMANCE PROOF ── */}
+      <PerformanceProof
+        stats={FALLBACK_PORTFOLIO_STATS}
+        cityName="Playa del Carmen"
+        locale="es"
+        estimateHref="/es/publica-tu-propiedad/"
+      />
+
+      {/* ── OWNER DASHBOARD PREVIEW ── */}
+      <OwnerDashboardPreview
+        locale="es"
+        cityName="Playa del Carmen"
+        estimateHref="/es/publica-tu-propiedad/"
+      />
+
+      {/* ── PRICING PLANS ────────────────────────────────── */}
+      <div id="management-plans">
+        <PricingGrid
+          eyebrow="Planes de Administración"
+          headline="Tarifas claras. Sin sorpresas."
+          body="Todos los planes son basados en desempeño — ganamos cuando tú ganas. Sin cuota de instalación, sin retención mensual."
+          plans={plans}
+        />
+      </div>
 
       {/* ── BEFORE / AFTER ── */}
       <BeforeAfter
@@ -391,49 +450,44 @@ export default async function EsPricingHubPage() {
             <h2 className="section-title mt-12 mb-8">Empresa típica vs PlayaStays</h2>
             <p className="body-text">Una comparación directa y profesional de lo que ofrecemos.</p>
           </div>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0, fontSize: '0.83rem' }}>
-              <thead>
-                <tr>
-                  <th style={{ textAlign: 'left', padding: '12px 16px', background: 'var(--sand)', fontFamily: 'var(--font-display)', fontSize: '0.78rem', fontWeight: 600, color: 'var(--mid)', borderBottom: '2px solid var(--sand-dark)' }}>Criterio</th>
-                  <th style={{ textAlign: 'center', padding: '12px 16px', background: 'var(--sand)', fontFamily: 'var(--font-display)', fontSize: '0.78rem', fontWeight: 600, color: 'var(--mid)', borderBottom: '2px solid var(--sand-dark)' }}>Empresa típica</th>
-                  <th style={{ textAlign: 'center', padding: '12px 16px', background: 'var(--deep)', fontFamily: 'var(--font-display)', fontSize: '0.78rem', fontWeight: 700, color: 'var(--gold-light)', borderBottom: '2px solid var(--teal)' }}>PlayaStays</th>
-                </tr>
-              </thead>
-              <tbody>
-                {COMPARISON_ROWS.map((row, i) => (
-                  <tr key={i}>
-                    <td style={{ padding: '12px 16px', background: 'var(--white)', borderBottom: '1px solid var(--sand-dark)', fontWeight: 600, color: 'var(--charcoal)' }}>{row.featureEs}</td>
-                    <td style={{ padding: '12px 16px', background: 'var(--white)', borderBottom: '1px solid var(--sand-dark)', color: 'var(--mid)', textAlign: 'center' }}>{row.typicalEs}</td>
-                    <td style={{ padding: '12px 16px', background: row.highlight ? 'rgba(24,104,112,0.07)' : 'var(--white)', borderBottom: '1px solid var(--sand-dark)', color: row.highlight ? 'var(--teal)' : 'var(--charcoal)', fontWeight: row.highlight ? 700 : 500, textAlign: 'center', borderLeft: '2px solid var(--teal)' }}>{row.playastaysEs}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ComparisonTable locale="es" />
         </div>
       </section>
 
-      {/* ── CITY LINKS ────────────────────────────────────── */}
+      {/* ── ENLACES RÁPIDOS POR CIUDAD ───────────────────── */}
       <section className="pad-lg bg-sand">
         <div className="container">
-          <div className="eyebrow mb-8">Precios por ciudad</div>
+          <div className="eyebrow mb-8">Páginas locales</div>
           <h2 className="section-title mt-12 mb-8" style={{ fontSize: 'clamp(1.6rem,2.5vw,2.2rem)' }}>
-            Precios detallados para cada mercado
+            Ir al desglose por ciudad
           </h2>
-          <p className="body-text mb-32" style={{ maxWidth: 500 }}>
-            Los precios y los ejemplos de ingresos varían por ciudad. Elige la tuya para un desglose específico.
+          <p className="body-text mb-16" style={{ maxWidth: 520 }}>
+            Abre el mercado de tu propiedad: contexto de ADR y ocupación, factores de comisión y escenarios de ejemplo.
+          </p>
+          <p className="body-sm mb-32" style={{ maxWidth: 520, color: 'var(--light)' }}>
+            ¿Prefieres la vista en tarjetas con ocupación y tarifas?{' '}
+            <a href="#choose-your-market" style={{ color: 'var(--teal)', fontWeight: 600 }}>
+              Vuelve a Elige tu mercado
+            </a>
+            {' '}arriba en esta guía.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-            {Object.values(CITY_PRICING).map(cityData => (
-              <Link
-                key={cityData.slug}
-                href={`/es/${cityData.slug}/costo-administracion-propiedades/`}
-                className="btn btn-ghost"
-              >
-                Precios en {cityData.nameEs} →
-              </Link>
-            ))}
+            {PRICING_HUB_PRIMARY_SLUGS.map(slug => {
+              const cityData = CITY_PRICING[slug]
+              if (!cityData) return null
+              return (
+                <Link
+                  key={cityData.slug}
+                  href={`/es/${cityData.slug}/costo-administracion-propiedades/`}
+                  className="btn btn-ghost"
+                >
+                  {cityData.nameEs} →
+                </Link>
+              )
+            })}
+            <Link href="/es/chetumal/costo-administracion-propiedades/" className="btn btn-ghost">
+              Chetumal (región / frontera) →
+            </Link>
           </div>
         </div>
       </section>

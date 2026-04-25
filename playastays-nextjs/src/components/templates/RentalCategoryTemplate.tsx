@@ -1,6 +1,6 @@
 // ============================================================
 // RentalCategoryTemplate — mixed server/client
-// Handles /rentals/, /[city]/vacation-rentals/, /[city]/condos-for-rent/
+// Handles /rentals/, /[city]/rentals/, /es/[ciudad]/rentas/
 // FilterBar is client-only; grid and hero are server-rendered.
 // ============================================================
 
@@ -11,7 +11,9 @@ import type { Locale } from '@/lib/i18n'
 import { Hero } from '@/components/hero/Hero'
 import { TrustBar, OwnerBanner, CtaStrip } from '@/components/sections'
 import { PropertyGrid } from '@/components/content/Cards'
-import { FilterBar } from '@/components/forms/FilterBar'
+import { FilterBar, type BrowseCityOption } from '@/components/forms/FilterBar'
+import { Breadcrumb } from '@/components/layout/Breadcrumb'
+import { t } from '@/lib/i18n'
 
 interface RentalCategoryTemplateProps {
   // Page identity
@@ -31,6 +33,15 @@ interface RentalCategoryTemplateProps {
   stats?: Array<{ val: string; key: string }>
 
   locale?: Locale
+
+  /** City picker options (from CMS); enables destination switching on browse */
+  browseCities?: BrowseCityOption[]
+
+  /**
+   * `search-led` — /rentals index: centered copy, prominent filters in hero, no marketing CTAs/stats bands before results.
+   * `default` — city hubs and legacy layout: hero + trust bar + filters above grid + owner CTAs.
+   */
+  browseLayout?: 'default' | 'search-led'
 }
 
 export function RentalCategoryTemplate({
@@ -42,6 +53,8 @@ export function RentalCategoryTemplate({
   breadcrumbs,
   stats,
   locale = 'en',
+  browseCities = [],
+  browseLayout = 'default',
 }: RentalCategoryTemplateProps) {
   const isEs      = locale === 'es'
   const citySlug  = city?.slug
@@ -53,11 +66,60 @@ export function RentalCategoryTemplate({
     ? `${base}/${citySlug}/${isEs ? 'administracion-de-propiedades' : 'property-management'}/`
     : estimateHref
 
+  if (browseLayout === 'search-led') {
+    return (
+      <>
+        <section className="page-hero rentals-search-hero">
+          <div className="container" style={{ position: 'relative', zIndex: 2 }}>
+            <div className="rentals-search-hero__inner">
+              {breadcrumbs && (
+                <div className="rentals-search-hero__crumb">
+                  <Breadcrumb crumbs={breadcrumbs} />
+                </div>
+              )}
+              <h1
+                className="display-title rentals-search-hero__title fade-2"
+                dangerouslySetInnerHTML={{ __html: title }}
+              />
+              {description && (
+                <p className="rentals-search-hero__sub fade-3">{description}</p>
+              )}
+              <div className="rentals-search-hero__search-wrap fade-4">
+                <Suspense fallback={<div className="bf bf--prominent bf--loading" aria-hidden />}>
+                  <FilterBar
+                    variant="prominent"
+                    locale={locale}
+                    neighborhoods={city?.ps_computed.neighborhoods ?? []}
+                    browseCities={browseCities}
+                    scopedCitySlug={city?.slug}
+                    resultCount={properties.length}
+                  />
+                </Suspense>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="rentals-results-section bg-ivory">
+          <div className="container">
+            <p className="browse-results-count browse-results-count--lead" role="status">
+              {t(locale).browseResultsCount.replace('{count}', String(properties.length))}
+            </p>
+            <div className="rentals-results-section__grid">
+              <PropertyGrid properties={properties} locale={locale} emptyHint={t(locale).browseNoResultsBody} />
+            </div>
+          </div>
+        </section>
+      </>
+    )
+  }
+
   return (
     <>
-      {/* HERO — centred variant (guest-first, no form above fold) */}
+      {/* HERO — centred variant (city hubs & legacy browse) */}
       <Hero
         variant="centred"
+        locale={locale}
         breadcrumbs={breadcrumbs}
         tag={tag}
         headline={title}
@@ -71,23 +133,33 @@ export function RentalCategoryTemplate({
       />
 
       {/* TRUST BAR */}
-      <TrustBar stats={[
-        { val: '200+', key: 'Properties managed' },
-        { val: '4.97★', key: 'Avg. portfolio rating' },
-        { val: '24/7', key: 'Guest support' },
-        { val: '100%', key: 'Professionally managed' },
-        { val: 'ES/EN', key: 'Bilingual hosts' },
-      ]} />
+      <TrustBar
+        locale={locale}
+        stats={[
+          { val: '4.97★', key: 'Avg. portfolio rating' },
+          { val: '24/7', key: 'Guest support' },
+          { val: '100%', key: 'Professionally managed' },
+          { val: 'ES/EN', key: 'Bilingual hosts' },
+        ]}
+      />
 
       {/* FILTER + LISTINGS */}
       <section className="pad-lg bg-ivory">
         <div className="container">
-          {/* FilterBar is a client component — wrapped in Suspense for streaming */}
-          <Suspense fallback={<div className="filter-bar" style={{ minHeight: 56 }} />}>
-            <FilterBar />
+          <Suspense fallback={<div className="bf bf--loading" />}>
+            <FilterBar
+              locale={locale}
+              neighborhoods={city?.ps_computed.neighborhoods ?? []}
+              browseCities={browseCities}
+              scopedCitySlug={city?.slug}
+              resultCount={properties.length}
+            />
           </Suspense>
-          <div style={{ marginTop: 28 }}>
-            <PropertyGrid properties={properties} />
+          <p className="browse-results-count" role="status">
+            {t(locale).browseResultsCount.replace('{count}', String(properties.length))}
+          </p>
+          <div style={{ marginTop: 16 }}>
+            <PropertyGrid properties={properties} locale={locale} emptyHint={t(locale).browseNoResultsBody} />
           </div>
         </div>
       </section>

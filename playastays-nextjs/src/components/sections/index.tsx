@@ -6,32 +6,41 @@
 // ============================================================
 
 import Link from 'next/link'
+import type { Locale } from '@/lib/i18n'
+import { localizeTrustStatKey } from '@/lib/i18n'
 import type { Stat, CtaLink, Neighborhood } from '@/types'
 
 // ── TrustBar ──────────────────────────────────────────────
 
 interface TrustBarProps {
-  stats: Stat[]
+  stats:  Stat[]
+  locale?: Locale
+  /** Optional extra class on the trust strip wrapper */
+  className?: string
 }
 
-export function TrustBar({ stats }: TrustBarProps) {
+export function TrustBar({ stats, locale = 'en', className }: TrustBarProps) {
   // Split stat values that contain em-formatted suffixes
-  // e.g. "200+" → val="200" em="+"
+  // e.g. "4.9★" → base + suffix split for styling
   function splitStat(val: string) {
     const match = val.match(/^([^+%★/]+)(.*)$/)
     return match ? { base: match[1], suffix: match[2] } : { base: val, suffix: '' }
   }
 
   return (
-    <div className="trust-bar">
+    <div
+      className={['trust-bar-shell', className].filter(Boolean).join(' ')}
+      role="region"
+      aria-label={locale === 'es' ? 'Indicadores de confianza' : 'Trust highlights'}
+    >
       <div className="container">
         <div className="trust-bar-grid">
           {stats.map((s, i) => {
-            const { base, suffix } = splitStat(s.val)
+            const { base, suffix } = splitStat(String(s.val))
             return (
               <div key={i} className="trust-item">
                 <div className="trust-num">{base}{suffix && <em>{suffix}</em>}</div>
-                <div className="trust-label">{s.key}</div>
+                <div className="trust-label">{localizeTrustStatKey(s.key, locale)}</div>
               </div>
             )
           })}
@@ -43,21 +52,24 @@ export function TrustBar({ stats }: TrustBarProps) {
 
 // ── ServiceGrid ───────────────────────────────────────────
 
-interface ServiceCardItem {
+export interface ServiceCardItem {
   icon?: React.ReactNode
   title: string
   desc: string
   href?: string
+  /** Optional CTA line (e.g. city hub service highlights) */
+  ctaLabel?: string
 }
 
-export function ServiceGrid({ items, eyebrow, headline, body }: {
+export function ServiceGrid({ items, eyebrow, headline, body, sectionClassName }: {
   items: ServiceCardItem[]
   eyebrow?: string
   headline?: string
   body?: string
+  sectionClassName?: string
 }) {
   return (
-    <section className="pad-lg bg-ivory">
+    <section className={['pad-lg', 'bg-ivory', sectionClassName].filter(Boolean).join(' ')}>
       <div className="container">
         {(eyebrow || headline) && (
           <div className="mb-40">
@@ -67,18 +79,29 @@ export function ServiceGrid({ items, eyebrow, headline, body }: {
           </div>
         )}
         <div className="service-cards">
-          {items.map((item, i) => (
-            <div key={i} className="service-card">
-              {item.icon && <div className="service-card-icon">{item.icon}</div>}
-              <div className="service-card-title">
-                {item.href
-                  ? <Link href={item.href} style={{ color: 'inherit' }}>{item.title}</Link>
-                  : item.title
-                }
+          {items.map((item, i) =>
+            item.href ? (
+              <Link
+                key={i}
+                href={item.href}
+                className="service-card service-card--link"
+              >
+                {item.icon && <div className="service-card-icon">{item.icon}</div>}
+                <div className="service-card-title">{item.title}</div>
+                <div className="service-card-text">{item.desc}</div>
+                {item.ctaLabel && (
+                  <span className="service-card-cta">{item.ctaLabel}</span>
+                )}
+                <span className="service-card-arrow" aria-hidden>→</span>
+              </Link>
+            ) : (
+              <div key={i} className="service-card">
+                {item.icon && <div className="service-card-icon">{item.icon}</div>}
+                <div className="service-card-title">{item.title}</div>
+                <div className="service-card-text">{item.desc}</div>
               </div>
-              <div className="service-card-text">{item.desc}</div>
-            </div>
-          ))}
+            ),
+          )}
         </div>
       </div>
     </section>
@@ -197,7 +220,7 @@ export function CaseStats({ stats, headline, sub, eyebrow, cta }: {
           </div>
         ))}
       </div>
-      {sub && <p style={{ fontSize: '0.83rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.65, margin: '16px 0 20px' }}>{sub}</p>}
+      {sub && <p className="case-stats-sub">{sub}</p>}
       {cta && (
         <Link href={cta.href} className="btn btn-gold btn-full" style={{ marginTop: 24 }}>
           {cta.label} →
@@ -245,18 +268,15 @@ export function CtaStrip({ eyebrow, headline, cta }: {
   cta: CtaLink
 }) {
   return (
-    <section className="bg-deep" style={{ padding: '48px 0' }}>
-      <div className="container" style={{
-        display: 'grid', gridTemplateColumns: '1fr auto',
-        gap: 36, alignItems: 'center', flexWrap: 'wrap',
-      }}>
-        <div>
+    <section className="cta-strip bg-deep">
+      <div className="container cta-strip__inner">
+        <div className="cta-strip__copy">
           {eyebrow && <div className="eyebrow" style={{ color: 'var(--gold)' }}>{eyebrow}</div>}
-          <h2 className="section-title light mt-10" style={{ fontSize: 'clamp(1.6rem, 3vw, 2.4rem)' }}>
+          <h2 className="section-title light mt-10" style={{ fontSize: 'clamp(1.5rem, 2.8vw, 2.25rem)', lineHeight: 1.2 }}>
             {headline}
           </h2>
         </div>
-        <Link href={cta.href} className="btn btn-gold btn-lg" style={{ flexShrink: 0 }}>
+        <Link href={cta.href} className="btn btn-gold btn-lg cta-strip__btn">
           {cta.label}
         </Link>
       </div>
@@ -271,14 +291,60 @@ interface InternalLink {
   href: string
 }
 
-export function InternalLinks({ heading, links, cityHubLabel, cityHubHref }: {
+export function InternalLinks({
+  heading,
+  links,
+  hubNavEyebrow,
+  parentCityHref,
+  parentCityLabel,
+  parentServiceHref,
+  parentServiceLabel,
+  rentalsHref,
+  rentalsLabel,
+  /** @deprecated Prefer rentalsHref — treated as guest browse URL when rentalsHref unset */
+  cityHubHref,
+  cityHubLabel,
+}: {
   heading: string
   links: InternalLink[]
-  cityHubLabel?: string
+  /** Shown above parent links, e.g. “Hub pages” */
+  hubNavEyebrow?: string
+  parentCityHref?: string
+  parentCityLabel?: string
+  parentServiceHref?: string
+  parentServiceLabel?: string
+  rentalsHref?: string
+  rentalsLabel?: string
   cityHubHref?: string
+  cityHubLabel?: string
 }) {
+  const browseHref = rentalsHref ?? cityHubHref
+  const browseLabel = rentalsLabel ?? cityHubLabel
+  const showParents = Boolean(parentCityHref || parentServiceHref)
+
   return (
     <div style={{ background: 'var(--deep)', borderRadius: 'var(--r-lg)', padding: '22px 24px' }}>
+      {showParents && (
+        <div style={{ marginBottom: 16 }}>
+          {hubNavEyebrow && (
+            <div className="eyebrow" style={{ color: 'rgba(255,255,255,0.45)', marginBottom: 8, fontSize: '0.68rem', letterSpacing: '0.06em' }}>
+              {hubNavEyebrow}
+            </div>
+          )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {parentCityHref && (
+              <Link href={parentCityHref} style={{ fontSize: '0.83rem', color: 'rgba(255,255,255,0.72)', fontWeight: 500 }}>
+                → {parentCityLabel ?? 'City overview'}
+              </Link>
+            )}
+            {parentServiceHref && (
+              <Link href={parentServiceHref} style={{ fontSize: '0.83rem', color: 'rgba(255,255,255,0.72)', fontWeight: 500 }}>
+                → {parentServiceLabel ?? 'Service overview'}
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
       <div className="eyebrow" style={{ color: 'var(--gold)', marginBottom: 10 }}>{heading}</div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 10 }}>
         {links.map((l, i) => (
@@ -287,10 +353,10 @@ export function InternalLinks({ heading, links, cityHubLabel, cityHubHref }: {
           </Link>
         ))}
       </div>
-      {cityHubHref && (
+      {browseHref && (
         <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-          <Link href={cityHubHref} style={{ fontSize: '0.83rem', color: 'rgba(255,255,255,0.5)' }}>
-            ← {cityHubLabel ?? 'Back to city hub'}
+          <Link href={browseHref} style={{ fontSize: '0.83rem', color: 'rgba(255,255,255,0.5)' }}>
+            → {browseLabel ?? 'Browse city rentals'}
           </Link>
         </div>
       )}

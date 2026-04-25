@@ -1,29 +1,35 @@
+'use client'
+
 import Link from 'next/link'
-import type { City, SiteConfig } from '@/types'
-import type { Locale } from '@/lib/i18n'
-import { t } from '@/lib/i18n'
+import { usePathname } from 'next/navigation'
+import type { SiteConfig } from '@/types'
+import { t, localeFromPath } from '@/lib/i18n'
+import { SITE_BUSINESS_ADDRESS } from '@/lib/site-contact'
+import { googleMapsPlaceSearchUrl } from '@/lib/google-maps-embed'
+import { FOOTER_LOCATION_HUBS } from '@/lib/footer-location-hubs'
 
 interface FooterProps {
-  cities: City[]
   config: SiteConfig
-  locale?: Locale
 }
 
-export function Footer({ cities, config, locale = 'en' }: FooterProps) {
+export function Footer({ config }: FooterProps) {
+  const pathname = usePathname() ?? '/'
+  const locale = localeFromPath(pathname)
   const s       = t(locale)
   const isEs    = locale === 'es'
   const base    = isEs ? '/es' : ''
-  const pmHref  = isEs
-    ? '/es/playa-del-carmen/administracion-de-propiedades/'
-    : '/playa-del-carmen/property-management/'
-  const abHref  = isEs
-    ? '/es/playa-del-carmen/administracion-airbnb/'
-    : '/playa-del-carmen/airbnb-management/'
+  const pmHref  = isEs ? '/es/administracion-de-propiedades/' : '/property-management/'
+  const abHref  = isEs ? '/es/administracion-airbnb/' : '/airbnb-management/'
+  const vrHref  = isEs ? '/es/gestion-rentas-vacacionales/' : '/vacation-rental-management/'
   const estHref = isEs ? '/es/publica-tu-propiedad/' : '/list-your-property/'
-  const sellHref= isEs ? '/es/playa-del-carmen/vender-propiedad/' : '/playa-del-carmen/sell-property/'
+  const sellHref= isEs ? '/es/vender-propiedad/' : '/sell-property/'
   const rentHref= isEs ? '/es/rentas/' : '/rentals/'
   const blogHref= isEs ? '/es/blog/' : '/blog/'
   const ctcHref = isEs ? '/es/contacto/' : '/contact/'
+  const aboutHref = isEs ? '/es/acerca-de-playastays/' : '/about/'
+  const privacyHref = isEs ? '/es/privacidad/' : '/privacy/'
+  const termsHref = isEs ? '/es/terminos/' : '/terms/'
+  const pricingHref = isEs ? '/es/precios-administracion-propiedades/' : '/property-management-pricing/'
 
   return (
     <footer className="footer">
@@ -32,6 +38,11 @@ export function Footer({ cities, config, locale = 'en' }: FooterProps) {
           <div>
             <div className="footer-logo">PlayaStays</div>
             <p className="footer-tagline">{s.footerTagline}</p>
+            <p style={{ marginBottom: 14 }}>
+              <Link href={ctcHref} className="footer-contact-page-link">
+                {s.footerContact} →
+              </Link>
+            </p>
             <div className="footer-contacts">
               <a href={`tel:${config.phone.replace(/\s/g,'')}`} className="footer-contact">
                 <PhoneIcon />{config.phone}
@@ -43,6 +54,15 @@ export function Footer({ cities, config, locale = 'en' }: FooterProps) {
                 <MailIcon />{config.email}
               </a>
             </div>
+            <p className="footer-address">{SITE_BUSINESS_ADDRESS}</p>
+            <a
+              href={googleMapsPlaceSearchUrl()}
+              className="footer-maplink"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {s.footerDirections}
+            </a>
             <div className="footer-socials">
               {config.social.facebook  && <a href={config.social.facebook}  className="footer-social" target="_blank" rel="noopener" aria-label="Facebook">fb</a>}
               {config.social.instagram && <a href={config.social.instagram} className="footer-social" target="_blank" rel="noopener" aria-label="Instagram">ig</a>}
@@ -53,18 +73,21 @@ export function Footer({ cities, config, locale = 'en' }: FooterProps) {
           <div className="footer-col">
             <h5>{s.footerServices}</h5>
             <div className="footer-links">
-              <Link href={pmHref}   className="highlight">{isEs ? 'Administración de Propiedades' : 'Property Management'}</Link>
-              <Link href={abHref}>  {isEs ? 'Administración Airbnb' : 'Airbnb Management'}</Link>
-              <Link href={estHref}> {isEs ? 'Estimado de Ingresos' : 'Free Revenue Estimate'}</Link>
-              <Link href={sellHref}>{isEs ? 'Vender tu Propiedad' : 'Sell Your Property'}</Link>
+              <Link href={pmHref}   className="highlight">{s.footerPm}</Link>
+              <Link href={abHref}>  {s.footerAirbnb}</Link>
+              <Link href={vrHref}>{s.footerVacationRental}</Link>
+              <Link href={estHref}> {s.footerFreeEstimate}</Link>
+              <Link href={sellHref}>{s.footerSellProperty}</Link>
             </div>
           </div>
 
           <div className="footer-col">
             <h5>{s.footerLocations}</h5>
             <div className="footer-links">
-              {cities.map(c => (
-                <Link key={c.slug} href={`${base}/${c.slug}/`}>{c.title.rendered}</Link>
+              {FOOTER_LOCATION_HUBS.map(h => (
+                <Link key={h.slug} href={`${base}/${h.slug}/`}>
+                  {isEs ? h.labelEs : h.labelEn}
+                </Link>
               ))}
             </div>
           </div>
@@ -72,10 +95,13 @@ export function Footer({ cities, config, locale = 'en' }: FooterProps) {
           <div className="footer-col">
             <h5>{s.footerCompany}</h5>
             <div className="footer-links">
-              <Link href={rentHref}>{isEs ? 'Ver Rentas' : 'Browse Rentals'}</Link>
-              <Link href={blogHref}>{isEs ? 'Blog' : 'Blog'}</Link>
-              <Link href={ctcHref}> {isEs ? 'Contacto' : 'Contact'}</Link>
-              <Link href={estHref}> {isEs ? 'Publicar Propiedad' : 'List Your Property'}</Link>
+              <Link href={ctcHref} className="highlight">{s.footerContact}</Link>
+              <Link href={pricingHref}>{s.navPricing}</Link>
+              <Link href={aboutHref}>{s.footerAbout}</Link>
+              <Link href={rentHref}>{s.footerBrowseRentals}</Link>
+              <Link href={blogHref}>{s.footerBlog}</Link>
+              <Link href={estHref}>{s.footerListProperty}</Link>
+              <Link href="/login">{s.footerLogin}</Link>
             </div>
           </div>
         </div>
@@ -83,9 +109,9 @@ export function Footer({ cities, config, locale = 'en' }: FooterProps) {
         <div className="footer-bottom">
           <p className="footer-copy">{s.footerCopy}</p>
           <nav className="footer-legal" aria-label="Legal">
-            <Link href="/privacy/">Privacy</Link>
-            <Link href="/terms/">Terms</Link>
-            <Link href="/sitemap.xml">Sitemap</Link>
+            <Link href={privacyHref}>{s.footerLegalPrivacy}</Link>
+            <Link href={termsHref}>{s.footerLegalTerms}</Link>
+            <Link href="/sitemap.xml">{s.footerLegalSitemap}</Link>
           </nav>
         </div>
       </div>

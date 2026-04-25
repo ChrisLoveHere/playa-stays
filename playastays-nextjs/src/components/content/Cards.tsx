@@ -6,65 +6,158 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Property, Testimonial, BlogPost } from '@/types'
 import type { Locale } from '@/lib/i18n'
+import { t } from '@/lib/i18n'
+import { inferListingRole } from '@/lib/property-browse'
+import { deriveCardSmartTags, collectResolvedAmenityKeys, amenityLabel } from '@/lib/amenity-taxonomy'
+import { propertyHref } from '@/lib/property-url'
+import {
+  rentalStrategyForDisplay,
+  rentalStrategyLabel,
+  showMonthlyStayFriendlyBadge,
+  monthlyStayFriendlyLabel,
+} from '@/lib/rental-strategy'
+import { BLOG_HERO_JPG } from '@/lib/public-assets'
 
 // ── PropertyCard ──────────────────────────────────────────
 
-export function PropertyCard({ property }: { property: Property }) {
-  const img = property.ps_computed.featured_image
+export function PropertyCard({
+  property,
+  locale = 'en',
+  variant = 'browse',
+}: {
+  property: Property
+  locale?: Locale
+  /** `featured-compact` — smaller homepage carousel tiles (fewer lines, tighter type). */
+  variant?: 'browse' | 'featured-compact'
+}) {
+  const ui   = t(locale)
+  const isEs = locale === 'es'
+  const href = propertyHref(property, locale)
+  const img  = property.ps_computed.featured_image
   const name = property.title.rendered
-  const loc  = `${property.meta.ps_neighborhood || property.meta.ps_city}`
-  const beds = property.meta.ps_bedrooms
+  const neighborhood = property.meta.ps_neighborhood
+  const city  = property.meta.ps_city
+  const loc   = neighborhood ? `${neighborhood}, ${city}` : city
+  const beds  = property.meta.ps_bedrooms
   const baths = property.meta.ps_bathrooms
   const guests = property.meta.ps_guests
-  const rate = property.meta.ps_nightly_rate
-  const rating = property.meta.ps_avg_rating
+  const rate  = property.meta.ps_nightly_rate
+  const monthly = Number(property.meta.ps_monthly_rate) || 0
+  const salePrice = Number(property.meta.ps_sale_price) || 0
+  const rating  = property.meta.ps_avg_rating
   const reviews = property.meta.ps_review_count
   const managed = property.meta.ps_managed_by_ps
+  const role = inferListingRole(property)
+
+  const bedPart = beds === 0
+    ? ui.propStudio
+    : (isEs ? `${beds} rec` : `${beds} ${ui.propBed.toLowerCase()}`)
+
+  const resolvedKeys = collectResolvedAmenityKeys(property)
+  const amenityHighlights = resolvedKeys.slice(0, 3).map(k => amenityLabel(k, locale))
+
+  const strategy = rentalStrategyForDisplay(property)
+  const listingBadges: Array<{ text: string; cls: string }> = []
+  if (strategy) {
+    listingBadges.push({
+      text: rentalStrategyLabel(strategy, locale),
+      cls: `rental-strat rental-strat--${strategy}`,
+    })
+  }
+  if (showMonthlyStayFriendlyBadge(property)) {
+    listingBadges.push({ text: monthlyStayFriendlyLabel(locale), cls: 'rental-monthly' })
+  }
+  if (role === 'rent' || role === 'both') listingBadges.push({ text: ui.propForRent, cls: '' })
+  if (role === 'sale' || role === 'both') listingBadges.push({ text: ui.propForSale, cls: 'sale' })
+  if (managed) listingBadges.push({ text: ui.propManaged, cls: 'managed' })
+
+  const smartTags = deriveCardSmartTags(property, locale)
+  const compact = variant === 'featured-compact'
+
+  const priceLine =
+    role === 'sale' && salePrice > 0 && rate <= 0
+      ? <><span className="card-price">${salePrice.toLocaleString()}</span><span className="card-night"> {isEs ? 'venta' : 'sale'}</span></>
+      : <><span className="card-price">${rate}</span><span className="card-night"> {ui.propNight}</span></>
 
   return (
-    <Link href={`/rentals/${property.slug}/`} className="prop-card">
-      <div className="card-img">
+    <Link
+      href={href}
+      className={`prop-card prop-card--browse${compact ? ' prop-card--featured-compact' : ''}`}
+    >
+      <div className="card-img card-img--browse">
         {img
-          ? <Image src={img.url} alt={img.alt || name} fill style={{ objectFit: 'cover' }} sizes="(max-width:768px) 100vw, 33vw" />
-          : <div style={{ background: 'var(--sand)', width: '100%', height: '100%' }} />
-        }
-        <span className={`card-badge${managed ? ' managed' : ''}`}>
-          {managed ? 'PlayaStays Managed' : 'Verified'}
-        </span>
+          ? (
+            <Image
+              src={img.url}
+              alt={img.alt || name}
+              fill
+              style={{ objectFit: 'cover' }}
+              sizes={compact ? '(max-width:768px) 88vw, 30vw' : '(max-width:768px) 100vw, 33vw'}
+            />
+          )
+          : <div className="card-img__placeholder" />}
+        <div className="card-img__shade" aria-hidden />
+        <div className="card-badges">
+          {listingBadges.map((b, i) => (
+            <span key={i} className={`card-badge-pill${b.cls ? ` ${b.cls}` : ''}`}>{b.text}</span>
+          ))}
+        </div>
       </div>
       <div className="card-body">
         <div className="card-loc">{loc}</div>
-        <div className="card-name">{name}</div>
-        <div className="card-specs">
-          {beds === 0 ? 'Studio' : `${beds} bed`} · {baths} bath · Sleeps {guests}
+        <h3 className="card-name">{name}</h3>
+        <div className="card-price-block">
+          {priceLine}
+          {monthly > 0 && role !== 'sale' && (
+            <span className="card-monthly"> · ${monthly.toLocaleString()}{isEs ? '/mes' : '/mo'}</span>
+          )}
         </div>
+        <div className="card-specs">
+          {bedPart} · {baths} {ui.propBath.toLowerCase()} · {ui.propSleeps} {guests}
+        </div>
+        {!compact && amenityHighlights.length > 0 && (
+          <div className="card-amenities">{amenityHighlights.join(' · ')}</div>
+        )}
+        {!compact && smartTags.length > 0 && (
+          <div className="card-tags">
+            {smartTags.map(tag => <span key={tag} className="card-tag">{tag}</span>)}
+          </div>
+        )}
         <div className="card-foot">
           <div className="card-rating">
             <StarIcon />
             {rating > 0 ? rating.toFixed(2) : '—'}
             {reviews > 0 && <span className="card-rating-count">({reviews})</span>}
           </div>
-          <div>
-            <span className="card-price">${rate}</span>
-            <span className="card-night"> /night</span>
-          </div>
+          <span className="card-cta card-cta--browse">{isEs ? 'Ver detalles →' : 'View details →'}</span>
         </div>
       </div>
     </Link>
   )
 }
 
-export function PropertyGrid({ properties }: { properties: Property[] }) {
+export function PropertyGrid({
+  properties,
+  locale = 'en',
+  emptyHint,
+}: {
+  properties: Property[]
+  locale?: Locale
+  /** Extra guidance when filters yield zero results */
+  emptyHint?: string
+}) {
+  const ui = t(locale)
   if (!properties.length) {
     return (
-      <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--light)' }}>
-        No properties found.
+      <div className="browse-empty">
+        <p className="browse-empty__title">{ui.noResults}</p>
+        {emptyHint ? <p className="browse-empty__hint">{emptyHint}</p> : null}
       </div>
     )
   }
   return (
     <div className="listings-grid">
-      {properties.map(p => <PropertyCard key={p.id} property={p} />)}
+      {properties.map(p => <PropertyCard key={p.id} property={p} locale={locale} />)}
     </div>
   )
 }
@@ -81,10 +174,12 @@ export function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
         dangerouslySetInnerHTML={{ __html: testimonial.content.rendered }}
       />
       <div className="test-author">
-        <div className="test-avatar">{m.ps_author_initials || m.ps_author_name.slice(0,2)}</div>
+        <div className="test-avatar">
+          {m.ps_author_initials || (m.ps_author_name ? m.ps_author_name.slice(0, 2) : 'PS')}
+        </div>
         <div>
-          <div className="test-name">{m.ps_author_name}</div>
-          <div className="test-detail">{m.ps_author_role}</div>
+          <div className="test-name">{m.ps_author_name || '—'}</div>
+          <div className="test-detail">{m.ps_author_role || ''}</div>
         </div>
       </div>
     </div>
@@ -101,10 +196,11 @@ export function BlogCard({ post }: { post: BlogPost }) {
   return (
     <Link href={`/blog/${post.slug}/`} className="blog-card">
       <div className="blog-img">
-        {img
-          ? <Image src={img} alt={alt} fill style={{ objectFit: 'cover' }} sizes="(max-width:768px) 100vw, 33vw" />
-          : <div style={{ background: 'var(--sand)', width: '100%', height: '100%' }} />
-        }
+        {img ? (
+          <Image src={img} alt={alt} fill style={{ objectFit: 'cover' }} sizes="(max-width:768px) 100vw, 33vw" />
+        ) : (
+          <Image src={BLOG_HERO_JPG} alt="" fill style={{ objectFit: 'cover' }} sizes="(max-width:768px) 100vw, 33vw" />
+        )}
       </div>
       <div className="blog-body">
         <span className="blog-tag">Insights</span>
@@ -142,10 +238,11 @@ export function EsBlogCard({ post, locale = 'en' }: { post: BlogPost; locale?: L
   return (
     <Link href={href} className="blog-card">
       <div className="blog-img">
-        {img
-          ? <Image src={img} alt={alt} fill style={{ objectFit: 'cover' }} sizes="(max-width:768px) 100vw, 33vw" />
-          : <div style={{ background: 'var(--sand)', width: '100%', height: '100%' }} />
-        }
+        {img ? (
+          <Image src={img} alt={alt} fill style={{ objectFit: 'cover' }} sizes="(max-width:768px) 100vw, 33vw" />
+        ) : (
+          <Image src={BLOG_HERO_JPG} alt="" fill style={{ objectFit: 'cover' }} sizes="(max-width:768px) 100vw, 33vw" />
+        )}
       </div>
       <div className="blog-body">
         <span className="blog-tag">{tag}</span>

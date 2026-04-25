@@ -39,6 +39,7 @@ export function BeforeAfter({
   const netMid     = Math.round((calc.netPlusLo + calc.netPlusHi) / 2)
   const upliftMid  = Math.max(0, netMid - selfMid)
   const upliftPct  = selfMid > 0 ? Math.round((upliftMid / selfMid) * 100) : 0
+  const moSuffix   = isEs ? '/mes' : '/mo'
 
   // Self-managed "before" column — problems
   const selfRows = isEs ? [
@@ -116,10 +117,10 @@ export function BeforeAfter({
             flexWrap: 'wrap',
           }}>
             {[
-              { val: fmt(selfMid) + '/mo',    key: isEs ? 'Sin gestión' : 'Self-managed',     sub: isEs ? 'ingresos brutos' : 'gross revenue' },
+              { val: fmt(selfMid) + moSuffix, key: isEs ? 'Sin gestión' : 'Self-managed',     sub: isEs ? 'ingresos brutos' : 'gross revenue' },
               { val: '→',                     key: '',                                          sub: '' },
-              { val: fmt(netMid) + '/mo',      key: isEs ? 'Con PlayaStays' : 'With PlayaStays', sub: isEs ? 'ingresos netos' : 'net to you' },
-              { val: '+' + fmt(upliftMid),     key: isEs ? `+${upliftPct}% de uplift` : `+${upliftPct}% uplift`, sub: isEs ? 'ingresos extra al mes' : 'extra income per month' },
+              { val: fmt(netMid) + moSuffix,  key: isEs ? 'Con PlayaStays' : 'With PlayaStays', sub: isEs ? 'ingresos netos' : 'net to you' },
+              { val: '+' + fmt(upliftMid),     key: isEs ? `+${upliftPct}% más` : `+${upliftPct}% uplift`, sub: isEs ? 'ingresos extra al mes' : 'extra income per month' },
             ].map((s, i) => s.val === '→' ? (
               <div key={i} style={{ fontSize: '1.5rem', color: 'var(--gold)', fontWeight: 200 }}>→</div>
             ) : (
@@ -148,7 +149,9 @@ export function BeforeAfter({
           </div>
         )}
 
-        {/* Comparison table */}
+        {/* Comparison table — header row is a full-width inner grid so parent `gap`
+            does not insert a sand gutter between the two header cells (that gutter
+            made the PlayaStays header look like a loose tile, not half of one bar). */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
@@ -157,30 +160,45 @@ export function BeforeAfter({
           overflow: 'hidden',
           boxShadow: 'var(--sh-sm)',
         }}>
-          {/* Column headers */}
-          <div style={{
-            background: 'var(--mid)',
-            padding: '14px 20px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-          }}>
-            <span style={{ fontSize: '1rem' }}>😰</span>
-            <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', fontWeight: 600, color: 'var(--white)' }}>
-              {isEs ? 'Auto-gestionado' : 'Self-managed'}
-            </span>
-          </div>
-          <div style={{
-            background: 'var(--teal)',
-            padding: '14px 20px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-          }}>
-            <span style={{ fontSize: '1rem' }}>✦</span>
-            <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', fontWeight: 600, color: 'var(--white)' }}>
-              {isEs ? 'PlayaStays' : 'PlayaStays'}
-            </span>
+          <div
+            style={{
+              gridColumn: '1 / -1',
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 0,
+              alignItems: 'stretch',
+            }}
+          >
+            <div style={{
+              backgroundColor: 'var(--mid)',
+              padding: '15px 20px',
+              minHeight: 52,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              boxSizing: 'border-box',
+            }}>
+              <span style={{ fontSize: '1rem', lineHeight: 1 }} aria-hidden>😰</span>
+              <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', fontWeight: 600, color: 'var(--white)', letterSpacing: '0.02em', lineHeight: 1.2 }}>
+                {isEs ? 'Auto-gestionado' : 'Self-managed'}
+              </span>
+            </div>
+            <div style={{
+              backgroundColor: 'var(--deep)',
+              padding: '15px 20px',
+              minHeight: 52,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              boxSizing: 'border-box',
+              borderLeft: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.06)',
+            }}>
+              <span style={{ fontSize: '1rem', lineHeight: 1 }} aria-hidden>✦</span>
+              <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.95rem', fontWeight: 600, color: 'var(--white)', letterSpacing: '0.02em', lineHeight: 1.2 }}>
+                PlayaStays
+              </span>
+            </div>
           </div>
 
           {/* Row pairs */}

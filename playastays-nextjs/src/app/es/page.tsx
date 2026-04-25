@@ -16,8 +16,9 @@ import { HomepageTemplate } from '@/components/templates/HomepageTemplate'
 export const revalidate = 3600
 
 export const metadata: Metadata = buildMetadata({
-  title: 'PlayaStays — Administración de Propiedades | Playa del Carmen & Riviera Maya',
-  description: 'PlayaStays es la empresa líder en administración de rentas vacacionales en Playa del Carmen. 200+ propiedades administradas. Maximiza tus ingresos — sin complicaciones. Estimado gratis.',
+  title: 'Administración de rentas en Playa del Carmen y Riviera Maya | PlayaStays',
+  description:
+    'Administración local de Airbnb y rentas vacacionales en Playa del Carmen y Riviera Maya. Un equipo, enfoque al propietario. Estimado de ingresos sin costo.',
   canonical: 'https://www.playastays.com/es/',
   hreflangEn: 'https://www.playastays.com/',
 })

@@ -6,9 +6,10 @@
 
 import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
-import { getProperties } from '@/lib/wordpress'
 import { buildMetadata } from '@/lib/seo'
 import { RentalCategoryTemplate } from '@/components/templates/RentalCategoryTemplate'
+import { loadBrowseProperties } from '@/lib/property-browse'
+import { getCitiesForNavigation } from '@/lib/wordpress'
 
 export const revalidate = 1800
 
@@ -20,49 +21,34 @@ export const metadata: Metadata = buildMetadata({
 })
 
 interface Props {
-  searchParams: {
-    bedrooms?: string
-    type?:     string
-    feature?:  string | string[]
-    city?:     string
-    sort?:     string
-  }
+  searchParams: Record<string, string | string[] | undefined>
 }
 
 export default async function EsRentalsPage({ searchParams }: Props) {
   const { isEnabled: preview } = draftMode()
 
-  const features = Array.isArray(searchParams.feature)
-    ? searchParams.feature
-    : searchParams.feature ? [searchParams.feature] : []
+  const cities = await getCitiesForNavigation(preview)
+  const browseCities = cities.map(c => ({ slug: c.slug, name: c.title.rendered }))
 
-  const properties = await getProperties({
-    bedrooms:     searchParams.bedrooms,
-    propertyType: searchParams.type,
-    feature:      features[0],
-    citySlug:     searchParams.city,
-    perPage:      18,
+  const properties = await loadBrowseProperties(searchParams, {
+    citySlug: typeof searchParams.city === 'string' ? searchParams.city : undefined,
     preview,
   })
 
   return (
     <RentalCategoryTemplate
-      title="Rentas vacacionales en Quintana Roo"
-      tag="🏖️ Rentas gestionadas por PlayaStays"
-      description="Explora rentas vacacionales gestionadas profesionalmente en Playa del Carmen, Tulum, Akumal y más. Cada propiedad es administrada por nuestro equipo local bilingüe."
+      title='Rentas vacacionales en <span class="rentals-search-hero__accent">Quintana Roo</span>'
+      tag=""
+      description="Explora rentas vacacionales gestionadas profesionalmente en Playa del Carmen, Tulum y destinos de la Riviera Maya."
       canonicalHref="/es/rentas/"
       properties={properties}
       breadcrumbs={[
         { label: 'Inicio', href: '/es/' },
         { label: 'Rentas', href: null },
       ]}
-      stats={[
-        { val: '200+', key: 'Propiedades administradas' },
-        { val: '4.97★', key: 'Calificación promedio' },
-        { val: '6',     key: 'Ciudades' },
-        { val: '24/7',  key: 'Soporte a huéspedes' },
-      ]}
       locale="es"
+      browseCities={browseCities}
+      browseLayout="search-led"
     />
   )
 }

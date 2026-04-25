@@ -12,6 +12,50 @@
 defined( 'ABSPATH' ) || exit;
 
 // ============================================================
+// Security (headless: Next.js is the public site; REST user list not required)
+//
+// - XML-RPC: disabled at plugin level (not theme) — persists via repo deploy.
+// - REST /wp/v2/users*: removed for guests — fallback if other security plugins are off.
+// - Author archives: noindex below — WP is CMS only; public SEO lives on Next.js.
+// ============================================================
+
+add_filter( 'xmlrpc_enabled', '__return_false' );
+
+/**
+ * Hide public REST user enumeration for unauthenticated requests (editors use wp-admin).
+ *
+ * @param array<string,mixed> $endpoints Registered REST routes.
+ * @return array<string,mixed>
+ */
+function playastays_rest_filter_user_endpoints_for_guests( $endpoints ) {
+	if ( is_user_logged_in() ) {
+		return $endpoints;
+	}
+	if ( isset( $endpoints['/wp/v2/users'] ) ) {
+		unset( $endpoints['/wp/v2/users'] );
+	}
+	if ( isset( $endpoints['/wp/v2/users/(?P<id>[\\d]+)'] ) ) {
+		unset( $endpoints['/wp/v2/users/(?P<id>[\\d]+)'] );
+	}
+	return $endpoints;
+}
+add_filter( 'rest_endpoints', 'playastays_rest_filter_user_endpoints_for_guests', 99 );
+
+/**
+ * Noindex author archives only (backend-scoped; does not replace AIOSEO or Next.js SEO).
+ *
+ * @param array<string,bool|string> $robots Robots keys for wp_robots().
+ * @return array<string,bool|string>
+ */
+function playastays_wp_robots_noindex_author_archives( $robots ) {
+	if ( is_author() ) {
+		$robots['noindex'] = true;
+	}
+	return $robots;
+}
+add_filter( 'wp_robots', 'playastays_wp_robots_noindex_author_archives', 20 );
+
+// ============================================================
 // 0. CONSTANTS
 // ============================================================
 
@@ -189,7 +233,64 @@ function ps_register_taxonomies() {
         'rest_base'     => 'ps_service_category',
         'rewrite'       => false,
     ] );
+
+    // Blog — editorial topics (assign in wp-admin on Posts)
+    register_taxonomy( 'ps_blog_topic', [ 'post' ], [
+        'label'             => 'Blog topic',
+        'hierarchical'      => true,
+        'show_in_rest'      => true,
+        'rest_base'         => 'ps_blog_topic',
+        'show_admin_column' => true,
+        'rewrite'           => false,
+    ] );
+
+    // Blog — area / market (riviera destinations)
+    register_taxonomy( 'ps_blog_area', [ 'post' ], [
+        'label'             => 'Blog area',
+        'hierarchical'      => true,
+        'show_in_rest'      => true,
+        'rest_base'         => 'ps_blog_area',
+        'show_admin_column' => true,
+        'rewrite'           => false,
+    ] );
 }
+
+/**
+ * One-time seed of default blog topic/area terms (idempotent).
+ */
+function ps_maybe_seed_blog_taxonomies() {
+    if ( get_option( 'ps_blog_taxonomies_v2_seeded' ) ) {
+        return;
+    }
+    $topics = [
+        'owner-guides'          => 'Owner Guides',
+        'property-management'   => 'Property Management',
+        'vacation-rentals'      => 'Vacation Rentals',
+        'long-term-rentals'     => 'Long-Term Rentals',
+        'market-insights'       => 'Market Insights',
+    ];
+    foreach ( $topics as $slug => $name ) {
+        if ( ! term_exists( $slug, 'ps_blog_topic' ) ) {
+            wp_insert_term( $name, 'ps_blog_topic', [ 'slug' => $slug ] );
+        }
+    }
+    $areas = [
+        'playa-del-carmen' => 'Playa del Carmen',
+        'tulum'            => 'Tulum',
+        'puerto-morelos'   => 'Puerto Morelos',
+        'akumal'           => 'Akumal',
+        'cozumel'          => 'Cozumel',
+        'isla-mujeres'     => 'Isla Mujeres',
+        'xpu-ha'           => 'Xpu-Ha',
+    ];
+    foreach ( $areas as $slug => $name ) {
+        if ( ! term_exists( $slug, 'ps_blog_area' ) ) {
+            wp_insert_term( $name, 'ps_blog_area', [ 'slug' => $slug ] );
+        }
+    }
+    update_option( 'ps_blog_taxonomies_v2_seeded', 1 );
+}
+add_action( 'init', 'ps_maybe_seed_blog_taxonomies', 100 );
 
 // ============================================================
 // 3. META FIELDS — registered for REST API exposure
@@ -201,38 +302,116 @@ function ps_register_meta_fields() {
 
     // ── Property meta ──────────────────────────────────────
     $property_meta = [
-        'ps_city'            => 'string',
-        'ps_neighborhood'    => 'string',
-        'ps_property_type'   => 'string',
-        'ps_bedrooms'        => 'integer',
-        'ps_bathrooms'       => 'number',
-        'ps_guests'          => 'integer',
-        'ps_sqm'             => 'integer',
-        'ps_nightly_rate'    => 'number',
-        'ps_monthly_rate'    => 'number',
-        'ps_cleaning_fee'    => 'number',
-        'ps_currency'        => 'string',
-        'ps_min_stay_nights' => 'integer',
-        'ps_lat'             => 'number',
-        'ps_lng'             => 'number',
-        'ps_airbnb_url'      => 'string',
-        'ps_vrbo_url'        => 'string',
-        'ps_booking_url'     => 'string',
-        'ps_direct_url'      => 'string',
-        'ps_managed_by_ps'   => 'boolean',
-        'ps_featured'        => 'boolean',
-        'ps_listing_status'  => 'string',
-        'ps_avg_occupancy'   => 'number',
-        'ps_avg_rating'      => 'number',
-        'ps_review_count'    => 'integer',
-        'ps_monthly_income'  => 'number',
-        'ps_owner_id'        => 'integer',
-        'ps_seo_title'       => 'string',
-        'ps_seo_desc'        => 'string',
-        'ps_title_es'        => 'string',
-        'ps_excerpt_es'      => 'string',
-        'ps_content_es'      => 'string',
+        // Location
+        'ps_city'               => 'string',
+        'ps_neighborhood'       => 'string',
+        'ps_state'              => 'string',
+        'ps_country'            => 'string',
+        'ps_address_line_1'     => 'string',
+        'ps_address_line_2'     => 'string',
+        'ps_postal_code'        => 'string',
+        'ps_lat'                => 'number',
+        'ps_lng'                => 'number',
+        'ps_map_display_mode'   => 'string',   // exact | approximate | hidden
+
+        // Specs
+        'ps_property_type'      => 'string',
+        'ps_bedrooms'           => 'integer',
+        'ps_bathrooms'          => 'number',
+        'ps_guests'             => 'integer',
+        'ps_beds'               => 'integer',
+        'ps_sqm'                => 'integer',
+        'ps_floor'              => 'integer',
+
+        // Listing & status
+        'ps_listing_type'       => 'string',   // rent | sale | both
+        /** Rental strategy (separate from listing type): vacation_rental | long_term | hybrid */
+        'ps_rental_strategy'    => 'string',
+        'ps_listing_status'     => 'string',   // active | draft | archived
+        'ps_managed_by_ps'      => 'boolean',
+        'ps_featured'           => 'boolean',
+
+        // Pricing
+        'ps_nightly_rate'       => 'number',
+        'ps_monthly_rate'       => 'number',
+        'ps_sale_price'         => 'number',
+        'ps_cleaning_fee'       => 'number',
+        'ps_currency'           => 'string',
+        'ps_min_stay_nights'    => 'integer',
+
+        // Performance / reviews
+        'ps_avg_occupancy'      => 'number',
+        'ps_avg_rating'         => 'number',
+        'ps_review_count'       => 'integer',
+        'ps_monthly_income'     => 'number',
+
+        // Booking URLs
+        'ps_airbnb_url'         => 'string',
+        'ps_vrbo_url'           => 'string',
+        'ps_booking_url'        => 'string',
+        'ps_direct_url'         => 'string',
+        'ps_booking_mode'       => 'string',   // instant | inquiry | external
+
+        // Availability / calendar
+        'ps_availability_json'      => 'string',  // JSON: { version, blocks, nextAvailable, minStayNights }
+        'ps_next_available_date'    => 'string',  // ISO YYYY-MM-DD
+
+        // Structured amenities — JSON array of keys from shared taxonomy
+        'ps_amenity_keys'       => 'string',   // e.g. '["wifi","pool","balcony"]'
+
+        // Guest-facing details
+        'ps_check_in_time'      => 'string',
+        'ps_check_out_time'     => 'string',
+        'ps_house_rules'        => 'string',
+        'ps_house_rules_es'     => 'string',
+
+        // Owner / operations
+        'ps_owner_id'           => 'integer',
+        'ps_manager_id'         => 'integer',
+        'ps_building_name'      => 'string',
+        'ps_ops_status'         => 'string',   // active | needs-attention | maintenance | onboarding | inactive
+        'ps_last_inspection_date' => 'string', // ISO YYYY-MM-DD
+
+        // SEO / bilingual
+        'ps_seo_title'          => 'string',
+        'ps_seo_desc'           => 'string',
+        'ps_title_es'           => 'string',
+        'ps_excerpt_es'         => 'string',
+        'ps_content_es'         => 'string',
     ];
+
+    // Internal notes — writable via REST only for authenticated users (auth_callback enforces edit_post)
+    register_post_meta( 'ps_property', 'ps_internal_notes', [
+        'single'        => true,
+        'type'          => 'string',
+        'show_in_rest'  => true,
+        'auth_callback' => 'ps_meta_auth_callback',
+    ] );
+
+    /** Operational activity log — JSON array of { id, at, category, body } */
+    register_post_meta( 'ps_property', 'ps_ops_activity_log', [
+        'single'        => true,
+        'type'          => 'string',
+        'show_in_rest'  => true,
+        'auth_callback' => 'ps_meta_auth_callback',
+    ] );
+
+    /** Operational issues / tickets — JSON array, admin-only */
+    register_post_meta( 'ps_property', 'ps_ops_issues', [
+        'single'        => true,
+        'type'          => 'string',
+        'show_in_rest'  => true,
+        'auth_callback' => 'ps_meta_auth_callback',
+    ] );
+
+    // Gallery — JSON array of attachment IDs, powers ps_computed.gallery read
+    register_post_meta( 'ps_property', 'ps_gallery', [
+        'single'        => true,
+        'type'          => 'string',
+        'show_in_rest'  => true,
+        'auth_callback' => 'ps_meta_auth_callback',
+    ] );
+
     foreach ( $property_meta as $key => $type ) {
         register_post_meta( 'ps_property', $key, [
             'single'        => true,
@@ -344,6 +523,9 @@ function ps_register_meta_fields() {
         'ps_excerpt_es'  => 'string',
         'ps_content_es'  => 'string',
         'ps_author_es'   => 'string',
+        /** Next.js BlogPostTemplate sidebar internal links — public EN slugs */
+        'ps_primary_city'    => 'string',
+        'ps_primary_service' => 'string',
     ];
     foreach ( $post_meta as $key => $type ) {
         register_post_meta( 'post', $key, [
@@ -426,7 +608,15 @@ function ps_register_rest_fields() {
                 $owner = $u ? [ 'id' => $owner_id, 'display_name' => $u->display_name ] : null;
             }
 
-            return compact( 'featured_image', 'gallery', 'booking_links', 'amenities', 'owner' );
+            // Manager
+            $manager_id = (int) get_post_meta( $id, 'ps_manager_id', true );
+            $manager    = null;
+            if ( $manager_id ) {
+                $u       = get_userdata( $manager_id );
+                $manager = $u ? [ 'id' => $manager_id, 'display_name' => $u->display_name ] : null;
+            }
+
+            return compact( 'featured_image', 'gallery', 'booking_links', 'amenities', 'owner', 'manager' );
         },
         'schema' => [ 'type' => 'object' ],
     ] );
@@ -525,12 +715,10 @@ function ps_get_settings( WP_REST_Request $request ): WP_REST_Response {
         'email'       => get_option( 'ps_email',     'hello@playastays.com' ),
         'address'     => get_option( 'ps_address',   'Playa del Carmen, Quintana Roo, Mexico' ),
         'trust_stats' => json_decode( get_option( 'ps_trust_stats', '[]' ), true ) ?: [
-            [ 'val' => '200+',  'key' => 'Properties managed' ],
             [ 'val' => '4.9★',  'key' => 'Owner satisfaction' ],
-            [ 'val' => '22%+',  'key' => 'Net income uplift' ],
+            [ 'val' => '20%+',  'key' => 'Revenue uplift' ],
             [ 'val' => '24/7',  'key' => 'Local support' ],
             [ 'val' => 'ES/EN', 'key' => 'Bilingual team' ],
-            [ 'val' => '<5min', 'key' => 'Guest inquiry response' ],
         ],
         'social' => [
             'facebook'  => get_option( 'ps_social_facebook',  '' ),
@@ -856,6 +1044,17 @@ function ps_render_bilingual_metabox( WP_Post $post ): void {
 
             <?php ps_text_field( 'ps_seo_title', 'SEO Title (EN)', $post->ID, 'Override the <title> tag for search engines' ); ?>
             <?php ps_textarea_field( 'ps_seo_desc', 'Meta Description (EN)', $post->ID, '150–160 characters recommended', 80 ); ?>
+
+            <?php if ( $pt === 'post' ) : ?>
+                <div style="margin-top:16px;padding-top:16px;border-top:1px solid #ddd;">
+                    <h4 style="margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#555;">🔗 Next.js — sidebar internal links</h4>
+                    <p style="font-size:12px;color:#888;margin:0 0 12px;">Optional. Matches <code>ps_city</code> slug and public EN service segment (same as URLs).</p>
+                    <?php
+                    ps_text_field( 'ps_primary_city', 'Primary city slug', $post->ID, 'e.g. playa-del-carmen, tulum' );
+                    ps_text_field( 'ps_primary_service', 'Primary service slug', $post->ID, 'e.g. property-management, airbnb-management' );
+                    ?>
+                </div>
+            <?php endif; ?>
         </div>
 
         <!-- ES column -->
@@ -942,10 +1141,258 @@ function ps_save_bilingual_meta( int $post_id, WP_Post $post ): void {
             update_post_meta( $post_id, $key, wp_kses_post( $_POST[ $key ] ) );
         }
     }
+
+    foreach ( [ 'ps_primary_city', 'ps_primary_service' ] as $slug_key ) {
+        if ( ! isset( $_POST[ $slug_key ] ) ) {
+            continue;
+        }
+        $raw = trim( (string) wp_unslash( $_POST[ $slug_key ] ) );
+        update_post_meta( $post_id, $slug_key, $raw === '' ? '' : sanitize_key( $raw ) );
+    }
 }
 
 // ============================================================
-// 11. SETTINGS PAGE
+// 11. PROPERTY OPERATIONS METABOX — structured amenities + ops fields
+// ============================================================
+
+add_action( 'add_meta_boxes', 'ps_add_property_ops_metabox' );
+
+function ps_add_property_ops_metabox(): void {
+    add_meta_box(
+        'ps_property_ops',
+        '🏠 Property Operations',
+        'ps_render_property_ops_metabox',
+        'ps_property',
+        'normal',
+        'default'
+    );
+}
+
+function ps_render_property_ops_metabox( WP_Post $post ): void {
+    wp_nonce_field( 'ps_save_property_ops', 'ps_property_ops_nonce' );
+
+    // Current amenity keys
+    $raw_keys = get_post_meta( $post->ID, 'ps_amenity_keys', true );
+    $selected = json_decode( $raw_keys ?: '[]', true );
+    if ( ! is_array( $selected ) ) $selected = [];
+    $selected_map = array_flip( $selected );
+
+    // Ops fields
+    $ops_status   = get_post_meta( $post->ID, 'ps_ops_status', true ) ?: 'active';
+    $manager_id   = (int) get_post_meta( $post->ID, 'ps_manager_id', true );
+    $building     = get_post_meta( $post->ID, 'ps_building_name', true );
+    $notes        = get_post_meta( $post->ID, 'ps_internal_notes', true );
+    $check_in     = get_post_meta( $post->ID, 'ps_check_in_time', true );
+    $check_out    = get_post_meta( $post->ID, 'ps_check_out_time', true );
+    $house_rules  = get_post_meta( $post->ID, 'ps_house_rules', true );
+    $map_mode     = get_post_meta( $post->ID, 'ps_map_display_mode', true ) ?: 'exact';
+    $listing_type    = get_post_meta( $post->ID, 'ps_listing_type', true ) ?: 'rent';
+    $rental_strategy = get_post_meta( $post->ID, 'ps_rental_strategy', true ) ?: '';
+
+    // Amenity taxonomy — mirrors amenity-taxonomy.ts AMENITY_CATEGORIES
+    $amenity_groups = [
+        'Guest favorites' => [
+            'wifi'             => 'WiFi',
+            'tv'               => 'TV',
+            'kitchen'          => 'Kitchen',
+            'washer-dryer'     => 'Washer / dryer',
+            'air-conditioning' => 'Air conditioning',
+            'workspace'        => 'Dedicated workspace',
+            'parking'          => 'Parking',
+            'furnished'        => 'Furnished',
+        ],
+        'Standout amenities' => [
+            'pool'              => 'Pool',
+            'hot-tub-private'   => 'Private hot tub',
+            'hot-tub-shared'    => 'Shared hot tub',
+            'balcony'           => 'Balcony / terrace',
+            'patio'             => 'Patio',
+            'bbq-grill'         => 'BBQ grill',
+            'outdoor-dining'    => 'Outdoor dining area',
+            'exercise-equipment'=> 'Exercise equipment',
+            'beach-access'      => 'Beach access',
+        ],
+        'Location & views' => [
+            'beachfront'       => 'Beachfront',
+            'waterfront'       => 'Waterfront',
+            'ocean-view'       => 'Ocean view',
+            'walk-beach'       => 'Walk to beach',
+            'downtown'         => 'Downtown / Centro',
+            'gated-community'  => 'Gated community',
+            'quiet-area'       => 'Quiet area',
+        ],
+        'Safety' => [
+            'smoke-alarm'          => 'Smoke alarm',
+            'fire-extinguisher'    => 'Fire extinguisher',
+            'first-aid-kit'        => 'First aid kit',
+            'carbon-monoxide-alarm'=> 'CO alarm',
+        ],
+        'Stay preferences' => [
+            'pet-friendly'     => 'Pet-friendly',
+            'family-friendly'  => 'Family-friendly',
+            'elevator'         => 'Elevator',
+        ],
+    ];
+
+    ?>
+    <style>
+        .ps-ops-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 12px; }
+        .ps-ops-section { margin-bottom: 20px; }
+        .ps-ops-section h4 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: #666; border-bottom: 1px solid #eee; padding-bottom: 6px; }
+        .ps-amenity-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 4px 12px; }
+        .ps-amenity-grid label { font-size: 13px; display: flex; align-items: center; gap: 5px; padding: 2px 0; cursor: pointer; }
+        .ps-amenity-grid label:hover { color: #0073aa; }
+        .ps-amenity-group { margin-bottom: 14px; }
+        .ps-amenity-group-title { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: .05em; margin: 0 0 6px; }
+        .ps-ops-row { margin-bottom: 10px; }
+        .ps-ops-row label { display: block; font-size: 12px; font-weight: 600; color: #555; margin-bottom: 3px; }
+        .ps-ops-row select, .ps-ops-row input, .ps-ops-row textarea { width: 100%; }
+        .ps-ops-row textarea { height: 80px; }
+        .ps-ops-note { font-size: 11px; color: #999; margin-top: 2px; }
+    </style>
+
+    <h3 style="margin-top:4px;">Structured Amenities</h3>
+    <p style="font-size:12px;color:#666;">Check amenities that this property actually has. This powers browse filters, detail page display, and smart tags.</p>
+
+    <?php foreach ( $amenity_groups as $group_name => $items ) : ?>
+        <div class="ps-amenity-group">
+            <div class="ps-amenity-group-title"><?php echo esc_html( $group_name ); ?></div>
+            <div class="ps-amenity-grid">
+                <?php foreach ( $items as $key => $label ) : ?>
+                    <label>
+                        <input type="checkbox" name="ps_amenity_keys_selected[]" value="<?php echo esc_attr( $key ); ?>"
+                            <?php checked( isset( $selected_map[ $key ] ) ); ?> />
+                        <?php echo esc_html( $label ); ?>
+                    </label>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endforeach; ?>
+
+    <hr style="margin: 20px 0;" />
+
+    <div class="ps-ops-grid">
+        <div>
+            <h4 style="margin-top:0;">Operations</h4>
+
+            <div class="ps-ops-row">
+                <label for="ps_listing_type">Listing Type</label>
+                <select id="ps_listing_type" name="ps_listing_type">
+                    <option value="rent" <?php selected( $listing_type, 'rent' ); ?>>For Rent</option>
+                    <option value="sale" <?php selected( $listing_type, 'sale' ); ?>>For Sale</option>
+                    <option value="both" <?php selected( $listing_type, 'both' ); ?>>Both</option>
+                </select>
+            </div>
+
+            <div class="ps-ops-row">
+                <label for="ps_rental_strategy">Rental strategy</label>
+                <select id="ps_rental_strategy" name="ps_rental_strategy">
+                    <option value="" <?php selected( $rental_strategy, '' ); ?>>— Not set (infer from rates in app) —</option>
+                    <option value="vacation_rental" <?php selected( $rental_strategy, 'vacation_rental' ); ?>>Vacation / short-term</option>
+                    <option value="long_term" <?php selected( $rental_strategy, 'long_term' ); ?>>Long-term rental</option>
+                    <option value="hybrid" <?php selected( $rental_strategy, 'hybrid' ); ?>>Both / hybrid</option>
+                </select>
+                <div class="ps-ops-note">Separate from listing type. Used for browse filters and badges (not in public URLs).</div>
+            </div>
+
+            <div class="ps-ops-row">
+                <label for="ps_ops_status">Ops Status</label>
+                <select id="ps_ops_status" name="ps_ops_status">
+                    <option value="active" <?php selected( $ops_status, 'active' ); ?>>Active</option>
+                    <option value="needs-attention" <?php selected( $ops_status, 'needs-attention' ); ?>>Needs Attention</option>
+                    <option value="maintenance" <?php selected( $ops_status, 'maintenance' ); ?>>Maintenance</option>
+                    <option value="onboarding" <?php selected( $ops_status, 'onboarding' ); ?>>Onboarding</option>
+                    <option value="inactive" <?php selected( $ops_status, 'inactive' ); ?>>Inactive</option>
+                </select>
+            </div>
+
+            <div class="ps-ops-row">
+                <label for="ps_map_display_mode">Map Display</label>
+                <select id="ps_map_display_mode" name="ps_map_display_mode">
+                    <option value="exact" <?php selected( $map_mode, 'exact' ); ?>>Exact</option>
+                    <option value="approximate" <?php selected( $map_mode, 'approximate' ); ?>>Approximate</option>
+                    <option value="hidden" <?php selected( $map_mode, 'hidden' ); ?>>Hidden</option>
+                </select>
+            </div>
+
+            <div class="ps-ops-row">
+                <label for="ps_building_name">Building / Development</label>
+                <input type="text" id="ps_building_name" name="ps_building_name" value="<?php echo esc_attr( $building ); ?>" />
+            </div>
+
+            <div class="ps-ops-row">
+                <label for="ps_manager_id">Assigned Manager (User ID)</label>
+                <input type="number" id="ps_manager_id" name="ps_manager_id" value="<?php echo esc_attr( $manager_id ?: '' ); ?>" min="0" />
+                <div class="ps-ops-note">WP user ID of the assigned property manager</div>
+            </div>
+        </div>
+
+        <div>
+            <h4 style="margin-top:0;">Guest Details</h4>
+
+            <div class="ps-ops-row">
+                <label for="ps_check_in_time">Check-in Time</label>
+                <input type="text" id="ps_check_in_time" name="ps_check_in_time" value="<?php echo esc_attr( $check_in ); ?>" placeholder="3:00 PM" />
+            </div>
+
+            <div class="ps-ops-row">
+                <label for="ps_check_out_time">Check-out Time</label>
+                <input type="text" id="ps_check_out_time" name="ps_check_out_time" value="<?php echo esc_attr( $check_out ); ?>" placeholder="11:00 AM" />
+            </div>
+
+            <div class="ps-ops-row">
+                <label for="ps_house_rules">House Rules</label>
+                <textarea id="ps_house_rules" name="ps_house_rules"><?php echo esc_textarea( $house_rules ); ?></textarea>
+            </div>
+
+            <div class="ps-ops-row">
+                <label for="ps_internal_notes">Internal Notes (admin-only)</label>
+                <textarea id="ps_internal_notes" name="ps_internal_notes" style="background:#fff8e1;"><?php echo esc_textarea( $notes ); ?></textarea>
+                <div class="ps-ops-note">Never shown publicly. For internal team use only.</div>
+            </div>
+        </div>
+    </div>
+    <?php
+}
+
+add_action( 'save_post_ps_property', 'ps_save_property_ops_meta', 15, 2 );
+function ps_save_property_ops_meta( int $post_id, WP_Post $post ): void {
+    if ( ! isset( $_POST['ps_property_ops_nonce'] ) ) return;
+    if ( ! wp_verify_nonce( $_POST['ps_property_ops_nonce'], 'ps_save_property_ops' ) ) return;
+    if ( wp_is_post_autosave( $post_id ) || wp_is_post_revision( $post_id ) ) return;
+    if ( ! current_user_can( 'edit_post', $post_id ) ) return;
+
+    // Amenity keys → JSON array
+    $keys = isset( $_POST['ps_amenity_keys_selected'] ) && is_array( $_POST['ps_amenity_keys_selected'] )
+        ? array_map( 'sanitize_key', $_POST['ps_amenity_keys_selected'] )
+        : [];
+    update_post_meta( $post_id, 'ps_amenity_keys', wp_json_encode( array_values( $keys ) ) );
+
+    // Ops fields
+    $text_fields = [
+        'ps_listing_type', 'ps_rental_strategy', 'ps_ops_status', 'ps_map_display_mode',
+        'ps_building_name', 'ps_check_in_time', 'ps_check_out_time',
+    ];
+    foreach ( $text_fields as $key ) {
+        if ( isset( $_POST[ $key ] ) ) {
+            update_post_meta( $post_id, $key, sanitize_text_field( $_POST[ $key ] ) );
+        }
+    }
+
+    if ( isset( $_POST['ps_manager_id'] ) ) {
+        update_post_meta( $post_id, 'ps_manager_id', absint( $_POST['ps_manager_id'] ) );
+    }
+
+    $textarea_fields = [ 'ps_house_rules', 'ps_internal_notes' ];
+    foreach ( $textarea_fields as $key ) {
+        if ( isset( $_POST[ $key ] ) ) {
+            update_post_meta( $post_id, $key, sanitize_textarea_field( $_POST[ $key ] ) );
+        }
+    }
+}
+
+// ============================================================
+// 12. SETTINGS PAGE
 // ============================================================
 
 add_action( 'admin_menu', 'ps_settings_menu' );
@@ -984,4 +1431,418 @@ function ps_render_settings_page(): void {
         </form>
     </div>
     <?php
+}
+
+// == REST COLLECTION PARAM EXTENSIONS ==
+//
+// Register custom query args so REST validation accepts the headless frontend contract (avoids 400 before rest_*_query runs).
+
+/**
+ * Widen taxonomy REST params to accept slug strings (and merge with core schema when present).
+ *
+ * @param array<string,mixed>|null $existing Existing param schema from core.
+ * @param string                   $param_name Parameter key (for description).
+ * @return array<string,mixed>
+ */
+function ps_rest_collection_param_tax_slug_or_id( $existing, $param_name ) {
+    // Widen past core’s integer-only taxonomy param (e.g. ps_city_tag[0] must be int).
+    // Accept a slug string, a single ID, or an array of slug(s) and/or ID(s).
+    return [
+        'description' => sprintf( __( 'Term slug(s) or ID(s) (%s).' ), $param_name ),
+        'type'        => [ 'string', 'integer', 'array' ],
+        'items'       => [ 'type' => [ 'integer', 'string' ] ],
+        'required'    => false,
+    ];
+}
+
+/**
+ * Drop REST-generated ps_city_tag clauses (term_id) so we can re-apply with slug/ID.
+ *
+ * @param array<string, mixed> $args WP_Query args.
+ * @return array<string, mixed>
+ */
+function ps_rest_strip_ps_city_tag_clauses( array $args ): array {
+    if ( empty( $args['tax_query'] ) || ! is_array( $args['tax_query'] ) ) {
+        return $args;
+    }
+    $args['tax_query'] = array_values(
+        array_filter(
+            $args['tax_query'],
+            static function ( $q ) {
+                return ! ( is_array( $q ) && isset( $q['taxonomy'] ) && 'ps_city_tag' === $q['taxonomy'] );
+            }
+        )
+    );
+    return $args;
+}
+
+/**
+ * Apply ?ps_city_tag= from the request (slug, ID, or list) on top of a stripped tax_query.
+ *
+ * @param array<string, mixed> $args    WP_Query args.
+ * @param WP_REST_Request      $request Request.
+ * @return array<string, mixed>
+ */
+function ps_rest_merge_ps_city_tag_tax( array $args, WP_REST_Request $request ): array {
+    $raw = $request->get_param( 'ps_city_tag' );
+    if ( null === $raw || '' === $raw || ( is_array( $raw ) && array() === $raw ) ) {
+        return $args;
+    }
+    $args = ps_rest_strip_ps_city_tag_clauses( $args );
+    $vals = is_array( $raw ) ? $raw : [ $raw ];
+    $vals = array_values(
+        array_filter(
+            array_map(
+                static function ( $v ) {
+                    return trim( (string) $v );
+                },
+                $vals
+            ),
+            static function ( $v ) {
+                return '' !== $v;
+            }
+        )
+    );
+    if ( array() === $vals ) {
+        return $args;
+    }
+    $is_slug = false;
+    foreach ( $vals as $v ) {
+        if ( ! is_numeric( $v ) ) {
+            $is_slug = true;
+            break;
+        }
+    }
+    if ( ! isset( $args['tax_query'] ) || ! is_array( $args['tax_query'] ) ) {
+        $args['tax_query'] = [];
+    }
+    if ( $is_slug ) {
+        $terms = array_map( 'sanitize_title', array_map( 'strval', $vals ) );
+    } else {
+        $terms = array_map( 'absint', $vals );
+    }
+    $args['tax_query'][] = [
+        'taxonomy' => 'ps_city_tag',
+        'field'    => $is_slug ? 'slug' : 'term_id',
+        'terms'    => 1 === count( $terms ) ? $terms[0] : $terms,
+    ];
+    return $args;
+}
+
+/**
+ * @param array<string,mixed> $params Collection params for ps_faq.
+ * @param WP_Post_Type        $post_type Post type object.
+ * @return array<string,mixed>
+ */
+function ps_rest_ps_faq_collection_params( $params, $post_type ) {
+    if ( isset( $params['orderby']['enum'] ) && is_array( $params['orderby']['enum'] ) ) {
+        if ( ! in_array( 'meta_value_num', $params['orderby']['enum'], true ) ) {
+            $params['orderby']['enum'][] = 'meta_value_num';
+        }
+    }
+    if ( ! isset( $params['meta_key'] ) ) {
+        $params['meta_key'] = [
+            'description' => __( 'Meta key for ordering or filtering.' ),
+            'type'        => 'string',
+        ];
+    }
+    $params['ps_faq_category'] = ps_rest_collection_param_tax_slug_or_id( $params['ps_faq_category'] ?? null, 'ps_faq_category' );
+    $params['ps_city_tag']     = ps_rest_collection_param_tax_slug_or_id( $params['ps_city_tag'] ?? null, 'ps_city_tag' );
+
+    return $params;
+}
+
+/**
+ * @param array<string,mixed> $params Collection params for ps_testimonial.
+ * @param WP_Post_Type        $post_type Post type object.
+ * @return array<string,mixed>
+ */
+function ps_rest_ps_testimonial_collection_params( $params, $post_type ) {
+    if ( isset( $params['orderby']['enum'] ) && is_array( $params['orderby']['enum'] ) ) {
+        if ( ! in_array( 'meta_value_num', $params['orderby']['enum'], true ) ) {
+            $params['orderby']['enum'][] = 'meta_value_num';
+        }
+    }
+    if ( ! isset( $params['meta_key'] ) ) {
+        $params['meta_key'] = [
+            'description' => __( 'Meta key for ordering or filtering.' ),
+            'type'        => 'string',
+        ];
+    }
+    if ( ! isset( $params['meta_value'] ) ) {
+        $params['meta_value'] = [
+            'description' => __( 'Meta value.' ),
+            'type'        => 'string',
+        ];
+    }
+
+    return $params;
+}
+
+/**
+ * @param array<string,mixed> $params Collection params for ps_service.
+ * @param WP_Post_Type        $post_type Post type object.
+ * @return array<string,mixed>
+ */
+function ps_rest_ps_service_collection_params( $params, $post_type ) {
+    $params['ps_city_tag'] = ps_rest_collection_param_tax_slug_or_id( $params['ps_city_tag'] ?? null, 'ps_city_tag' );
+    if ( ! isset( $params['meta_key'] ) ) {
+        $params['meta_key'] = [
+            'description' => __( 'Meta key for ordering or filtering.' ),
+            'type'        => 'string',
+        ];
+    }
+    if ( ! isset( $params['meta_value'] ) ) {
+        $params['meta_value'] = [
+            'description' => __( 'Meta value.' ),
+            'type'        => 'string',
+        ];
+    }
+
+    return $params;
+}
+
+/**
+ * @param array<string,mixed> $params Collection params for ps_property (REST base: properties).
+ * @param WP_Post_Type        $post_type Post type object.
+ * @return array<string,mixed>
+ */
+function ps_rest_ps_property_collection_params( $params, $post_type ) {
+    $params['ps_city_tag'] = ps_rest_collection_param_tax_slug_or_id( $params['ps_city_tag'] ?? null, 'ps_city_tag' );
+    if ( ! isset( $params['meta_key'] ) ) {
+        $params['meta_key'] = [
+            'description' => __( 'Meta key for ordering or filtering.' ),
+            'type'        => 'string',
+        ];
+    }
+    if ( ! isset( $params['meta_value'] ) ) {
+        $params['meta_value'] = [
+            'description' => __( 'Meta value.' ),
+            'type'        => 'string',
+        ];
+    }
+
+    return $params;
+}
+
+add_filter( 'rest_ps_faq_collection_params', 'ps_rest_ps_faq_collection_params', 10, 2 );
+add_filter( 'rest_ps_testimonial_collection_params', 'ps_rest_ps_testimonial_collection_params', 10, 2 );
+add_filter( 'rest_ps_service_collection_params', 'ps_rest_ps_service_collection_params', 10, 2 );
+add_filter( 'rest_ps_property_collection_params', 'ps_rest_ps_property_collection_params', 10, 2 );
+
+// == REST QUERY FILTERS ==
+//
+// Map validated query params into WP_Query $args. REST route for properties is /wp/v2/properties; filter uses CPT slug ps_property.
+
+/**
+ * @param array<string,mixed> $args    Query args for WP_Query.
+ * @param WP_REST_Request     $request Request object.
+ * @return array<string,mixed>
+ */
+function ps_rest_ps_faq_query( $args, $request ) {
+    if ( ! $request instanceof WP_REST_Request ) {
+        return $args;
+    }
+    $q = $request->get_query_params();
+    if ( isset( $q['orderby'] ) && 'meta_value_num' === $q['orderby'] ) {
+        $args['orderby'] = 'meta_value_num';
+    }
+    if ( isset( $q['meta_key'] ) && '' !== $q['meta_key'] ) {
+        $args['meta_key'] = sanitize_key( (string) $q['meta_key'] );
+    }
+    if ( isset( $q['ps_faq_category'] ) && '' !== $q['ps_faq_category'] ) {
+        if ( ! isset( $args['tax_query'] ) || ! is_array( $args['tax_query'] ) ) {
+            $args['tax_query'] = [];
+        }
+        $args['tax_query'][] = [
+            'taxonomy' => 'ps_faq_category',
+            'field'    => 'slug',
+            'terms'    => sanitize_title( (string) $q['ps_faq_category'] ),
+        ];
+    }
+
+    return ps_rest_merge_ps_city_tag_tax( $args, $request );
+}
+
+/**
+ * @param array<string,mixed> $args    Query args for WP_Query.
+ * @param WP_REST_Request     $request Request object.
+ * @return array<string,mixed>
+ */
+function ps_rest_ps_testimonial_query( $args, $request ) {
+    if ( ! $request instanceof WP_REST_Request ) {
+        return $args;
+    }
+    $q = $request->get_query_params();
+    if ( isset( $q['orderby'] ) && 'meta_value_num' === $q['orderby'] ) {
+        $args['orderby'] = 'meta_value_num';
+    }
+    if ( isset( $q['meta_key'] ) && '' !== $q['meta_key'] ) {
+        $args['meta_key'] = sanitize_key( (string) $q['meta_key'] );
+    }
+    if ( isset( $q['meta_value'] ) && '' !== $q['meta_value'] ) {
+        $args['meta_value'] = sanitize_text_field( (string) $q['meta_value'] );
+    }
+
+    return $args;
+}
+
+/**
+ * @param array<string,mixed> $args    Query args for WP_Query.
+ * @param WP_REST_Request     $request Request object.
+ * @return array<string,mixed>
+ */
+function ps_rest_ps_service_query( $args, $request ) {
+    if ( ! $request instanceof WP_REST_Request ) {
+        return $args;
+    }
+    $q = $request->get_query_params();
+    if ( isset( $q['meta_key'] ) && '' !== $q['meta_key'] ) {
+        $args['meta_key'] = sanitize_key( (string) $q['meta_key'] );
+    }
+    if ( isset( $q['meta_value'] ) && '' !== $q['meta_value'] ) {
+        $args['meta_value'] = sanitize_text_field( (string) $q['meta_value'] );
+    }
+    if ( isset( $q['orderby'] ) && 'meta_value_num' === $q['orderby'] ) {
+        $args['orderby'] = 'meta_value_num';
+    }
+
+    return ps_rest_merge_ps_city_tag_tax( $args, $request );
+}
+
+/**
+ * @param array<string,mixed> $args    Query args for WP_Query.
+ * @param WP_REST_Request     $request Request object.
+ * @return array<string,mixed>
+ */
+function ps_rest_ps_property_query( $args, $request ) {
+    if ( ! $request instanceof WP_REST_Request ) {
+        return $args;
+    }
+    $q = $request->get_query_params();
+    if ( isset( $q['orderby'] ) && 'meta_value_num' === $q['orderby'] ) {
+        $args['orderby'] = 'meta_value_num';
+    }
+    if ( isset( $q['meta_key'] ) && '' !== $q['meta_key'] ) {
+        $args['meta_key'] = sanitize_key( (string) $q['meta_key'] );
+    }
+    if ( isset( $q['meta_value'] ) && '' !== $q['meta_value'] ) {
+        $args['meta_value'] = sanitize_text_field( (string) $q['meta_value'] );
+    }
+
+    return ps_rest_merge_ps_city_tag_tax( $args, $request );
+}
+
+/**
+ * REST collection params for standard posts — blog topic/area filters (slug or ID).
+ *
+ * @param array<string,mixed> $params Collection params.
+ * @param WP_Post_Type        $post_type Post type object.
+ * @return array<string,mixed>
+ */
+function ps_rest_post_collection_params( $params, $post_type ) {
+    if ( ! $post_type || 'post' !== $post_type->name ) {
+        return $params;
+    }
+    $params['ps_blog_topic'] = ps_rest_collection_param_tax_slug_or_id( $params['ps_blog_topic'] ?? null, 'ps_blog_topic' );
+    $params['ps_blog_area']  = ps_rest_collection_param_tax_slug_or_id( $params['ps_blog_area'] ?? null, 'ps_blog_area' );
+    $params['ps_city_tag']   = ps_rest_collection_param_tax_slug_or_id( $params['ps_city_tag'] ?? null, 'ps_city_tag' );
+    return $params;
+}
+
+/**
+ * Apply blog taxonomy filters to post REST queries (slug or numeric ID).
+ *
+ * @param array<string,mixed> $args    Query args.
+ * @param WP_REST_Request     $request Request.
+ * @return array<string,mixed>
+ */
+function ps_rest_post_query_blog_tax( $args, $request ) {
+    if ( ! $request instanceof WP_REST_Request ) {
+        return $args;
+    }
+    $q       = $request->get_query_params();
+    $clauses = [];
+    foreach ( [ 'ps_blog_topic' => 'ps_blog_topic', 'ps_blog_area' => 'ps_blog_area' ] as $param => $taxonomy ) {
+        if ( ! isset( $q[ $param ] ) || '' === $q[ $param ] ) {
+            continue;
+        }
+        $raw = $q[ $param ];
+        if ( is_numeric( $raw ) ) {
+            $clauses[] = [
+                'taxonomy' => $taxonomy,
+                'field'    => 'term_id',
+                'terms'    => (int) $raw,
+            ];
+        } else {
+            $clauses[] = [
+                'taxonomy' => $taxonomy,
+                'field'    => 'slug',
+                'terms'    => sanitize_title( (string) $raw ),
+            ];
+        }
+    }
+    if ( ! empty( $clauses ) ) {
+        if ( count( $clauses ) > 1 ) {
+            $args['tax_query'] = array_merge( [ 'relation' => 'AND' ], $clauses );
+        } else {
+            $args['tax_query'] = $clauses;
+        }
+    }
+    return $args;
+}
+
+/**
+ * Headless ?ps_city_tag= on blog post collections (slug / ID / list).
+ *
+ * @param array<string, mixed> $args    Query args.
+ * @param WP_REST_Request      $request Request.
+ * @return array<string, mixed>
+ */
+function ps_rest_post_query_ps_city_tag( $args, $request ) {
+    if ( ! $request instanceof WP_REST_Request ) {
+        return $args;
+    }
+    return ps_rest_merge_ps_city_tag_tax( $args, $request );
+}
+
+add_filter( 'rest_post_collection_params', 'ps_rest_post_collection_params', 10, 2 );
+add_filter( 'rest_post_query', 'ps_rest_post_query_blog_tax', 10, 2 );
+add_filter( 'rest_post_query', 'ps_rest_post_query_ps_city_tag', 15, 2 );
+
+add_filter( 'rest_ps_faq_query', 'ps_rest_ps_faq_query', 10, 2 );
+add_filter( 'rest_ps_testimonial_query', 'ps_rest_ps_testimonial_query', 10, 2 );
+add_filter( 'rest_ps_service_query', 'ps_rest_ps_service_query', 10, 2 );
+add_filter( 'rest_ps_property_query', 'ps_rest_ps_property_query', 10, 2 );
+
+// == TEMPORARY DEBUG — remove after deployment verification ==
+add_action( 'rest_api_init', 'ps_register_debug_rest_route' );
+
+/**
+ * Registers GET /wp-json/playastays/v1/debug-rest (temporary).
+ */
+function ps_register_debug_rest_route() {
+    register_rest_route(
+        'playastays/v1',
+        '/debug-rest',
+        [
+            'methods'             => 'GET',
+            'callback'            => 'ps_debug_rest_callback',
+            'permission_callback' => '__return_true',
+        ]
+    );
+}
+
+/**
+ * @return WP_REST_Response
+ */
+function ps_debug_rest_callback() {
+    return new WP_REST_Response(
+        [
+            'ok'                 => true,
+            'source'             => 'playastays-content-model.php',
+            'rest_patch_version' => 'v2-collection-params',
+        ],
+        200
+    );
 }

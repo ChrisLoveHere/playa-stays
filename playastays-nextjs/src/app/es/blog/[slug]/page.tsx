@@ -9,9 +9,17 @@
 import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
 import { notFound } from 'next/navigation'
-import { getBlogPost, getBlogPosts, getBlogSlugs } from '@/lib/wordpress'
+import {
+  getBlogPost,
+  getBlogPosts,
+  getBlogSlugs,
+  getBlogTopicTerms,
+  getBlogAreaTerms,
+} from '@/lib/wordpress'
 import { buildMetadata } from '@/lib/seo'
+import { SITE_URL } from '@/lib/site-url'
 import { BlogPostTemplate } from '@/components/templates/BlogPostTemplate'
+import { blogPostDisplayFields } from '@/components/blog/blog-hub-display'
 
 export const revalidate = 3600
 
@@ -26,8 +34,8 @@ export async function generateMetadata(
   const post = await getBlogPost(params.slug)
   if (!post) return {}
 
-  const canonical = `https://www.playastays.com/es/blog/${params.slug}/`
-  const enHref    = `https://www.playastays.com/blog/${params.slug}/`
+  const canonical = `${SITE_URL}/es/blog/${params.slug}/`
+  const enHref    = `${SITE_URL}/blog/${params.slug}/`
   const image     = post._embedded?.['wp:featuredmedia']?.[0]?.source_url
 
   // Noindex if no Spanish content — never rank ES page with EN title
@@ -41,8 +49,12 @@ export async function generateMetadata(
     })
   }
 
+  const titleEsPlain = (post.meta.ps_title_es || post.title.rendered).replace(/<[^>]*>/g, '').trim()
+
   return buildMetadata({
-    title:       post.meta.ps_seo_title    || post.meta.ps_title_es,
+    title:
+      (post.meta.ps_seo_title && post.meta.ps_seo_title.trim()) ||
+      `${titleEsPlain} | PlayaStays`,
     description: post.meta.ps_seo_desc     || post.meta.ps_excerpt_es || post.excerpt.rendered.replace(/<[^>]*>/g, ''),
     canonical,
     hreflangEn:  enHref,
@@ -55,16 +67,24 @@ export default async function EsBlogPostPage(
 ) {
   const { isEnabled: preview } = draftMode()
 
-  const [post, relatedPosts] = await Promise.all([
+  const [post, relatedPosts, topicTerms, areaTerms] = await Promise.all([
     getBlogPost(params.slug, preview),
     getBlogPosts({ perPage: 4, preview }),
+    getBlogTopicTerms(),
+    getBlogAreaTerms(),
   ])
 
   if (!post) notFound()
 
   const related = relatedPosts.filter(p => p.slug !== params.slug).slice(0, 3)
+  const tagPillLabel = blogPostDisplayFields(post, 'es', topicTerms, areaTerms).tag
 
   return (
-    <BlogPostTemplate post={post} relatedPosts={related} locale="es" />
+    <BlogPostTemplate
+      post={post}
+      relatedPosts={related}
+      locale="es"
+      tagPillLabel={tagPillLabel}
+    />
   )
 }

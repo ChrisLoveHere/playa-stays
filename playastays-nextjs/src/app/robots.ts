@@ -4,6 +4,7 @@
 // ============================================================
 
 import type { MetadataRoute } from 'next'
+import { SITE_URL } from '@/lib/schema'
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -11,11 +12,10 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: [
-          '/api/',
-        ],
+        disallow: ['/api/', '/admin/', '/portal/', '/login/'],
       },
     ],
-    sitemap: 'https://www.playastays.com/sitemap.xml',
+    sitemap: `${SITE_URL}/sitemap.xml`,
+    host: new URL(SITE_URL).host,
   }
 }

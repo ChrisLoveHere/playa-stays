@@ -1,21 +1,111 @@
 // ============================================================
-// PlayaStays â TypeScript Types
-// All WP REST API responses are typed here.
-// ps_computed fields are resolved server-side in the WP plugin.
+// PlayaStays — shared app types (single barrel: `@/types`)
+//
+// WordPress REST entity shapes, UI primitives, SEO helpers, forms.
+// Keep aligned with `lib/wordpress.ts` and `lib/seo.ts`.
 // ============================================================
 
-// ââ Shared primitives âââââââââââââââââââââââââââââââââââââ
+// ── App & i18n ────────────────────────────────────────────
 
-export interface WPImage {
-  id: number
-  url: string
-  alt: string
-  width?: number
-  height?: number
+/** Supported site locales (re-exported from `@/lib/i18n` for convenience) */
+export type Locale = 'en' | 'es'
+
+/** Optional locale on templates / cards */
+export type WithLocale<P = object> = P & { locale?: Locale }
+
+// ── SEO / metadata (Next `generateMetadata` / `buildMetadata` inputs) ──
+
+/** Common `ps_*` SEO fields on CMS entities */
+export interface EntitySeoFields {
+  ps_seo_title?: string
+  ps_seo_desc?: string
 }
 
+/** Options passed to `buildMetadata()` in `lib/seo.ts` */
+export interface SeoMetadataInput {
+  title: string
+  description: string
+  canonical: string
+  hreflangEs?: string
+  hreflangEn?: string
+  noindex?: boolean
+  ogImage?: string
+}
+
+// ── Navigation / layout ───────────────────────────────────
+
+export interface BreadcrumbItem {
+  label: string
+  href?: string | null
+}
+
+// ── Forms & API payloads ──────────────────────────────────
+
+/** Lead form body: `/api/lead` POST + WP `submit-lead` */
+export interface LeadFormData {
+  first_name: string
+  email: string
+  phone?: string
+  property_type?: string
+  current_status?: string
+  city?: string
+  source?: string
+}
+
+/** Alias — same shape as `LeadFormData` */
+export type LeadPayload = LeadFormData
+
+/**
+ * Full payload after `/api/lead` merges client metadata + server fields.
+ * HubSpot + WordPress receive this shape (HubSpot maps fields in `hubspot-leads.ts`).
+ * Future ops sync hook: `lib/integrations/lead-handoff.ts`.
+ */
+export interface LeadSubmissionPayload extends LeadFormData {
+  locale?: string
+  page_url?: string
+  referrer?: string
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  utm_term?: string
+  utm_content?: string
+  /** ISO timestamp — set by API route */
+  submitted_at?: string
+  source_ip?: string
+  user_agent?: string
+}
+
+// ── Pricing UI (PricingGrid + pricing-data) ───────────────
+
+export interface PricingPlan {
+  tier: string
+  name: string
+  unit?: string
+  desc: string
+  features: string[]
+  cta: { label: string; href: string }
+  featured?: boolean
+  badge?: string
+}
+
+// ── WordPress REST primitives ─────────────────────────────
+
+/** Standard WP `title` / `excerpt` / `content` fields */
+export interface WpRendered {
+  rendered: string
+}
+
+export interface WpMediaSize {
+  /** WP attachment ID — present in ps_computed REST responses */
+  id?: number
+  url: string
+  alt?: string
+}
+
+/** Trust bar / hero / site config stat line */
 export interface Stat {
-  val: string
+  /** Display value — may come from CMS as string or number */
+  val: string | number
   key: string
 }
 
@@ -24,93 +114,30 @@ export interface CtaLink {
   href: string
 }
 
-// ââ Property âââââââââââââââââââââââââââââââââââââââââââââ
-
-export interface BookingLinks {
-  airbnb?: string
-  vrbo?: string
-  booking?: string
-  direct?: string
-}
-
-export interface PropertyMeta {
-  ps_city: string
-  ps_city_id: number
-  ps_neighborhood: string
-  ps_bedrooms: number
-  ps_bathrooms: number
-  ps_guests: number
-  ps_sqm: number
-  ps_nightly_rate: number
-  ps_monthly_rate: number
-  ps_currency: string
-  ps_min_stay_nights: number
-  ps_avg_occupancy: number
-  ps_avg_rating: number
-  ps_review_count: number
-  ps_monthly_income: number
-  ps_listing_status: 'active' | 'inactive' | 'pending_review' | 'draft'
-  ps_managed_by_ps: boolean
-  ps_seo_title: string
-  ps_seo_desc: string
-  ps_title_es: string
-  ps_excerpt_es: string
-  ps_content_es: string
-}
-
-export interface PropertyComputed {
-  featured_image: WPImage | null
-  gallery: WPImage[]
-  booking_links: BookingLinks
-  amenities: string[]
-  owner: { id: number; display_name: string } | null
-}
-
-export interface Property {
-  id: number
-  slug: string
-  title: { rendered: string }
-  content: { rendered: string }
-  excerpt: { rendered: string }
-  meta: PropertyMeta
-  ps_computed: PropertyComputed
-  ps_property_type: number[]
-  ps_bedrooms: number[]
-  ps_feature: number[]
-  ps_neighborhood: number[]
-}
-
-// ââ City âââââââââââââââââââââââââââââââââââââââââââââââââ
-
 export interface Neighborhood {
   name: string
-  slug: string
   desc: string
-  image_id: number
+  /** Future deep link: /[city]/[neighborhood-slug]/ — optional until neighborhood pages exist */
+  slug?: string
 }
 
-export interface CityMeta {
-  ps_country: string
-  ps_state: string
-  ps_lat: number
-  ps_lng: number
-  ps_market_note: string
+// ── Cities ─────────────────────────────────────────────────
+
+export interface CityMeta extends EntitySeoFields {
+  ps_title_es?: string
+  ps_excerpt_es?: string
+  ps_market_note?: string
   ps_market_note_es?: string
-  ps_best_for: string
-  ps_peak_season: string
-  ps_avg_nightly: string
-  ps_avg_occupancy: string
-  ps_avg_monthly_income: string
-  ps_seo_title: string
-  ps_seo_desc: string
-  ps_title_es: string
-  ps_excerpt_es: string
-  ps_content_es: string
-  ps_neighborhoods_es: string
+  ps_best_for?: string
+  ps_peak_season?: string
+  ps_avg_occupancy?: string
+  ps_avg_nightly?: string
+  ps_avg_monthly_income?: string
+  ps_state?: string
+  [key: string]: unknown
 }
 
 export interface CityComputed {
-  featured_image: WPImage | null
   stats: Stat[]
   neighborhoods: Neighborhood[]
 }
@@ -118,153 +145,296 @@ export interface CityComputed {
 export interface City {
   id: number
   slug: string
-  title: { rendered: string }
-  content: { rendered: string }
-  excerpt: { rendered: string }
+  title: WpRendered
+  excerpt: WpRendered
+  content: WpRendered
   meta: CityMeta
   ps_computed: CityComputed
 }
 
-// ââ Service âââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Services ──────────────────────────────────────────────
 
-export type ServiceSlug =
-  | 'property-management'
-  | 'airbnb-management'
-  | 'vacation-rentals'
-  | 'condos-for-rent'
-  | 'beachfront-rentals'
-  | 'investment-property'
-  | 'sell-property'
+export interface ServiceMeta extends EntitySeoFields {
+  ps_service_slug: string
+  ps_seo_title_es?: string
+  ps_hero_headline?: string
+  ps_hero_subheadline?: string
+  ps_hero_headline_es?: string
+  ps_hero_subheadline_es?: string
+  ps_content_es?: string
+  ps_cta_primary_text?: string
+  ps_cta_primary_url?: string
+  [key: string]: unknown
+}
 
 export interface ServiceStep {
-  icon: string  // SVG path string
   title: string
   desc: string
-}
-
-export interface ServiceFeature {
-  icon: string
-  title: string
-  desc: string
-}
-
-export interface ServiceMeta {
-  ps_service_slug: ServiceSlug
-  ps_city_id: number
-  ps_hero_headline: string
-  ps_hero_subheadline: string
-  ps_cta_primary_text: string
-  ps_cta_primary_url: string
-  ps_schema_type: string
-  ps_seo_title: string
-  ps_seo_desc: string
-  ps_seo_title_es: string
-  ps_seo_desc_es: string
-  ps_hero_headline_es: string
-  ps_hero_subheadline_es: string
-  ps_content_es: string
 }
 
 export interface ServiceComputed {
-  featured_image: WPImage | null
   stats: Stat[]
   steps: ServiceStep[]
-  features: ServiceFeature[]
-  faq_ids: number[]
-  related_services: Array<{ id: number; title: string; slug: string; ps_service_slug: ServiceSlug }>
 }
 
 export interface Service {
   id: number
-  slug: string
-  title: { rendered: string }
-  content: { rendered: string }
-  excerpt: { rendered: string }
+  title: WpRendered
+  excerpt: WpRendered
+  content: WpRendered
   meta: ServiceMeta
   ps_computed: ServiceComputed
-  ps_city_tag: number[]
 }
 
-// ââ FAQ âââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── Properties ────────────────────────────────────────────
+
+export interface PropertyMeta extends EntitySeoFields {
+  // ── Identity / bilingual ────────────────────────────────
+  ps_title_es?: string
+  ps_excerpt_es?: string
+  ps_content_es?: string
+
+  // ── Location ────────────────────────────────────────────
+  ps_city: string
+  ps_neighborhood?: string
+  ps_state?: string
+  ps_country?: string
+  ps_address_line_1?: string
+  ps_address_line_2?: string
+  ps_postal_code?: string
+  ps_lat?: number
+  ps_lng?: number
+  /** exact | approximate | hidden — legacy map display hint */
+  ps_map_display_mode?: 'exact' | 'approximate' | 'hidden'
+  /**
+   * Listing map embed policy: public condo/development vs private residence.
+   * Unknown/missing → treated as private (approximate) on the public site.
+   */
+  ps_location_type?: 'public_building' | 'private_address' | string
+  /** Free-text query for Embed API when no `ps_google_place_id`. */
+  ps_map_query?: string
+  /** Google Place ID for public building embeds (preferred when set). */
+  ps_google_place_id?: string
+  /** Approximate center for private listings (view-mode embed). */
+  ps_approximate_lat?: number
+  ps_approximate_lng?: number
+  /** Broader area label (e.g. region) when neighborhood is insufficient. */
+  ps_service_area?: string
+
+  // ── Specs ───────────────────────────────────────────────
+  /** CMS: condo | villa | penthouse | studio | … — used for browse type filter */
+  ps_property_type?: string
+  ps_bedrooms: number
+  ps_bathrooms: number
+  ps_guests: number
+  /** Actual bed count (distinct from bedrooms) */
+  ps_beds?: number
+  /** Square meters — present in CMS, not yet surfaced on frontend */
+  ps_sqm?: number
+  /** Building floor / level (condos, penthouses) */
+  ps_floor?: number
+
+  // ── Listing & status ────────────────────────────────────
+  /**
+   * rent = short-term / vacation listing; sale = purchase; both = shown in either mode when filtered.
+   * If absent, inferred from ps_nightly_rate / ps_sale_price in browse helpers.
+   */
+  ps_listing_type?: 'rent' | 'sale' | 'both'
+  /**
+   * How the rental is positioned: vacation (short-term), long-term, or hybrid.
+   * Separate from ps_listing_type; not used in URL paths.
+   */
+  ps_rental_strategy?: 'vacation_rental' | 'long_term' | 'hybrid' | string
+  ps_listing_status?: string
+  ps_managed_by_ps: boolean
+  ps_featured?: boolean
+
+  // ── Pricing ─────────────────────────────────────────────
+  ps_nightly_rate: number
+  ps_monthly_rate?: number
+  /** Listing price in USD when for-sale inventory is enabled in CMS */
+  ps_sale_price?: number
+  ps_cleaning_fee?: number
+  ps_currency?: string
+  ps_min_stay_nights?: number
+
+  // ── Performance / reviews ───────────────────────────────
+  ps_avg_rating: number
+  ps_review_count: number
+  ps_monthly_income: number
+  ps_avg_occupancy: number
+
+  // ── Booking ─────────────────────────────────────────────
+  ps_airbnb_url?: string
+  ps_vrbo_url?: string
+  ps_booking_url?: string
+  ps_direct_url?: string
+  /** instant | inquiry | external — how guests confirm dates */
+  ps_booking_mode?: string
+
+  // ── Availability / calendar ─────────────────────────────
+  /**
+   * JSON: see AvailabilityJsonPayload — blocked/booked spans for rental calendar.
+   * Owner/admin/PMS sync can populate; headless parses in lib/availability.ts
+   */
+  ps_availability_json?: string
+  /** ISO date — optional quick display before full calendar JSON exists */
+  ps_next_available_date?: string
+
+  // ── Structured amenities ────────────────────────────────
+  /**
+   * JSON array of canonical kebab-case keys from `lib/amenity-taxonomy.ts`
+   * (`AMENITY_CATEGORIES`). When populated, keys are merged with regex matches
+   * on the amenities text blob. Snake_case entries are normalized to kebab-case.
+   * Example: `["wifi","pool","air-conditioning","balcony","beachfront"]`
+   */
+  ps_amenity_keys?: string
+
+  // ── Guest-facing details ────────────────────────────────
+  ps_check_in_time?: string
+  ps_check_out_time?: string
+  /** JSON or plain text — house rules for guests */
+  ps_house_rules?: string
+  ps_house_rules_es?: string
+
+  // ── Owner / operations ──────────────────────────────────
+  /** WP user ID of the property owner */
+  ps_owner_id?: number
+  /** Assigned property manager WP user ID */
+  ps_manager_id?: number
+  /** HOA or building/development name */
+  ps_building_name?: string
+  /** Private notes visible only to admin/managers — never exposed to REST public */
+  ps_internal_notes?: string
+  /** JSON array: operational activity log (append-only notes), admin-only */
+  ps_ops_activity_log?: string
+  /** JSON array: lightweight ops issues / maintenance tracker, admin-only */
+  ps_ops_issues?: string
+  /** active | needs-attention | maintenance | onboarding | inactive */
+  ps_ops_status?: string
+  /** ISO date — last time property was inspected or physically checked */
+  ps_last_inspection_date?: string
+}
+
+export interface PropertyComputed {
+  featured_image?: WpMediaSize
+  gallery: WpMediaSize[]
+  amenities: string[]
+  booking_links: {
+    airbnb?: string
+    vrbo?: string
+    booking?: string
+    direct?: string
+  }
+  /** Owner display info resolved from ps_owner_id */
+  owner?: {
+    id: number
+    display_name: string
+  }
+  /** Manager display info resolved from ps_manager_id */
+  manager?: {
+    id: number
+    display_name: string
+  }
+  /**
+   * Optional REST-computed mirror of parsed availability (if plugin adds it).
+   * App primarily derives calendar from meta via getPropertyAvailabilitySummary().
+   */
+  availability?: import('./availability').PropertyAvailabilitySummary
+}
+
+export interface Property {
+  id: number
+  slug: string
+  /** WordPress `post_modified` when REST returns it — used for sitemap lastmod. */
+  modified?: string
+  title: WpRendered
+  excerpt: WpRendered
+  content: WpRendered
+  meta: PropertyMeta
+  ps_computed: PropertyComputed
+}
+
+// ── FAQs & testimonials ─────────────────────────────────────
 
 export interface FAQMeta {
   ps_answer: string
-  ps_service_ids: string   // JSON int[]
-  ps_city_ids: string      // JSON int[]
-  ps_sort_order: number
-  ps_answer_es: string
-  ps_question_es: string
+  ps_question_es?: string
+  ps_answer_es?: string
+  [key: string]: unknown
 }
 
 export interface FAQ {
   id: number
-  title: { rendered: string }
+  title: WpRendered
   meta: FAQMeta
 }
 
-// ââ Testimonial âââââââââââââââââââââââââââââââââââââââââââ
-
 export interface TestimonialMeta {
+  ps_rating?: number
   ps_author_name: string
-  ps_author_role: string
-  ps_author_initials: string
-  ps_rating: number
-  ps_property_id: number
-  ps_service_id: number
-  ps_sort_order: number
-  ps_featured: boolean
+  ps_author_initials?: string
+  ps_author_role?: string
+  [key: string]: unknown
 }
 
 export interface Testimonial {
   id: number
-  title: { rendered: string }
-  content: { rendered: string }
+  content: WpRendered
   meta: TestimonialMeta
 }
 
-// ââ Blog Post âââââââââââââââââââââââââââââââââââââââââââââ
+// ── Blog ──────────────────────────────────────────────────
 
-export interface BlogPostMeta {
-  ps_seo_title: string
-  ps_seo_desc: string
-  ps_title_es: string
-  ps_excerpt_es: string
-  ps_content_es: string
+export interface BlogPostMeta extends EntitySeoFields {
+  ps_title_es?: string
+  ps_excerpt_es?: string
+  ps_content_es?: string
+  /** WP: sidebar deep links on blog article (public EN slugs). */
+  ps_primary_city?: string
+  ps_primary_service?: string
+  [key: string]: unknown
+}
+
+export interface BlogPostEmbedded {
+  'wp:featuredmedia'?: Array<{
+    source_url?: string
+    alt_text?: string
+  }>
+  author?: Array<{ name?: string }>
+}
+
+/** WordPress REST term (blog topic / area taxonomies). */
+export interface WpTerm {
+  id: number
+  name: string
+  slug: string
+  taxonomy?: string
 }
 
 export interface BlogPost {
   id: number
   slug: string
-  title: { rendered: string }
-  content: { rendered: string }
-  excerpt: { rendered: string }
   date: string
   modified: string
-  featured_media: number
+  title: WpRendered
+  excerpt: WpRendered
+  content: WpRendered
   meta: BlogPostMeta
-  ps_city_tag: number[]
-  _embedded?: {
-    'wp:featuredmedia'?: Array<{ source_url: string; alt_text: string }>
-    author?: Array<{ name: string; avatar_urls?: Record<string, string> }>
-  }
+  /** Term IDs from `ps_blog_topic` taxonomy (WordPress REST). */
+  ps_blog_topic?: number[]
+  /** Term IDs from `ps_blog_area` taxonomy (WordPress REST). */
+  ps_blog_area?: number[]
+  _embedded?: BlogPostEmbedded
 }
 
-// ââ Lead form âââââââââââââââââââââââââââââââââââââââââââââ
+// ── Site config (footer / nav / trust) ───────────────────
 
-export interface LeadFormData {
-  first_name: string
-  last_name?: string
-  email: string
-  phone?: string
-  property_type?: string
-  neighborhood?: string
-  city: string
-  source: string
-  current_status?: string
-  notes?: string
+export interface SiteConfigSocial {
+  facebook?: string
+  instagram?: string
+  linkedin?: string
 }
-
-// ââ Site config (from WP Options API) ââââââââââââââââââââ
 
 export interface SiteConfig {
   phone: string
@@ -272,5 +442,21 @@ export interface SiteConfig {
   email: string
   address: string
   trust_stats: Stat[]
-  social: { facebook?: string; instagram?: string; linkedin?: string }
+  social: SiteConfigSocial
 }
+
+// ── Card / template prop helpers (optional composition) ───
+
+export type PropertyCardProps = WithLocale<{ property: Property }>
+
+export type TestimonialCardProps = { testimonial: Testimonial }
+
+export type BlogCardProps = { post: BlogPost }
+
+// ── Availability (calendar / PMS) ───────────────────────────
+export type {
+  AvailabilityBlock,
+  AvailabilityBlockKind,
+  AvailabilityJsonPayload,
+  PropertyAvailabilitySummary,
+} from './availability'

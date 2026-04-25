@@ -18,7 +18,9 @@ export function FaqAccordion({ items, eyebrow, headline }: FaqAccordionProps) {
   return (
     <div>
       {eyebrow  && <div className="eyebrow mb-8">{eyebrow}</div>}
-      {headline && <h2 className="section-title mt-12 mb-40" style={{ fontSize: 'clamp(1.8rem,3vw,2.6rem)' }}>{headline}</h2>}
+      {headline && (
+        <h2 className="section-title faq-section-title">{headline}</h2>
+      )}
       <div className="faq-list">
         {items.map((item, i) => (
           <div key={i} className={`faq-item${openIdx === i ? ' open' : ''}`}>

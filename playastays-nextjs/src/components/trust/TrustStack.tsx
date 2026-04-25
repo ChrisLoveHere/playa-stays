@@ -14,6 +14,7 @@
 // ============================================================
 
 import type { Locale } from '@/lib/i18n'
+import styles from './TrustStack.module.css'
 
 interface TrustStackProps {
   locale:   Locale
@@ -69,8 +70,6 @@ const SIGNALS: TrustSignal[] = [
     icon:   '⭐',
     textEn: '4.9★ owner satisfaction',
     textEs: '4.9★ satisfacción del propietario',
-    subEn:  'Across 200+ managed properties',
-    subEs:  'En más de 200 propiedades',
   },
 ]
 
@@ -119,51 +118,30 @@ export function TrustStack({
     )
   }
 
-  // Grid variant — 2×2 or 3×2 cards with sub-text
+  // Grid variant — explicit 3×2 on desktop (equal row heights via grid stretch)
   return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-      gap: 12,
-    }}>
+    <div className={styles.trustStackGrid}>
       {SIGNALS.map((s, i) => (
-        <div key={i} style={{
-          display: 'flex',
-          gap: 12,
-          alignItems: 'flex-start',
-          padding: '14px 16px',
-          borderRadius: 'var(--r-md)',
-          background: isDark
-            ? 'rgba(255,255,255,0.05)'
-            : 'var(--white)',
-          border: isDark
-            ? '1px solid rgba(255,255,255,0.08)'
-            : '1px solid var(--sand-dark)',
-        }}>
-          <span style={{
-            fontSize: '1.15rem',
-            lineHeight: 1,
-            flexShrink: 0,
-            marginTop: 2,
-          }}>
+        <div
+          key={i}
+          className={`${styles.card} ${isDark ? styles.cardDark : ''}`}
+        >
+          <span
+            className={`${styles.iconWrap} ${isDark ? styles.iconWrapDark : ''}`}
+            aria-hidden
+          >
             {s.icon}
           </span>
-          <div>
-            <div style={{
-              fontSize: '0.8rem',
-              fontWeight: 700,
-              color: isDark ? 'var(--white)' : 'var(--charcoal)',
-              lineHeight: 1.3,
-              marginBottom: 3,
-            }}>
+          <div className={styles.text}>
+            <div
+              className={`${styles.title} ${isDark ? styles.titleDark : styles.titleLight}`}
+            >
               {isEs ? s.textEs : s.textEn}
             </div>
             {(s.subEn || s.subEs) && (
-              <div style={{
-                fontSize: '0.7rem',
-                color: isDark ? 'rgba(255,255,255,0.4)' : 'var(--light)',
-                lineHeight: 1.4,
-              }}>
+              <div
+                className={`${styles.sub} ${isDark ? styles.subDark : styles.subLight}`}
+              >
                 {isEs ? s.subEs : s.subEn}
               </div>
             )}

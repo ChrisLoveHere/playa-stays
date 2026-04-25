@@ -5,13 +5,15 @@ import { buildMetadata } from '@/lib/seo'
 import { Hero } from '@/components/hero/Hero'
 import { TrustBar, StepsGrid, CtaStrip } from '@/components/sections'
 import { FaqAccordion } from '@/components/content/FaqAccordion'
+import { limitPublicFaqs } from '@/lib/faq-helpers'
 import { LeadForm } from '@/components/forms/LeadForm'
 
 export const revalidate = 86400
 
 export const metadata: Metadata = buildMetadata({
   title: 'List Your Property | Get a Free Revenue Estimate | PlayaStays',
-  description: 'List your Playa del Carmen vacation rental with PlayaStays. Get a free income estimate based on real market data. 200+ properties managed. No commitment required.',
+  description:
+    'List your Playa del Carmen vacation rental with PlayaStays. Get a free income estimate based on real market data. No commitment required.',
   canonical: 'https://www.playastays.com/list-your-property/',
   hreflangEs: 'https://www.playastays.com/es/publica-tu-propiedad/',
 })
@@ -55,13 +57,14 @@ export default async function ListYourPropertyPage() {
     <>
       <Hero
         variant="split"
+        locale="en"
         breadcrumbs={[
           { label: 'Home', href: '/' },
           { label: 'List Your Property', href: null },
         ]}
         tag="🏡 List Your Property"
-        headline="Maximize your<br /><em>rental income</em><br />in paradise"
-        sub="Full-service vacation rental management across the Riviera Maya. We handle everything — you collect the revenue."
+        headline="Tell us about your property.<br />We'll send a <em>real revenue number</em> in 24 hours."
+        sub="Full-service vacation rental management across the Riviera Maya — photography, listings, pricing, and guest operations."
         stats={config.trust_stats}
         primaryCta={{ label: 'Get Free Estimate', href: '#estimate-form' }}
         secondaryCta={{ label: 'How It Works', href: '#how-it-works' }}
@@ -75,7 +78,7 @@ export default async function ListYourPropertyPage() {
         }
       />
 
-      <TrustBar stats={config.trust_stats} />
+      <TrustBar stats={config.trust_stats} locale="en" />
 
       <StepsGrid
         eyebrow="How It Works"
@@ -90,7 +93,9 @@ export default async function ListYourPropertyPage() {
             <FaqAccordion
               eyebrow="Common Questions"
               headline="FAQ"
-              items={faqs.map(f => ({ question: f.title.rendered, answer: f.meta.ps_answer }))}
+              items={limitPublicFaqs(
+                faqs.map(f => ({ question: f.title.rendered, answer: f.meta.ps_answer })),
+              )}
             />
             <div style={{
               background: 'var(--white)', borderRadius: 'var(--r-lg)',

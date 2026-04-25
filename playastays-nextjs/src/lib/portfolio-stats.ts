@@ -52,12 +52,11 @@ export function computePortfolioStats(
 /**
  * Fallback stats used when no live property data is available
  * (e.g. first load before CMS is seeded).
- * Based on the market averages in pricing-data.ts.
  */
 export const FALLBACK_PORTFOLIO_STATS: PortfolioStats = {
-  totalActive:        200,
-  avgMonthlyIncome:   3200,
-  topMonthlyIncome:   9800,
+  totalActive:        0,
+  avgMonthlyIncome:   2800,
+  topMonthlyIncome:   7100,
   avgOccupancy:       82,
   totalRevenue12mo:   0,
   propertiesWithData: 0,

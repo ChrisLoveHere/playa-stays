@@ -12,12 +12,14 @@ import { Hero } from '@/components/hero/Hero'
 import { TrustBar, StepsGrid, CtaStrip } from '@/components/sections'
 import { FaqAccordion } from '@/components/content/FaqAccordion'
 import { LeadForm } from '@/components/forms/LeadForm'
+import { getBilingualFaqItems, limitPublicFaqs } from '@/lib/faq-helpers'
 
 export const revalidate = 86400
 
 export const metadata: Metadata = buildMetadata({
   title: 'Publica tu Propiedad | Estimado de Ingresos Gratis | PlayaStays',
-  description: 'Publica tu renta vacacional en Playa del Carmen con PlayaStays. Estimado de ingresos gratis basado en datos reales del mercado. 200+ propiedades administradas. Sin compromiso.',
+  description:
+    'Publica tu renta vacacional en Playa del Carmen con PlayaStays. Estimado de ingresos gratis basado en datos reales del mercado. Sin compromiso.',
   canonical: 'https://www.playastays.com/es/publica-tu-propiedad/',
   hreflangEn: 'https://www.playastays.com/list-your-property/',
 })
@@ -57,24 +59,20 @@ export default async function PublicaTuPropiedadPage() {
     },
   ]
 
-  //// Use ES answers when available, fall back to EN
-const faqItems = faqs.map(f => ({
-  // cast meta to any and use bracket notation for Spanish fields
-  question: (f.meta as any)['ps_question_es'] || f.title.rendered,
-  answer:   (f.meta as any)['ps_answer_es']   || f.meta.ps_answer,
-}))
+  const faqItems = limitPublicFaqs(getBilingualFaqItems(faqs, 'es'))
 
   return (
     <>
       <Hero
         variant="split"
+        locale="es"
         breadcrumbs={[
           { label: 'Inicio', href: '/es/' },
           { label: 'Publica tu Propiedad', href: null },
         ]}
         tag="🏡 Publica tu Propiedad"
-        headline="Maximiza tus<br /><em>ingresos de renta</em><br />en el paraíso"
-        sub="Administración integral de rentas vacacionales en la Riviera Maya. Nosotros nos encargamos de todo — tú recibes los ingresos."
+        headline="Cuéntanos sobre tu propiedad.<br />Te enviamos un <em>número real de ingresos</em> en 24 horas."
+        sub="Administración integral en la Riviera Maya: fotografía, anuncios, precios y operación con huéspedes."
         stats={config.trust_stats}
         primaryCta={{ label: 'Obtener estimado gratis', href: '#estimate-form' }}
         secondaryCta={{ label: 'Cómo funciona', href: '#how-it-works' }}
@@ -89,14 +87,15 @@ const faqItems = faqs.map(f => ({
         }
       />
 
-      <TrustBar stats={[
-        { val: '200+', key: 'Propiedades administradas' },
-        { val: '4.9★', key: 'Satisfacción del propietario' },
-        { val: '22%+', key: 'Aumento de ingresos' },
-        { val: '24/7', key: 'Soporte local' },
-        { val: 'ES/EN', key: 'Equipo bilingüe' },
-        { val: '<5min', key: 'Respuesta a huéspedes' },
-      ]} />
+      <TrustBar
+        locale="es"
+        stats={[
+          { val: '4.9★', key: 'Owner satisfaction' },
+          { val: '22%+', key: 'Net income uplift' },
+          { val: '24/7', key: 'Local support' },
+          { val: 'ES/EN', key: 'Bilingual team' },
+        ]}
+      />
 
       <StepsGrid
         eyebrow="Cómo Funciona"

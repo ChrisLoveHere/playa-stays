@@ -3,25 +3,36 @@
 // One template drives all 42 city-service pages.
 // Service type is detected from service.meta.ps_service_slug.
 // Content differences are purely data-driven — no branching HTML.
+// Page role: strongest commercial page for exact city + service (@/content/page-roles).
 // ============================================================
 
 import Link from 'next/link'
 import type { City, Service, FAQ, Testimonial } from '@/types'
-import type { Locale } from '@/lib/i18n'
-import { SERVICE_SLUG_EN_TO_ES } from '@/lib/i18n'
+import { serviceLabel, SERVICE_SLUG_EN_TO_ES, type Locale } from '@/lib/i18n'
+import { publicEnSlugFromPs } from '@/lib/service-url-slugs'
+import { serviceHubHref, wpSlugToServiceHubId } from '@/lib/service-hub-routes'
 import { Hero } from '@/components/hero/Hero'
 import {
-  TrustBar, StepsGrid, NeighborhoodList, CaseStats,
-  OwnerBanner, CtaStrip, InternalLinks, SvcList,
+  StepsGrid, NeighborhoodList, CaseStats,
+  OwnerBanner, InternalLinks, SvcList,
 } from '@/components/sections'
-import { PricingGrid, type PricingPlan } from '@/components/sections/PricingGrid'
+import { PricingGrid } from '@/components/sections/PricingGrid'
+import type { PricingPlan } from '@/types'
 import { FaqAccordion } from '@/components/content/FaqAccordion'
-import { TestimonialCard } from '@/components/content/Cards'
 import { LeadForm } from '@/components/forms/LeadForm'
 import { serviceSchema } from '@/lib/seo'
 import { PerformanceProof } from '@/components/trust/PerformanceProof'
-import { TrustStack } from '@/components/trust/TrustStack'
 import { FALLBACK_PORTFOLIO_STATS } from '@/lib/portfolio-stats'
+import { PlayaDelCarmenPropertyManagement } from '@/components/templates/PlayaDelCarmenPropertyManagement'
+import { PlayaDelCarmenAirbnbManagement } from '@/components/templates/PlayaDelCarmenAirbnbManagement'
+import { getBilingualFaqItems, limitPublicFaqs, PUBLIC_FAQ_LIMIT_CITY } from '@/lib/faq-helpers'
+import {
+  genericHeroSubhead,
+  ownerBannerHeadlineForServicePage,
+  padServicePageFaqs,
+  fallbackMarketContextLine,
+  fallbackBestForLine,
+} from '@/lib/service-page-fallbacks'
 
 // Service types that show the lead form in the hero
 const OWNER_INTENT_SERVICES = new Set([
@@ -35,6 +46,13 @@ const OWNER_INTENT_SERVICES = new Set([
 const PRICED_SERVICES = new Set([
   'property-management',
   'airbnb-management',
+])
+
+// Guest-intent rental listing pages — hero secondary should not duplicate city rentals nav
+const GUEST_RENTAL_SERVICES = new Set([
+  'vacation-rentals',
+  'condos-for-rent',
+  'beachfront-rentals',
 ])
 
 interface ServicePageTemplateProps {
@@ -64,41 +82,85 @@ export function ServicePageTemplate({
   const hasPricing = PRICED_SERVICES.has(svcSlug)
 
   // ES-aware content: use _es meta fields when locale='es', fall back to EN
-  const headline  = isEs && meta.ps_hero_headline_es   ? meta.ps_hero_headline_es   : (meta.ps_hero_headline || service.title.rendered)
-  const subhead   = isEs && meta.ps_hero_subheadline_es ? meta.ps_hero_subheadline_es : (meta.ps_hero_subheadline || service.excerpt.rendered.replace(/<[^>]*>/g, ''))
+  const serviceTitlePlain = service.title.rendered.replace(/<[^>]*>/g, '').trim()
+  const cmsHeadlineRaw = isEs && meta.ps_hero_headline_es ? meta.ps_hero_headline_es : meta.ps_hero_headline
+  const cmsHeadline = typeof cmsHeadlineRaw === 'string' ? cmsHeadlineRaw.trim() : ''
+  const headline =
+    cmsHeadline ||
+    (svcSlug === 'property-management' || svcSlug === 'airbnb-management'
+      ? `${serviceTitlePlain} in ${cityName}`
+      : service.title.rendered)
+  const rawSubhead =
+    isEs && meta.ps_hero_subheadline_es
+      ? meta.ps_hero_subheadline_es
+      : (meta.ps_hero_subheadline || service.excerpt.rendered.replace(/<[^>]*>/g, ''))
+  const subheadTrim = typeof rawSubhead === 'string' ? rawSubhead.replace(/\s+/g, ' ').trim() : ''
+  const subhead =
+    subheadTrim || genericHeroSubhead(cityName, serviceTitlePlain, svcSlug, isEs)
   const content   = isEs && meta.ps_content_es          ? meta.ps_content_es          : service.content.rendered
-  const faqItems = faqs.map(f => ({
-    question: isEs && (f.meta as any)['ps_question_es']
-      ? (f.meta as any)['ps_question_es']
-      : f.title.rendered,
-    answer:   isEs && (f.meta as any)['ps_answer_es']
-      ? (f.meta as any)['ps_answer_es']
-      : f.meta.ps_answer,
-  }))
+  const faqItems = padServicePageFaqs(
+    limitPublicFaqs(getBilingualFaqItems(faqs, locale), PUBLIC_FAQ_LIMIT_CITY),
+    cityName,
+    svcSlug,
+    isEs
+  )
 
   // Locale-correct hrefs
   const base        = isEs ? '/es' : ''
   const estimateHref = isEs ? '/es/publica-tu-propiedad/' : '/list-your-property/'
   const cityHref    = `${base}/${citySlug}/`
-  const esServiceSlug = SERVICE_SLUG_EN_TO_ES[svcSlug] ?? svcSlug
+  const esServiceSlug = SERVICE_SLUG_EN_TO_ES[publicEnSlugFromPs(svcSlug)] ?? svcSlug
   const pricingHref  = isEs
     ? `/es/${citySlug}/costo-administracion-propiedades/`
     : `/${citySlug}/property-management-cost/`
   const rentalsHref  = isEs ? '/es/rentas/' : '/rentals/'
+  /** City-scoped guest browse — separate from management service URLs */
+  const cityRentalsHref = isEs
+    ? `/es/${citySlug}/rentas/`
+    : `/${citySlug}/rentals/`
   const investHref   = `${base}/${citySlug}/${isEs ? 'propiedades-de-inversion' : 'investment-property'}/`
   const pmHref       = `${base}/${citySlug}/${isEs ? 'administracion-de-propiedades' : 'property-management'}/`
   const keepRentHref = pmHref
 
+  if (citySlug === 'playa-del-carmen' && svcSlug === 'property-management') {
+    return (
+      <PlayaDelCarmenPropertyManagement
+        city={city}
+        service={service}
+        faqs={faqs}
+        testimonials={testimonials}
+        relatedServices={relatedServices}
+        locale={locale}
+      />
+    )
+  }
+
+  if (citySlug === 'playa-del-carmen' && svcSlug === 'airbnb-management') {
+    return (
+      <PlayaDelCarmenAirbnbManagement
+        city={city}
+        service={service}
+        faqs={faqs}
+        testimonials={testimonials}
+        relatedServices={relatedServices}
+        locale={locale}
+      />
+    )
+  }
+
   const schema = serviceSchema(service, city, faqs)
 
-  const relatedLinks = relatedServices.map(s => ({
-    label: isEs
-      ? `${s.title.rendered} en ${cityName}`
-      : `${s.title.rendered} in ${cityName}`,
-    href:  isEs
-      ? `/es/${citySlug}/${SERVICE_SLUG_EN_TO_ES[s.meta.ps_service_slug] ?? s.meta.ps_service_slug}/`
-      : `/${citySlug}/${s.meta.ps_service_slug}/`,
-  }))
+  const relatedLinks = relatedServices.map(s => {
+    const pubEn = publicEnSlugFromPs(s.meta.ps_service_slug)
+    return {
+      label: isEs
+        ? `${s.title.rendered} en ${cityName}`
+        : `${s.title.rendered} in ${cityName}`,
+      href:  isEs
+        ? `/es/${citySlug}/${SERVICE_SLUG_EN_TO_ES[pubEn] ?? pubEn}/`
+        : `/${citySlug}/${pubEn}/`,
+    }
+  })
 
   // Default pricing plans for PM/Airbnb management pages
   // In production these should come from WP meta. Shown here as a typed fallback.
@@ -163,6 +225,56 @@ export function ServicePageTemplate({
       }))
     : defaultSteps(cityName, isEs)
 
+  const heroFormTitle = isEs
+    ? `Estimado gratis · ${cityName}`
+    : `Free estimate · ${cityName}`
+  const stepsGridBody = isEs
+    ? `Nuestro proceso de gestión en ${cityName} es sistemático y comprobado.`
+    : `Our ${cityName} management process is systematic and proven.`
+  const pricingTeaserTitle = isEs
+    ? `¿Quieres un desglose completo de precios para ${cityName}?`
+    : `Want a full pricing breakdown for ${cityName}?`
+  const ownerBannerEyebrow = isEs
+    ? `¿Tienes propiedad en ${cityName}?`
+    : `Own property in ${cityName}?`
+  const ownerBannerHeadline = ownerBannerHeadlineForServicePage(
+    cityName,
+    city.meta.ps_avg_monthly_income,
+    isEs
+  )
+  const faqAsideSupportLine = isEs
+    ? `Sin compromiso. Nuestro equipo en ${cityName} responde en 24 horas.`
+    : `No obligation. Our ${cityName} team responds within 24 hours.`
+  const internalLinksHeading = isEs
+    ? `También en ${cityName}`
+    : `Also in ${cityName}`
+  const internalLinksCityHubLabel = isEs
+    ? `Ver rentas en ${cityName}`
+    : `Browse ${cityName} Rentals`
+  const hubId = wpSlugToServiceHubId(svcSlug)
+  const parentServiceHref = hubId ? serviceHubHref(locale, hubId) : undefined
+  const labelSlug =
+    hubId === 'vacation-rental-management' ? 'vacation-rentals' : hubId ?? ''
+  const parentServiceLabel =
+    hubId && labelSlug
+      ? isEs
+        ? `Ver todas: ${serviceLabel(labelSlug, 'es')}`
+        : `View all ${serviceLabel(labelSlug, 'en')} services`
+      : undefined
+  const parentCityLabel = isEs ? `Volver a ${cityName}` : `Back to ${cityName}`
+  const exploreHeading =
+    relatedLinks.length > 0
+      ? internalLinksHeading
+      : isEs
+        ? 'Seguir explorando'
+        : 'Keep exploring'
+
+  const heroTag = GUEST_RENTAL_SERVICES.has(svcSlug)
+    ? `${serviceTitlePlain} · ${cityName}`
+    : isEs
+      ? `Gestión local · ${cityName}`
+      : `Local management · ${cityName}`
+
   return (
     <>
       {/* JSON-LD */}
@@ -174,12 +286,13 @@ export function ServicePageTemplate({
       {/* HERO */}
       <Hero
         variant="split"
+        locale={locale}
         breadcrumbs={[
           { label: isEs ? 'Inicio' : 'Home', href: isEs ? '/es/' : '/' },
           { label: cityName, href: cityHref },
           { label: headline, href: null },
         ]}
-        tag={`${headline} · ${cityName}`}
+        tag={heroTag}
         headline={headline}
         sub={subhead}
         stats={computed.stats}
@@ -187,120 +300,104 @@ export function ServicePageTemplate({
           label: meta.ps_cta_primary_text || (isEs ? 'Obtener estimado gratis' : 'Get Free Revenue Estimate'),
           href:  meta.ps_cta_primary_url  || '#estimate-form',
         }}
-        secondaryCta={{ label: isEs ? `Hub ${cityName}` : `${cityName} Hub`, href: cityHref }}
+        secondaryCta={
+          GUEST_RENTAL_SERVICES.has(svcSlug)
+            ? undefined
+            : {
+                label: isEs ? `Ver rentas en ${cityName}` : `Browse ${cityName} Rentals`,
+                href: cityRentalsHref,
+              }
+        }
         formSlot={isOwner ? (
           <LeadForm
             variant="dark"
             city={cityName}
             source={`${citySlug}-${svcSlug}`}
-            title={isEs ? `Estimado gratis · ${cityName}` : `Free estimate · ${cityName}`}
+            title={heroFormTitle}
             subtitle={isEs ? 'Sin compromiso. Respondemos en 24 horas.' : 'No commitment required. Our local team responds within 24 hours.'}
             locale={locale}
           />
         ) : null}
       />
 
-      {/* TRUST BAR */}
-      <TrustBar stats={isEs ? [
-        { val: '200+', key: 'Propiedades administradas' },
-        { val: '4.9★', key: 'Satisfacción del propietario' },
-        { val: '20%+', key: 'Aumento de ingresos' },
-        { val: '24/7', key: 'Soporte local' },
-        { val: 'ES/EN', key: 'Equipo bilingüe' },
-      ] : [
-        { val: '200+', key: 'Properties managed' },
-        { val: '4.9★', key: 'Owner satisfaction' },
-        { val: '20%+', key: 'Revenue uplift' },
-        { val: '24/7', key: 'Local support' },
-        { val: 'ES/EN', key: 'Bilingual team' },
-      ]} />
-
       {/* ── SECTION GROUPS BY SERVICE TYPE ── */}
 
       {/* Property Management & Airbnb Management */}
       {(svcSlug === 'property-management' || svcSlug === 'airbnb-management') && (
         <>
+          <section className="pad-lg bg-ivory">
+            <div className="container city-hub-narrow">
+              <div className="eyebrow mb-8">{isEs ? 'Por qué importa aquí' : 'Why it matters here'}</div>
+              <h2 className="section-title mt-12 mb-24" style={{ fontSize: 'clamp(1.8rem,3vw,2.6rem)' }}>
+                {isEs ? `Por qué este servicio importa en ${cityName}` : `Why this service matters in ${cityName}`}
+              </h2>
+              <p className="body-text mb-20" style={{ maxWidth: 680 }}>
+                {isEs
+                  ? `Ejecutamos ${serviceTitlePlain} con equipos locales: turnovers, proveedores, mensajería y reglas de condominio alineadas a la demanda en ${cityName}.`
+                  : `We deliver ${serviceTitlePlain} with on-the-ground operators in ${cityName}—turnovers, vendors, guest messaging, and HOA-aligned standards for real destination demand.`}
+              </p>
+              <p className="body-text mb-20" style={{ maxWidth: 680, color: 'var(--mid)', fontSize: '0.95rem' }}>
+                {isEs
+                  ? 'El directorio de zonas vive en el hub de la ciudad; aquí nos enfocamos en alcance, proceso y conversión.'
+                  : 'Neighborhood-level mapping lives on the city hub—this page stays focused on scope, execution, and conversion.'}
+              </p>
+              <Link href={`${cityHref}#city-neighborhoods`} className="btn btn-ghost btn-sm">
+                {isEs ? `Explorar el mercado de ${cityName} →` : `Explore the ${cityName} market →`}
+              </Link>
+            </div>
+          </section>
+
+          {hasPricing && (
+            <>
+              <PricingGrid
+                eyebrow={isEs ? 'Qué incluye' : 'What’s included'}
+                headline={isEs ? 'Planes de administración' : 'Management plans'}
+                body={isEs ? 'Todos los planes son basados en desempeño — ganamos cuando tú ganas.' : 'All plans are performance-based — we earn when you earn.'}
+                plans={pricingPlans}
+              />
+              <section className="pad-sm bg-ivory">
+                <div className="container">
+                  <div style={{
+                    background: 'var(--sand)',
+                    borderRadius: 'var(--r-md)',
+                    padding: '18px 24px',
+                    border: '1px solid var(--sand-dark)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: 14,
+                  }}>
+                    <div>
+                      <div style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 600, color: 'var(--charcoal)', marginBottom: 3 }}>
+                        {pricingTeaserTitle}
+                      </div>
+                      <p style={{ fontSize: '0.83rem', color: 'var(--mid)', margin: 0 }}>
+                        {isEs ? 'Ejemplos de ingresos reales, comparación de tarifas y contexto del mercado.' : 'Real income examples, fee comparisons, and market context — all in one page.'}
+                      </p>
+                    </div>
+                    <Link href={pricingHref} className="btn btn-ghost" style={{ flexShrink: 0, whiteSpace: 'nowrap' }}>
+                      {isEs ? 'Ver precios de gestión →' : 'See management pricing →'}
+                    </Link>
+                  </div>
+                </div>
+              </section>
+            </>
+          )}
+
           <StepsGrid
-            eyebrow={isEs ? 'Cómo funciona' : 'How It Works'}
-            headline={isEs ? 'Del anuncio a los ingresos en 7 días' : 'From listing to revenue in 7 days'}
-            body={isEs ? `Nuestro proceso de gestión en ${cityName} es sistemático y comprobado.` : `Our ${cityName} management process is systematic and proven.`}
+            eyebrow={isEs ? 'Proceso local' : 'Local process'}
+            headline={isEs ? 'De la consulta a la operación' : 'From onboarding to execution'}
+            body={stepsGridBody}
             steps={steps}
           />
 
-          <section className="pad-lg bg-ivory">
-            <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'start' }}>
-              <div>
-                <div className="eyebrow mb-8">{cityName} Neighborhoods</div>
-                <h2 className="section-title mt-12 mb-24" style={{ fontSize: 'clamp(1.8rem,3vw,2.6rem)' }}>
-                  Where we manage properties
-                </h2>
-                <p className="body-text mb-24">
-                  PlayaStays manages properties across all major neighborhoods in {cityName}.
-                  Our local team knows the micro-market dynamics of each area.
-                </p>
-                <NeighborhoodList
-                  neighborhoods={city.ps_computed.neighborhoods}
-                  cityName={cityName}
-                />
-                <div style={{ marginTop: 24 }}>
-                  <Link href={`/${citySlug}/investment-property/`} className="btn btn-ghost">
-                    {cityName} Investment Guide →
-                  </Link>
-                </div>
-              </div>
-              <CaseStats
-                eyebrow={`Real Numbers · ${cityName}`}
-                headline={`${cityName} portfolio performance`}
-                stats={[
-                  { val: city.meta.ps_avg_occupancy,      key: 'Avg. occupancy' },
-                  { val: city.meta.ps_avg_nightly,        key: 'Nightly rate range' },
-                  { val: '4.9★',                          key: 'Guest rating' },
-                  { val: '0 hrs',                         key: 'Owner time/month' },
-                ]}
-                cta={{ label: 'Get Free Revenue Estimate →', href: '/list-your-property/' }}
-              />
-            </div>
-          </section>
-        </>
-      )}
-
-      {/* Pricing — PM and Airbnb management only */}
-      {hasPricing && (
-        <>
-          <PricingGrid
-            eyebrow={isEs ? 'Planes de Administración' : 'Management Plans'}
-            headline={isEs ? 'Elige tu plan' : 'Choose your plan'}
-            body={isEs ? 'Todos los planes son basados en desempeño — ganamos cuando tú ganas.' : 'All plans are performance-based — we earn when you earn.'}
-            plans={pricingPlans}
+          <PerformanceProof
+            stats={FALLBACK_PORTFOLIO_STATS}
+            cityName={cityName}
+            locale={locale}
+            estimateHref={estimateHref}
           />
-          {/* Deep-dive pricing link */}
-          <section className="pad-sm bg-ivory">
-            <div className="container">
-              <div style={{
-                background: 'var(--sand)',
-                borderRadius: 'var(--r-md)',
-                padding: '18px 24px',
-                border: '1px solid var(--sand-dark)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: 14,
-              }}>
-                <div>
-                  <div style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 600, color: 'var(--charcoal)', marginBottom: 3 }}>
-                    {isEs ? `¿Quieres un desglose completo de precios para ${cityName}?` : `Want a full pricing breakdown for ${cityName}?`}
-                  </div>
-                  <p style={{ fontSize: '0.83rem', color: 'var(--mid)', margin: 0 }}>
-                    {isEs ? 'Ejemplos de ingresos reales, comparación de tarifas y contexto del mercado.' : 'Real income examples, fee comparisons, and market context — all in one page.'}
-                  </p>
-                </div>
-                <Link href={pricingHref} className="btn btn-ghost" style={{ flexShrink: 0, whiteSpace: 'nowrap' }}>
-                  {isEs ? 'Ver precios de gestión →' : 'See management pricing →'}
-                </Link>
-              </div>
-            </div>
-          </section>
         </>
       )}
 
@@ -313,9 +410,17 @@ export function ServicePageTemplate({
               <h2 className="section-title mt-12 mb-16" style={{ fontSize: 'clamp(1.8rem,3vw,2.6rem)' }}>
                 The {cityName} investment case
               </h2>
-              <p className="body-text mb-16">{city.meta.ps_market_note}</p>
-              <p className="body-text mb-16"><strong>Best suited for:</strong> {city.meta.ps_best_for}</p>
-              <p className="body-text mb-32"><strong>Peak season:</strong> {city.meta.ps_peak_season}</p>
+              <p className="body-text mb-16">
+                {city.meta.ps_market_note || fallbackMarketContextLine(cityName, isEs)}
+              </p>
+              <p className="body-text mb-16">
+                <strong>{isEs ? 'Ideal para' : 'Best suited for:'}</strong>{' '}
+                {city.meta.ps_best_for || fallbackBestForLine(cityName, isEs)}
+              </p>
+              <p className="body-text mb-32">
+                <strong>{isEs ? 'Temporada alta' : 'Peak season:'}</strong>{' '}
+                {city.meta.ps_peak_season || (isEs ? 'varía; lo segmentamos con datos recientes' : 'varies — we break it out with what is booking right now')}
+              </p>
               <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 600, color: 'var(--charcoal)', marginBottom: 16 }}>
                 Top neighborhoods for investment
               </h3>
@@ -325,9 +430,9 @@ export function ServicePageTemplate({
               eyebrow={`${cityName} Market Data`}
               headline="Performance benchmarks"
               stats={[
-                { val: city.meta.ps_avg_nightly,        key: 'Nightly rate range' },
-                { val: city.meta.ps_avg_occupancy,      key: 'Occupancy range' },
-                { val: city.meta.ps_avg_monthly_income, key: 'Monthly income range' },
+                { val: city.meta.ps_avg_nightly ?? '—',        key: 'Nightly rate range' },
+                { val: city.meta.ps_avg_occupancy ?? '—',      key: 'Occupancy range' },
+                { val: city.meta.ps_avg_monthly_income ?? '—', key: 'Monthly income range' },
                 { val: '4.9★',                          key: 'Portfolio guest rating' },
               ]}
               cta={{ label: 'Get Free ROI Estimate →', href: '/list-your-property/' }}
@@ -353,10 +458,23 @@ export function ServicePageTemplate({
                 <strong>Consider selling if:</strong> You need to redeploy capital, the property
                 has significantly appreciated, or your investment horizon has concluded.
               </p>
-              <p className="body-text mb-32">
-                <strong>Consider keeping if:</strong> Your {cityName} property earns{' '}
-                {city.meta.ps_avg_monthly_income} monthly and you don't need the capital.
-                Appreciation and rental income make holding compelling.
+                <p className="body-text mb-32">
+                <strong>Consider keeping if:</strong>{' '}
+                {isEs
+                  ? (() => {
+                    const n = (city.meta.ps_avg_monthly_income || '').trim()
+                    if (n && n !== '—' && !/^undefined/i.test(n)) {
+                      return `tu propiedad en ${cityName} gana aprox. ${n} al mes y no necesitas el capital. La plusvalía y el ingreso hacen que retener tenga sentido.`
+                    }
+                    return `la renta en ${cityName} es fuerte, no estás forzado a vender, y aún te conviene el flujo.`
+                  })()
+                  : (() => {
+                    const n = (city.meta.ps_avg_monthly_income || '').trim()
+                    if (n && n !== '—' && !/^undefined/i.test(n)) {
+                      return `Your ${cityName} property earns around ${n} monthly and you don't need the capital. Appreciation and rental income can make holding compelling.`
+                    }
+                    return `Rental performance in ${cityName} is strong, you are not under pressure to sell, and the cash flow still makes sense.`
+                  })()}
               </p>
               <Link href={keepRentHref} className="btn btn-ghost">
                 {isEs ? 'Seguir rentando — ver servicios →' : 'Keep renting — see management services →'}
@@ -367,7 +485,9 @@ export function ServicePageTemplate({
               <h2 className="section-title mt-12 mb-24" style={{ fontSize: 'clamp(1.8rem,3vw,2.6rem)' }}>
                 What's selling right now
               </h2>
-              <p className="body-text mb-24">{city.meta.ps_market_note}</p>
+                <p className="body-text mb-24">
+                  {city.meta.ps_market_note || fallbackMarketContextLine(cityName, isEs)}
+                </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 {['Studio / 1BR', '2-Bedroom Condo', '3BR+ / Villa', 'Penthouse'].map(type => (
                   <div key={type} style={{ padding: '14px 0', borderBottom: '1px solid var(--sand-dark)' }}>
@@ -419,8 +539,8 @@ export function ServicePageTemplate({
             </div>
           </section>
           <OwnerBanner
-            eyebrow={isEs ? `¿Tienes propiedad en ${cityName}?` : `Own property in ${cityName}?`}
-            headline={isEs ? `Propiedades en ${cityName} generan ${city.meta.ps_avg_monthly_income} al mes con PlayaStays` : `${cityName} properties earn ${city.meta.ps_avg_monthly_income} monthly under PlayaStays management`}
+            eyebrow={ownerBannerEyebrow}
+            headline={ownerBannerHeadline}
             body={isEs ? 'Obtén un estimado gratuito basado en datos reales del mercado.' : 'Get a free estimate based on real market data.'}
             primaryCta={{ label: isEs ? 'Obtener estimado →' : 'Get Free Estimate →', href: estimateHref }}
             secondaryCta={{ label: isEs ? 'Servicios de gestión' : 'Management Services', href: pmHref }}
@@ -440,79 +560,47 @@ export function ServicePageTemplate({
         </section>
       )}
 
-      {/* ── PERFORMANCE PROOF (PM + Airbnb pages only) ── */}
-      {(svcSlug === 'property-management' || svcSlug === 'airbnb-management') && (
-        <PerformanceProof
-          stats={FALLBACK_PORTFOLIO_STATS}
-          cityName={cityName}
-          locale={locale}
-          estimateHref={estimateHref}
-        />
-      )}
-
-      {/* Testimonials */}
-      {testimonials.length > 0 && (
-        <section className="pad-lg bg-deep">
-          <div className="container">
-            <div className="eyebrow" style={{ color: 'var(--gold-light)', marginBottom: 32 }}>
-              What {cityName} owners say
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
-              {testimonials.map(t => <TestimonialCard key={t.id} testimonial={t} />)}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* FAQ + Related Links sidebar */}
-      {faqs.length > 0 && (
+      {/* FAQ + parent / sibling pathways */}
+      {(faqItems.length > 0 || relatedLinks.length > 0 || parentServiceHref) && (
         <section className="pad-lg bg-sand">
-          <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'start' }}>
-            <FaqAccordion
-              eyebrow={isEs ? 'Preguntas frecuentes' : 'Common Questions'}
-              headline="FAQ"
-              items={faqItems}
-            />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div style={{ background: 'var(--white)', borderRadius: 'var(--r-lg)', padding: 28, border: '1px solid var(--sand-dark)', boxShadow: 'var(--sh-sm)' }}>
-                <TrustStack locale={locale} variant="row" theme="light" />
-                <div style={{ height: 16 }} />
-                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 600, color: 'var(--charcoal)', marginBottom: 8 }}>
-                  {isEs ? '¿Listo para comenzar?' : 'Ready to get started?'}
-                </h3>
-                <p className="body-sm mb-20">
-                  {isEs ? `Sin compromiso. Nuestro equipo en ${cityName} responde en 24 horas.` : `No obligation. Our ${cityName} team responds within 24 hours.`}
-                </p>
-                <Link href={estimateHref} className="btn btn-coral btn-full" style={{ marginBottom: 10 }}>
-                  {isEs ? 'Obtener estimado gratis →' : 'Get a Free Revenue Estimate →'}
-                </Link>
-                <a
-                  href="https://wa.me/529841234567"
-                  className="btn btn-wa btn-full"
-                  target="_blank" rel="noopener"
-                >
-                  {isEs ? 'Chatear por WhatsApp' : 'Chat on WhatsApp'}
-                </a>
-              </div>
-              {relatedLinks.length > 0 && (
+          <div className="container" style={{ maxWidth: 800, margin: '0 auto' }}>
+            {faqItems.length > 0 && (
+              <FaqAccordion
+                eyebrow={isEs ? 'Preguntas frecuentes' : 'FAQ'}
+                headline={
+                  isEs
+                    ? `Sobre este servicio en ${cityName}`
+                    : `About this service in ${cityName}`
+                }
+                items={faqItems}
+              />
+            )}
+            <p className="body-text" style={{ marginTop: faqItems.length ? 28 : 0, marginBottom: 0 }}>
+              <Link href={estimateHref} className="btn btn-ghost btn-sm" style={{ verticalAlign: 'middle' }}>
+                {isEs ? 'Obtener estimado gratis →' : 'Get a free revenue estimate →'}
+              </Link>
+              <span className="body-sm" style={{ display: 'block', marginTop: 12, color: 'var(--mid)' }}>
+                {faqAsideSupportLine}
+              </span>
+            </p>
+            {(relatedLinks.length > 0 || parentServiceHref) && (
+              <div style={{ marginTop: 36, paddingTop: 28, borderTop: '1px solid var(--sand-dark)' }}>
                 <InternalLinks
-                  heading={isEs ? `También en ${cityName}` : `Also in ${cityName}`}
+                  hubNavEyebrow={isEs ? 'Páginas padre' : 'Parent pages'}
+                  parentCityHref={cityHref}
+                  parentCityLabel={parentCityLabel}
+                  parentServiceHref={parentServiceHref}
+                  parentServiceLabel={parentServiceLabel}
+                  heading={exploreHeading}
                   links={relatedLinks}
-                  cityHubLabel={isEs ? `Hub de ${cityName}` : `Back to ${cityName} hub`}
-                  cityHubHref={cityHref}
+                  rentalsHref={cityRentalsHref}
+                  rentalsLabel={isEs ? `Ver rentas en ${cityName}` : `Browse ${cityName} rentals`}
                 />
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </section>
       )}
-
-      {/* Pre-footer CTA */}
-      <CtaStrip
-        eyebrow={isEs ? `Propietarios en ${cityName}` : `${cityName} Property Owners`}
-        headline={isEs ? 'Obtén un estimado de ingresos gratis — sin compromisos.' : 'Get a free rental income estimate — no commitment required.'}
-        cta={{ label: isEs ? 'Obtener mi estimado →' : 'Get My Free Estimate →', href: estimateHref }}
-      />
     </>
   )
 }

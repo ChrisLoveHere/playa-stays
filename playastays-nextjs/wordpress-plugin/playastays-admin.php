@@ -24,6 +24,8 @@ function psa_city_options(): array {
     return [
         'playa-del-carmen' => 'Playa del Carmen',
         'tulum'            => 'Tulum',
+        'cozumel'          => 'Cozumel',
+        'isla-mujeres'     => 'Isla Mujeres',
         'akumal'           => 'Akumal',
         'puerto-morelos'   => 'Puerto Morelos',
         'xpu-ha'           => 'Xpu-Ha',
