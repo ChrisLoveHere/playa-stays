@@ -423,7 +423,7 @@ export const PLAYA_PM_FALLBACK_FAQS: Record<'en' | 'es', PlayaPmFaqItem[]> = {
     {
       question: 'What are typical management fees?',
       answer:
-        '<p>Fees vary by scope: long-term oversight differs from short-term programs with frequent turnovers. We provide clear pricing after understanding your property and strategy. For orientation, see <a href="/playa-del-carmen/property-management-cost/">Playa del Carmen management pricing</a>—then we align the plan to your goals.</p>',
+        '<p>Fees vary by scope: long-term oversight differs from short-term programs with frequent turnovers. We provide clear pricing after understanding your property and strategy. For orientation, see <a href="/property-management-pricing/">Playa del Carmen management pricing</a>—then we align the plan to your goals.</p>',
     },
     {
       question: 'Can I switch between long-term and short-term strategies later?',
@@ -465,7 +465,7 @@ export const PLAYA_PM_FALLBACK_FAQS: Record<'en' | 'es', PlayaPmFaqItem[]> = {
     {
       question: '¿Cuáles son las tarifas típicas de administración?',
       answer:
-        '<p>Varían según alcance: la supervisión de renta larga difiere de programas de renta corta con turnovers frecuentes. Cotizamos con claridad tras conocer tu propiedad y estrategia. Para orientación visita <a href="/es/playa-del-carmen/costo-administracion-propiedades/">precios de administración en Playa del Carmen</a>.</p>',
+        '<p>Varían según alcance: la supervisión de renta larga difiere de programas de renta corta con turnovers frecuentes. Cotizamos con claridad tras conocer tu propiedad y estrategia. Para orientación visita <a href="/es/precios-administracion-propiedades/">precios de administración en Playa del Carmen</a>.</p>',
     },
     {
       question: '¿Puedo cambiar después entre renta larga y corta?',

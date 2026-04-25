@@ -85,9 +85,9 @@ export function enRouteToEs(enRoute: string): string {
   // [city]
   if (parts.length === 1) return `/es/${parts[0]}/`
 
-  // [city]/property-management-cost/
+  // [city]/property-management-cost/ (retired) → ES universal pricing
   if (parts.length === 2 && parts[1] === 'property-management-cost') {
-    return `/es/${parts[0]}/costo-administracion-propiedades/`
+    return '/es/precios-administracion-propiedades/'
   }
 
   // [city]/rentals (guest browse) → [ciudad]/rentas
@@ -140,9 +140,9 @@ export function esRouteToEn(esRoute: string): string {
 
   if (parts.length === 1) return `/${parts[0]}/`
 
-  // [ciudad]/costo-administracion-propiedades
+  // [ciudad]/costo-administracion-propiedades/ (retired) → EN universal pricing
   if (parts.length === 2 && parts[1] === 'costo-administracion-propiedades') {
-    return `/${parts[0]}/property-management-cost/`
+    return '/property-management-pricing/'
   }
 
   // [ciudad]/rentas (guest browse) → [city]/rentals
@@ -217,7 +217,6 @@ export function buildEnRouteMap(): string[] {
   }
   for (const city of CITY_SLUGS) {
     routes.push(`/${city}/`)
-    routes.push(`/${city}/property-management-cost/`)
     routes.push(`/${city}/rentals/`)
     for (const svc of EN_SERVICE_SLUGS) {
       routes.push(`/${city}/${svc}/`)

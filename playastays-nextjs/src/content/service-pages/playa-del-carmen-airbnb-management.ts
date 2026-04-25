@@ -413,7 +413,7 @@ export const PLAYA_AIRBNB_FALLBACK_FAQS: Record<'en' | 'es', PlayaAirbnbFaqItem[
     {
       question: 'How much does Airbnb management cost in Playa del Carmen?',
       answer:
-        '<p>Fees typically reflect a percentage of gross revenue or a performance-based structure, depending on scope and property type. We provide a clear quote after review. For orientation, see <a href="/playa-del-carmen/property-management-cost/">Playa del Carmen management pricing</a>.</p>',
+        '<p>Fees typically reflect a percentage of gross revenue or a performance-based structure, depending on scope and property type. We provide a clear quote after review. For orientation, see <a href="/property-management-pricing/">Playa del Carmen management pricing</a>.</p>',
     },
     {
       question: 'What is RETUR-Q and do I need it for my Airbnb?',
@@ -455,7 +455,7 @@ export const PLAYA_AIRBNB_FALLBACK_FAQS: Record<'en' | 'es', PlayaAirbnbFaqItem[
     {
       question: '¿Cuánto cuesta la administración de Airbnb en Playa del Carmen?',
       answer:
-        '<p>Las tarifas suelen reflejar un porcentaje de ingresos brutos o estructura por desempeño, según alcance y tipo de unidad. Cotizamos tras revisión. Consulta <a href="/es/playa-del-carmen/costo-administracion-propiedades/">precios de administración en Playa del Carmen</a> para orientación.</p>',
+        '<p>Las tarifas suelen reflejar un porcentaje de ingresos brutos o estructura por desempeño, según alcance y tipo de unidad. Cotizamos tras revisión. Consulta <a href="/es/precios-administracion-propiedades/">precios de administración en Playa del Carmen</a> para orientación.</p>',
     },
     {
       question: '¿Qué es RETUR-Q y lo necesito para mi Airbnb?',

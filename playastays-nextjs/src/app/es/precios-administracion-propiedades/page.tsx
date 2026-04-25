@@ -2,7 +2,7 @@
 // /es/precios-administracion-propiedades/
 //
 // Hub global de precios (todos los mercados en Quintana Roo).
-// Calculadoras y ejemplos por ciudad: /es/[slug]/costo-administracion-propiedades/
+// Ilustraciones de mercado por ciudad: guías locales (CITY_PRICING en el hub de ciudad).
 // ============================================================
 
 import type { Metadata } from 'next'
@@ -179,7 +179,7 @@ export default function EsPricingHubPage() {
             Mira los precios en contexto de tu destino
           </h2>
           <p className="body-text mb-24" style={{ maxWidth: 560 }}>
-            Cada página por ciudad incluye contexto de tarifa y ocupación, escenarios de ejemplo y la misma estructura Core / Plus / Pro que ves aquí.
+            Cada guía de ciudad incluye contexto de tarifa y ocupación, escenarios de ejemplo y la misma estructura Core / Plus / Pro que ves aquí.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
             {PRICING_HUB_PRIMARY_SLUGS.map(slug => {
@@ -188,15 +188,15 @@ export default function EsPricingHubPage() {
               return (
                 <Link
                   key={cityData.slug}
-                  href={`/es/${cityData.slug}/costo-administracion-propiedades/`}
+                  href={`/es/${cityData.slug}/`}
                   className="btn btn-ghost"
                 >
-                  {cityData.nameEs} — precios locales →
+                  {cityData.nameEs} — guía del destino →
                 </Link>
               )
             })}
-            <Link href="/es/chetumal/costo-administracion-propiedades/" className="btn btn-ghost">
-              Chetumal — precios locales →
+            <Link href="/es/chetumal/" className="btn btn-ghost">
+              Chetumal — guía del destino →
             </Link>
           </div>
         </div>

@@ -111,8 +111,8 @@ export function ServicePageTemplate({
   const cityHref    = `${base}/${citySlug}/`
   const esServiceSlug = SERVICE_SLUG_EN_TO_ES[publicEnSlugFromPs(svcSlug)] ?? svcSlug
   const pricingHref  = isEs
-    ? `/es/${citySlug}/costo-administracion-propiedades/`
-    : `/${citySlug}/property-management-cost/`
+    ? '/es/precios-administracion-propiedades/'
+    : '/property-management-pricing/'
   const rentalsHref  = isEs ? '/es/rentas/' : '/rentals/'
   /** City-scoped guest browse — separate from management service URLs */
   const cityRentalsHref = isEs

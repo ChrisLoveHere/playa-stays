@@ -20,6 +20,7 @@ import { sortCitiesForHub } from '@/lib/city-hub-sort'
 import { telHref } from '@/lib/telHref'
 import { SITE_WHATSAPP } from '@/lib/site-contact'
 import { limitPublicFaqs, PUBLIC_FAQ_LIMIT_CITY } from '@/lib/faq-helpers'
+import { getCityPricing } from '@/lib/pricing-data'
 
 function cityServiceHref(citySlug: string, psServiceSlug: string, locale: Locale): string {
   const pubEn = publicEnSlugFromPs(psServiceSlug)
@@ -71,6 +72,18 @@ function hubCopy(locale: Locale, name: string) {
     blogHint: es ? 'Próximamente: guías y datos del mercado en el blog.' : 'More guides & market notes on the blog soon.',
     investmentCta: es ? `Guía de inversión · ${name} →` : `${name} investment guide →`,
     pricingCta: es ? 'Ver precios de gestión →' : 'See management pricing →',
+    marketOppTitle: (city: string) =>
+      es ? `Oportunidad de Mercado en ${city}` : `Market Opportunity in ${city}`,
+    avgNightly: es ? 'Tarifa promedio' : 'Avg nightly',
+    avgOccupancy: es ? 'Ocupación promedio' : 'Avg occupancy',
+    peakSeason: es ? 'Temporada alta' : 'Peak season',
+    competition: es ? 'Competencia' : 'Competition',
+    earningsIllustrations: es ? 'Ilustraciones de ingresos' : 'Earnings illustrations',
+    withoutMgmt: es ? 'Sin gestión profesional' : 'Without professional management',
+    withMgmt: es ? 'Con PlayaStays' : 'With PlayaStays',
+    uplift: es ? 'Ingreso neto adicional' : 'Extra net income',
+    perNight: es ? 'por noche' : 'per night',
+    seeFullPricing: es ? 'Ver precios completos →' : 'See full pricing →',
   }
 }
 
@@ -122,9 +135,10 @@ export function CityHubTemplate({
   const t = hubCopy(locale, name)
   const merged = getCityHubMergedContent(city, locale)
   const o = heroImageUrl ? { ...merged, heroImageUrl } : merged
-  const base = locale === 'es' ? '/es' : ''
   const contactHref = locale === 'es' ? '/es/contacto/' : '/contact/'
   const rentalsHref = locale === 'es' ? `/es/${slug}/rentas/` : `/${slug}/rentals/`
+  const market = getCityPricing(slug)
+  const pricingHubHref = locale === 'es' ? '/es/precios-administracion-propiedades/' : '/property-management-pricing/'
 
   const wa = siteConfig?.whatsapp ?? SITE_WHATSAPP
   const waHref = `https://wa.me/${wa}`
@@ -242,6 +256,206 @@ export function CityHubTemplate({
         hubSnapshot
         showEstimateCta={false}
       />
+
+      {market && (
+        <section className="pad-lg bg-ivory" id="city-market-opportunity">
+          <div className="container">
+            <h2 className="section-title mt-12 mb-8" style={{ fontSize: 'clamp(1.5rem,2.6vw,2.1rem)' }}>
+              {t.marketOppTitle(name)}
+            </h2>
+            <p className="body-text mb-24" style={{ maxWidth: 720, lineHeight: 1.7 }}>
+              {locale === 'es' ? market.marketNoteEs : market.marketNote}
+            </p>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: 20,
+                marginBottom: 32,
+                maxWidth: 880,
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    fontSize: '0.68rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    color: 'var(--light)',
+                    marginBottom: 6,
+                  }}
+                >
+                  {t.avgNightly}
+                </div>
+                <div className="body-text" style={{ fontWeight: 600, color: 'var(--charcoal)', margin: 0 }}>
+                  {market.avgNightly}
+                </div>
+              </div>
+              <div>
+                <div
+                  style={{
+                    fontSize: '0.68rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    color: 'var(--light)',
+                    marginBottom: 6,
+                  }}
+                >
+                  {t.avgOccupancy}
+                </div>
+                <div className="body-text" style={{ fontWeight: 600, color: 'var(--charcoal)', margin: 0 }}>
+                  {market.avgOccupancy}
+                </div>
+              </div>
+              <div>
+                <div
+                  style={{
+                    fontSize: '0.68rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    color: 'var(--light)',
+                    marginBottom: 6,
+                  }}
+                >
+                  {t.peakSeason}
+                </div>
+                <div className="body-text" style={{ fontWeight: 600, color: 'var(--charcoal)', margin: 0 }}>
+                  {locale === 'es' ? market.peakSeasonEs : market.peakSeason}
+                </div>
+              </div>
+              <div>
+                <div
+                  style={{
+                    fontSize: '0.68rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    color: 'var(--light)',
+                    marginBottom: 6,
+                  }}
+                >
+                  {t.competition}
+                </div>
+                <div className="body-text" style={{ fontWeight: 600, color: 'var(--charcoal)', margin: 0 }}>
+                  {locale === 'es' ? market.competitionLevelEs : market.competitionLevel}
+                </div>
+              </div>
+            </div>
+
+            <div className="eyebrow mb-8">{t.earningsIllustrations}</div>
+            <div
+              className="service-cards"
+              style={{ alignItems: 'stretch' }}
+            >
+              {market.earnings.map((ex, i) => (
+                <div
+                  key={i}
+                  style={{
+                    background: 'var(--white)',
+                    border: '1px solid var(--sand-dark)',
+                    borderRadius: 'var(--r-lg)',
+                    overflow: 'hidden',
+                    boxShadow: 'var(--sh-sm)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    minWidth: 0,
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'var(--deep)',
+                      padding: '14px 20px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontFamily: 'var(--font-display)',
+                        fontSize: '1.05rem',
+                        fontWeight: 600,
+                        color: 'var(--white)',
+                      }}
+                    >
+                      {locale === 'es' ? ex.typeEs : ex.type}
+                    </div>
+                    <div style={{ fontSize: '0.76rem', color: 'rgba(255,255,255,0.55)', marginTop: 3 }}>
+                      {ex.nightlyRange} {t.perNight}
+                    </div>
+                  </div>
+                  <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--sand-dark)' }}>
+                    <div
+                      style={{
+                        fontSize: '0.65rem',
+                        fontWeight: 700,
+                        letterSpacing: '0.1em',
+                        textTransform: 'uppercase',
+                        color: 'var(--light)',
+                        marginBottom: 6,
+                      }}
+                    >
+                      {t.withoutMgmt}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: 'var(--font-display)',
+                        fontSize: '1.25rem',
+                        fontWeight: 600,
+                        color: 'var(--mid)',
+                      }}
+                    >
+                      {ex.monthlyWithout.split(' ')[0]}
+                    </div>
+                  </div>
+                  <div style={{ padding: '14px 20px', background: 'rgba(24,104,112,0.04)', flex: 1 }}>
+                    <div
+                      style={{
+                        fontSize: '0.65rem',
+                        fontWeight: 700,
+                        letterSpacing: '0.1em',
+                        textTransform: 'uppercase',
+                        color: 'var(--teal)',
+                        marginBottom: 6,
+                      }}
+                    >
+                      {t.withMgmt}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: 'var(--font-display)',
+                        fontSize: '1.4rem',
+                        fontWeight: 700,
+                        color: 'var(--teal)',
+                      }}
+                    >
+                      {ex.monthlyWith.split(' ')[0]}
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--mid)', marginTop: 4 }}>{ex.managementFee}</div>
+                  </div>
+                  <div
+                    style={{
+                      padding: '10px 20px',
+                      background: 'var(--gold)',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--deep)' }}>
+                      {t.uplift}: {ex.uplift}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ marginTop: 28 }}>
+              <Link href={pricingHubHref} className="btn btn-gold">
+                {t.seeFullPricing}
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* 6. FAQ (max 6 via PUBLIC_FAQ_LIMIT_CITY) */}
       <section className="pad-lg bg-ivory">

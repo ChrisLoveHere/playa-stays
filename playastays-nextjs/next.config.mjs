@@ -96,6 +96,31 @@ const nextConfig = {
         destination: '/es/rentas/?city=:ciudad&feature=beachfront',
         permanent: true,
       },
+      // ── Retired city-scoped pricing pages → universal pricing page ──
+      {
+        source:
+          '/:city((?!api|_next|rentals|blog|contact|list-your-property|property-management-pricing|about|terms|privacy|es|login|portal|admin|favicon.ico)[^/]+)/property-management-cost',
+        destination: '/property-management-pricing/',
+        permanent: true,
+      },
+      {
+        source:
+          '/es/:ciudad((?!api|_next|rentas|blog|contacto|publica-tu-propiedad|precios-administracion-propiedades|acerca-de-playastays|terminos|privacidad)[^/]+)/costo-administracion-propiedades',
+        destination: '/es/precios-administracion-propiedades/',
+        permanent: true,
+      },
+      {
+        source:
+          '/:city((?!api|_next|rentals|blog|contact|list-your-property|property-management-pricing|about|terms|privacy|es|login|portal|admin|favicon.ico)[^/]+)/property-management-cost/',
+        destination: '/property-management-pricing/',
+        permanent: true,
+      },
+      {
+        source:
+          '/es/:ciudad((?!api|_next|rentas|blog|contacto|publica-tu-propiedad|precios-administracion-propiedades|acerca-de-playastays|terminos|privacidad)[^/]+)/costo-administracion-propiedades/',
+        destination: '/es/precios-administracion-propiedades/',
+        permanent: true,
+      },
     ]
   },
 }

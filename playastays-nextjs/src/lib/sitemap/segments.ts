@@ -64,7 +64,7 @@ export function isSitemapSegment(s: string): s is SitemapSegment {
 
 /**
  * Core / money pages: static marketing, service hubs, city hubs,
- * city pricing, city guest browse, city × service — EN + ES (ES gated on CMS fields).
+ * city guest browse, city × service — EN + ES (ES gated on CMS fields).
  */
 export async function getCoreSitemapEntries(): Promise<UrlsetEntry[]> {
   const cities = await getCities()
@@ -124,12 +124,6 @@ export async function getCoreSitemapEntries(): Promise<UrlsetEntry[]> {
       priority: 0.9,
     })
     map.push({
-      loc: `${SITE_URL}/${slug}/property-management-cost/`,
-      lastmod: DEPLOY_DATE,
-      changefreq: 'monthly',
-      priority: 0.8,
-    })
-    map.push({
       loc: `${SITE_URL}/${slug}/rentals/`,
       lastmod: DEPLOY_DATE,
       changefreq: 'daily',
@@ -142,12 +136,6 @@ export async function getCoreSitemapEntries(): Promise<UrlsetEntry[]> {
         lastmod: DEPLOY_DATE,
         changefreq: 'weekly',
         priority: 0.9,
-      })
-      map.push({
-        loc: `${SITE_URL}/es/${slug}/costo-administracion-propiedades/`,
-        lastmod: DEPLOY_DATE,
-        changefreq: 'monthly',
-        priority: 0.8,
       })
       map.push({
         loc: `${SITE_URL}/es/${slug}/rentas/`,

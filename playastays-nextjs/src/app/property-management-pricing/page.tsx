@@ -2,7 +2,7 @@
 // /property-management-pricing/
 //
 // Global pricing hub (all Quintana Roo markets). City-specific
-// calculators and earnings live on /[city]/property-management-cost/
+// market illustrations live on each city hub (CITY_PRICING).
 // ============================================================
 
 import type { Metadata } from 'next'
@@ -179,7 +179,7 @@ export default function PricingHubPage() {
             See pricing in context for your destination
           </h2>
           <p className="body-text mb-24" style={{ maxWidth: 560 }}>
-            Each city page includes market-specific rate and occupancy context, example scenarios, and the same Core / Plus / Pro structure you see here.
+            Each city hub includes market-specific rate and occupancy context, example scenarios, and the same Core / Plus / Pro structure you see here.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
             {PRICING_HUB_PRIMARY_SLUGS.map(slug => {
@@ -188,15 +188,15 @@ export default function PricingHubPage() {
               return (
                 <Link
                   key={cityData.slug}
-                  href={`/${cityData.slug}/property-management-cost/`}
+                  href={`/${cityData.slug}/`}
                   className="btn btn-ghost"
                 >
-                  {cityData.name} — local pricing →
+                  {cityData.name} — destination hub →
                 </Link>
               )
             })}
-            <Link href="/chetumal/property-management-cost/" className="btn btn-ghost">
-              Chetumal — local pricing →
+            <Link href="/chetumal/" className="btn btn-ghost">
+              Chetumal — destination hub →
             </Link>
           </div>
         </div>

@@ -210,6 +210,11 @@ export function getTierAudienceLabel(locale: Locale, tier: string): string | und
 
 // ── City-specific market data ─────────────────────────────
 
+/** City hub / calculators — undefined when a WP city has no static market block yet. */
+export function getCityPricing(citySlug: string): CityPricingData | undefined {
+  return CITY_PRICING[citySlug]
+}
+
 export const CITY_PRICING: Record<string, CityPricingData> = {
   'playa-del-carmen': {
     slug: 'playa-del-carmen',
@@ -982,13 +987,7 @@ export interface PricingFAQItem {
 export function getPricingFAQs(
   locale: Locale,
   cityName: string,
-  citySlug?: string
 ): PricingFAQItem[] {
-  const extra =
-    citySlug && CITY_PRICING[citySlug]?.extraFaqs
-      ? (locale === 'es' ? CITY_PRICING[citySlug].extraFaqs.es : CITY_PRICING[citySlug].extraFaqs.en)
-      : []
-
   if (locale === 'es') {
     return [
       {
@@ -1015,7 +1014,6 @@ export function getPricingFAQs(
         question: `¿Cómo se compara la tarifa de ${cityName} con otras empresas de administración?`,
         answer: `Las empresas de administración de propiedades en la Riviera Maya generalmente cobran entre 15% y 35%. PlayaStays se posiciona en el rango de 10–25% con un nivel de servicio superior al promedio del mercado: equipo local, fotógrafos propios y soporte bilingüe real.`,
       },
-      ...extra,
     ]
   }
 
@@ -1044,7 +1042,6 @@ export function getPricingFAQs(
       question: `How does ${cityName} management pricing compare to other companies?`,
       answer: `Property management companies in the Riviera Maya typically charge 15–35%. PlayaStays sits in the 10–25% range with above-market service: local team, in-house photographers, and real bilingual support — not a call centre.`,
     },
-    ...extra,
   ]
 }
 

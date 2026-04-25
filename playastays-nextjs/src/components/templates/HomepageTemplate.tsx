@@ -278,14 +278,14 @@ export function HomepageTemplate({
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16, marginBottom: 20 }}>
             {(locale === 'es'
               ? [
-                  { city: 'Playa del Carmen', slug: 'playa-del-carmen', nightly: '$110–$260', occupancy: '78–88%', uplift: '+$680–$1,800/mes', href: '/es/playa-del-carmen/costo-administracion-propiedades/' },
-                  { city: 'Tulum',            slug: 'tulum',            nightly: '$150–$450', occupancy: '65–82%', uplift: '+$680–$2,400/mes', href: '/es/tulum/costo-administracion-propiedades/' },
-                  { city: 'Akumal',           slug: 'akumal',           nightly: '$120–$320', occupancy: '72–85%', uplift: '+$550–$1,320/mes', href: '/es/akumal/costo-administracion-propiedades/' },
+                  { city: 'Playa del Carmen', slug: 'playa-del-carmen', nightly: '$110–$260', occupancy: '78–88%', uplift: '+$680–$1,800/mes', href: '/es/playa-del-carmen/' },
+                  { city: 'Tulum',            slug: 'tulum',            nightly: '$150–$450', occupancy: '65–82%', uplift: '+$680–$2,400/mes', href: '/es/tulum/' },
+                  { city: 'Akumal',           slug: 'akumal',           nightly: '$120–$320', occupancy: '72–85%', uplift: '+$550–$1,320/mes', href: '/es/akumal/' },
                 ]
               : [
-                  { city: 'Playa del Carmen', slug: 'playa-del-carmen', nightly: '$110–$260', occupancy: '78–88%', uplift: '+$680–$1,800/mo', href: '/playa-del-carmen/property-management-cost/' },
-                  { city: 'Tulum',            slug: 'tulum',            nightly: '$150–$450', occupancy: '65–82%', uplift: '+$680–$2,400/mo', href: '/tulum/property-management-cost/' },
-                  { city: 'Akumal',           slug: 'akumal',           nightly: '$120–$320', occupancy: '72–85%', uplift: '+$550–$1,320/mo', href: '/akumal/property-management-cost/' },
+                  { city: 'Playa del Carmen', slug: 'playa-del-carmen', nightly: '$110–$260', occupancy: '78–88%', uplift: '+$680–$1,800/mo', href: '/playa-del-carmen/' },
+                  { city: 'Tulum',            slug: 'tulum',            nightly: '$150–$450', occupancy: '65–82%', uplift: '+$680–$2,400/mo', href: '/tulum/' },
+                  { city: 'Akumal',           slug: 'akumal',           nightly: '$120–$320', occupancy: '72–85%', uplift: '+$550–$1,320/mo', href: '/akumal/' },
                 ]
             ).map(item => (
               <a
@@ -339,8 +339,8 @@ export function HomepageTemplate({
             ).map((city, i) => {
               const slugs = ['puerto-morelos', 'xpu-ha', 'chetumal']
               const href = locale === 'es'
-                ? `/es/${slugs[i]}/costo-administracion-propiedades/`
-                : `/${slugs[i]}/property-management-cost/`
+                ? `/es/${slugs[i]}/`
+                : `/${slugs[i]}/`
               return (
                 <a key={city} href={href} className="btn btn-ghost btn-sm">
                   {city} {locale === 'es' ? 'precios →' : 'pricing →'}

@@ -56,8 +56,8 @@ export function PlayaDelCarmenAirbnbManagement({
   const cityHubHref = `${base}/${citySlug}/`
   const cityRentalsHref = isEs ? `/es/${citySlug}/rentas/` : `/${citySlug}/rentals/`
   const pricingHref = isEs
-    ? `/es/${citySlug}/costo-administracion-propiedades/`
-    : `/${citySlug}/property-management-cost/`
+    ? '/es/precios-administracion-propiedades/'
+    : '/property-management-pricing/'
 
   const pmSeg = isEs ? 'administracion-de-propiedades' : 'property-management'
   const pmHref = `${base}/${citySlug}/${pmSeg}/`
