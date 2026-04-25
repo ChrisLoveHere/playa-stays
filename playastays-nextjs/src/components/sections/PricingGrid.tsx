@@ -5,6 +5,8 @@
 // ============================================================
 
 import Link from 'next/link'
+import type { Locale } from '@/lib/i18n'
+import { getTierAudienceLabel } from '@/lib/pricing-data'
 import type { PricingPlan } from '@/types'
 
 export type { PricingPlan } from '@/types'
@@ -14,9 +16,11 @@ interface PricingGridProps {
   eyebrow?: string
   headline?: string
   body?: string
+  /** When set, shows the one-line audience label under the tier (localized). */
+  locale?: Locale
 }
 
-export function PricingGrid({ plans, eyebrow, headline, body }: PricingGridProps) {
+export function PricingGrid({ plans, eyebrow, headline, body, locale }: PricingGridProps) {
   return (
     <section className="pad-lg bg-sand">
       <div className="container">
@@ -29,7 +33,9 @@ export function PricingGrid({ plans, eyebrow, headline, body }: PricingGridProps
         )}
 
         <div className="pricing-grid">
-          {plans.map((plan, i) => (
+          {plans.map((plan, i) => {
+            const audienceLine = locale ? getTierAudienceLabel(locale, plan.tier) : undefined
+            return (
             <div
               key={i}
               className={`pricing-card${plan.featured ? ' featured' : ''}`}
@@ -38,6 +44,20 @@ export function PricingGrid({ plans, eyebrow, headline, body }: PricingGridProps
                 <div className="pricing-badge">{plan.badge}</div>
               )}
               <div className="pricing-tier">{plan.tier}</div>
+              {audienceLine && (
+                <div
+                  className="pricing-audience"
+                  style={{
+                    fontSize: '0.8rem',
+                    lineHeight: 1.45,
+                    color: plan.featured ? 'rgba(255,255,255,0.55)' : 'var(--light)',
+                    marginTop: 4,
+                    marginBottom: 10,
+                  }}
+                >
+                  {audienceLine}
+                </div>
+              )}
               <div className="pricing-price">{plan.name}</div>
               {plan.unit && <div className="pricing-unit">{plan.unit}</div>}
               <div className="pricing-desc">{plan.desc}</div>
@@ -53,7 +73,8 @@ export function PricingGrid({ plans, eyebrow, headline, body }: PricingGridProps
                 {plan.cta.label}
               </Link>
             </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>

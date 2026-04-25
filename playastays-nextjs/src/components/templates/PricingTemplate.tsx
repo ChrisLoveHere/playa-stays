@@ -325,6 +325,7 @@ export function PricingTemplate({
         headline={c.pricingH2}
         body={c.pricingBody}
         plans={plans}
+        locale={locale}
       />
 
       {/* ── CALCULATOR SECTION ──────────────────────────── */}

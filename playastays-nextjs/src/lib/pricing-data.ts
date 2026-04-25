@@ -191,6 +191,23 @@ export function getPricingPlans(
   ]
 }
 
+/** One-line audience under tier name (UI). Same fees everywhere; use on hub and city pages when locale is passed to PricingGrid. */
+const TIER_AUDIENCE_EN: Record<string, string> = {
+  Core: 'For owners who want hands-off ownership without complexity',
+  Plus: 'For owners who want maximum visibility and rate optimization',
+  Pro: 'For investors, luxury villas, and multi-property portfolios',
+}
+const TIER_AUDIENCE_ES: Record<string, string> = {
+  Core: 'Para propietarios que quieren propiedad sin complicaciones',
+  Plus: 'Para propietarios que buscan máxima visibilidad y optimización de tarifas',
+  Pro: 'Para inversionistas, villas de lujo y portafolios de múltiples propiedades',
+}
+
+export function getTierAudienceLabel(locale: Locale, tier: string): string | undefined {
+  const map = locale === 'es' ? TIER_AUDIENCE_ES : TIER_AUDIENCE_EN
+  return map[tier] ?? map[tier.charAt(0).toUpperCase() + tier.slice(1).toLowerCase()]
+}
+
 // ── City-specific market data ─────────────────────────────
 
 export const CITY_PRICING: Record<string, CityPricingData> = {
