@@ -1,0 +1,78 @@
+/* Homepage stats — 4-up, same visual language as pricing StatsBanner (navy + gold) */
+.root {
+  background: var(--deep);
+  padding: clamp(3.5rem, 8vw, 5.5rem) 0;
+}
+
+.inner {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.5rem, 3vw, 1.75rem);
+  text-align: center;
+  align-items: start;
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(1.25rem, 2.5vw, 1.5rem) 0.5rem;
+  }
+}
+
+.cell {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem clamp(0.35rem, 1vw, 0.75rem);
+}
+
+@media (min-width: 900px) {
+  .cell:not(:last-child) {
+    border-right: 1px solid rgba(200, 164, 74, 0.15);
+  }
+}
+
+.iconWrap {
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.55rem;
+  flex-shrink: 0;
+}
+
+.iconSvg {
+  width: 32px;
+  height: 32px;
+  display: block;
+}
+
+.value {
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-size: clamp(2.25rem, 3.8vw, 3.15rem);
+  font-weight: 600;
+  color: var(--gold);
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
+}
+
+.label {
+  font-size: clamp(0.78rem, 1.05vw, 0.88rem);
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.84);
+  font-weight: 500;
+  max-width: 11rem;
+}

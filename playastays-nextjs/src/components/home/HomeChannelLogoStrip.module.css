@@ -1,0 +1,85 @@
+/* Homepage OTA band — ivory bg; wordmarks match pricing ChannelLogoStrip */
+.root {
+  background: var(--ivory);
+  padding: clamp(1.5rem, 3vw, 2.5rem) 0;
+  border-top: 1px solid rgba(10, 43, 47, 0.06);
+  border-bottom: 1px solid rgba(10, 43, 47, 0.06);
+}
+
+@media (min-width: 901px) {
+  .root {
+    padding: 2.5rem 0;
+  }
+}
+
+.wrap {
+  text-align: center;
+}
+
+.heading {
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+  font-weight: 500;
+  color: var(--charcoal);
+  max-width: 42rem;
+  margin: 0 auto 0.65rem;
+  line-height: 1.25;
+}
+
+.band {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 1.25rem 0 1.1rem;
+  border-top: 1px solid rgba(200, 164, 74, 0.2);
+  border-bottom: 1px solid rgba(200, 164, 74, 0.2);
+}
+
+.logos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 1.25rem) clamp(1.5rem, 4vw, 3rem);
+  row-gap: 1.2rem;
+}
+
+@media (min-width: 901px) {
+  .logos {
+    column-gap: 3rem;
+  }
+}
+
+.wordmark {
+  font-family: var(--font-body, 'DM Sans', system-ui, sans-serif);
+  font-size: clamp(2.125rem, 4.5vw, 2.875rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  line-height: 1.1;
+}
+
+.wordmarkAirbnb {
+  color: #ff5a5f;
+}
+
+.wordmarkVrbo {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #1a5cff;
+}
+
+.wordmarkBooking {
+  font-weight: 700;
+  letter-spacing: 0;
+  color: #003b95;
+}
+
+.wordmarkExpedia {
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #00355f;
+}

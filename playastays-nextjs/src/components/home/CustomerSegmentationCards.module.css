@@ -59,7 +59,7 @@
 }
 
 .icon {
-  color: var(--teal);
+  color: var(--deep);
   margin-bottom: 0.6rem;
   flex-shrink: 0;
 }
