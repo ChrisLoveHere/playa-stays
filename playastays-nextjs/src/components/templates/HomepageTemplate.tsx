@@ -1,7 +1,7 @@
 // ============================================================
 // HomepageTemplate — server component
-// Home: hero (full-bleed photo) → channels → segmentation → founder →
-// capabilities → stats → city grid → testimonial → CTA
+// Home: hero → channels → owner pain → segmentation → capabilities →
+// how it works → founder → stats → testimonial → cities → CTA
 // ============================================================
 
 import Link from 'next/link'
@@ -14,6 +14,8 @@ import { HomeChannelLogoStrip } from '@/components/home/HomeChannelLogoStrip'
 import { HomeFounderWidget } from '@/components/home/HomeFounderWidget'
 import { HomeOwnerTestimonial } from '@/components/home/HomeOwnerTestimonial'
 import { HomeFeaturedCities } from '@/components/home/HomeFeaturedCities'
+import { HomeOwnerPain } from '@/components/home/HomeOwnerPain'
+import { HomeHowItWorks } from '@/components/home/HomeHowItWorks'
 import type { Property } from '@/types'
 import type { Locale } from '@/lib/i18n'
 
@@ -101,17 +103,21 @@ export function HomepageTemplate({
 
       <HomeChannelLogoStrip locale={locale} />
 
-      <CustomerSegmentationCards locale={locale} />
+      <HomeOwnerPain locale={locale} />
 
-      <HomeFounderWidget locale={locale} />
+      <CustomerSegmentationCards locale={locale} />
 
       <HomeCapabilitiesGrid locale={locale} />
 
+      <HomeHowItWorks locale={locale} />
+
+      <HomeFounderWidget locale={locale} />
+
       <HomeStatsBanner locale={locale} />
 
-      <HomeFeaturedCities locale={locale} />
-
       <HomeOwnerTestimonial locale={locale} />
+
+      <HomeFeaturedCities locale={locale} />
 
       {/* TODO: Re-add blog section when 3+ real posts exist (exclude placeholder “Hello world” if filtering) */}
 
