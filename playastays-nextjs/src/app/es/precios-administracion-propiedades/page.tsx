@@ -8,7 +8,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { buildMetadata } from '@/lib/seo'
-import { OwnerBanner } from '@/components/sections'
 import { PricingGrid } from '@/components/sections/PricingGrid'
 import { FaqAccordion } from '@/components/content/FaqAccordion'
 import { Breadcrumb } from '@/components/layout/Breadcrumb'
@@ -18,6 +17,7 @@ import { PropertyCareCard } from '@/components/sections/PropertyCareCard'
 import { ChannelLogoStrip } from '@/components/trust/ChannelLogoStrip'
 import { StatsBanner } from '@/components/trust/StatsBanner'
 import { OwnerTestimonial } from '@/components/trust/OwnerTestimonial'
+import { PricingPageOwnerQuestions } from '@/components/trust/PricingPageOwnerQuestions'
 
 export const revalidate = 86400
 
@@ -130,16 +130,6 @@ export default function EsPricingHubPage() {
 
       <ChannelLogoStrip locale="es" />
 
-      <section className="pad-lg bg-sand" aria-label="Contexto">
-        <div className="container" style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center' }}>
-          <p className="body-text" style={{ margin: 0 }}>
-            Desde que tu anuncio está en línea hasta la entrega lista para el huésped, el mismo cuidado
-            atraviesa cada plan: empieza en los canales de reservas principales y sigue con el trabajo detrás
-            de cada estancia.
-          </p>
-        </div>
-      </section>
-
       <section className="pad-lg bg-deep">
         <div className="container">
           <div style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto 32px' }}>
@@ -167,7 +157,7 @@ export default function EsPricingHubPage() {
             >
               Capacidades de administración activa de la propiedad
             </h2>
-            <p className="body-text" style={{ maxWidth: 640, margin: '0 auto' }}>
+            <p className="body-text" style={{ maxWidth: 640, margin: '0 auto', color: 'rgba(255, 255, 255, 0.9)' }}>
               Disponibles cuando tu propiedad genera ingresos de renta corta (planes PLUS y PRO).
             </p>
           </div>
@@ -198,7 +188,7 @@ export default function EsPricingHubPage() {
         </div>
       </section>
 
-      <OwnerBanner
+      <PricingPageOwnerQuestions
         eyebrow="Propietarios en Quintana Roo"
         headline="¿Preguntas sobre tu propiedad o los precios?"
         body="Respondemos de forma directa, sin call center."

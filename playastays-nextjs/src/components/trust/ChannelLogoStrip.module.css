@@ -1,4 +1,15 @@
-/* Horizontal partner wordmarks; grayscale / muted. Single row desktop, wraps mobile. */
+/* Tighter vertical band: logos unchanged; less padding so the block reads lighter */
+.root {
+  background: var(--white);
+  padding: clamp(1.5rem, 3vw, 2.5rem) 0;
+}
+
+@media (min-width: 901px) {
+  .root {
+    padding: 2.5rem 0; /* 40px — compact vs former 80px */
+  }
+}
+
 .wrap {
   text-align: center;
 }
@@ -9,8 +20,16 @@
   font-weight: 500;
   color: var(--charcoal);
   max-width: 40rem;
-  margin: 0 auto 1.5rem;
+  margin: 0 auto 0.65rem;
   line-height: 1.2;
+}
+
+.band {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 1.25rem 0 1.35rem;
+  border-top: 1px solid rgba(200, 164, 74, 0.2);
+  border-bottom: 1px solid rgba(200, 164, 74, 0.2);
 }
 
 .logos {
@@ -21,34 +40,60 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: clamp(0.9rem, 2.8vw, 2.25rem);
-  row-gap: 1.1rem;
+  gap: clamp(1rem, 3vw, 1.25rem) clamp(1.5rem, 4vw, 3rem);
+  row-gap: 1.2rem;
 }
 
+@media (min-width: 901px) {
+  .logos {
+    column-gap: 3rem;
+  }
+}
+
+/* ~34–46px: clearly legible; brand-approximate hex (not official logotype assets) */
 .wordmark {
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  font-size: clamp(0.8rem, 1.1vw, 0.95rem);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: rgba(10, 43, 47, 0.4);
+  font-family: var(--font-body, 'DM Sans', system-ui, sans-serif);
+  font-size: clamp(2.125rem, 4.5vw, 2.875rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
   white-space: nowrap;
+  line-height: 1.1;
 }
 
-/* Slight wordmark character without implying official brand fonts */
+/* Airbnb — primary coral */
+.wordmarkAirbnb {
+  color: #ff5a5f;
+}
+
+/* Vrbo — property blue (Expedia group) */
 .wordmarkVrbo {
   text-transform: uppercase;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
+  color: #1a5cff;
 }
 
+/* Booking.com */
 .wordmarkBooking {
-  text-transform: lowercase;
-  font-weight: 500;
-  letter-spacing: 0.01em;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: #003b95;
 }
 
+/* Expedia — yellow “dot” in logo; name often navy */
 .wordmarkExpedia {
   font-style: italic;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #00355f;
+}
+
+/* Bridge: below the wordmark band (tighter to match reduced section) */
+.bridge {
+  margin: clamp(0.85rem, 1.5vw, 1.1rem) auto 0;
+  max-width: 40rem;
+  font-size: clamp(0.9rem, 1.1vw, 0.98rem);
+  line-height: 1.75;
+  color: var(--mid);
+  text-align: center;
+  font-family: var(--font-body, 'DM Sans', system-ui, sans-serif);
 }

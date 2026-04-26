@@ -1,4 +1,4 @@
-/* Single quote card on light page section; photo left, serif quote. */
+/* White page section; teal card only — white / near-white type inside */
 .card {
   max-width: 800px;
   margin: 0 auto;
@@ -8,10 +8,10 @@
   align-items: flex-start;
   gap: clamp(1.1rem, 2.2vw, 1.5rem);
   padding: clamp(1.1rem, 2.2vw, 1.4rem) clamp(1.2rem, 2.2vw, 1.5rem);
-  background: var(--ivory);
-  border: 1px solid var(--sand-dark);
+  background: var(--teal);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: var(--r-lg);
-  box-shadow: 0 2px 14px rgba(10, 43, 47, 0.08);
+  box-shadow: 0 2px 14px rgba(10, 43, 47, 0.12);
 }
 
 .avatar {
@@ -20,12 +20,12 @@
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  border: 2px solid rgba(200, 164, 74, 0.45);
-  background: var(--sand);
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(10, 43, 47, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .avatar img {
@@ -39,7 +39,7 @@
   font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
   font-size: 1.35rem;
   font-weight: 600;
-  color: var(--deep);
+  color: var(--white);
   line-height: 1;
 }
 
@@ -50,10 +50,10 @@
 
 .quote {
   font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
-  font-size: clamp(0.95rem, 1.2vw, 1.02rem);
+  font-size: clamp(1.1rem, 1.7vw, 1.28rem);
   font-style: italic;
   font-weight: 400;
-  color: var(--charcoal);
+  color: var(--white);
   line-height: 1.7;
   margin: 0 0 0.75rem;
   padding: 0;
@@ -63,6 +63,24 @@
 .attrib {
   font-size: 0.82rem;
   line-height: 1.55;
-  color: var(--mid);
+  color: rgba(255, 255, 255, 0.86);
   font-style: normal;
+}
+
+.reviewLink {
+  color: var(--white);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 600;
+}
+
+.reviewLink:hover {
+  color: rgba(255, 255, 255, 0.95);
+  text-decoration-thickness: 1px;
+}
+
+.reviewLink:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 2px;
+  border-radius: 2px;
 }

@@ -1192,33 +1192,33 @@ export function getValueItems(locale: Locale) {
   return [
     {
       icon: '📈',
-      title: 'Dynamic pricing',
+      title: 'Dynamic Pricing',
       desc: 'Real-time algorithms adjust your rate daily based on local demand, events, and competition. Average outcome: 18% more revenue versus fixed-rate pricing.',
     },
     {
       icon: '💬',
-      title: 'Guest communication',
-      desc: 'Every enquiry answered in under 5 minutes. Guest screening, review management, and conflict resolution — all included.',
+      title: 'Guest Communication',
+      desc: 'Every inquiry answered in under 5 minutes. Guest screening, review management, and conflict resolution — all included.',
     },
     {
       icon: '🧹',
-      title: 'Cleaning & maintenance',
+      title: 'Cleaning and Maintenance',
       desc: 'In-house cleaning team certified to hotel standard. Maintenance coordination with a vetted provider network across the Riviera Maya.',
     },
     {
       icon: '📸',
-      title: 'Photography & listing optimisation',
-      desc: 'Professional photography, conversion-optimised descriptions, and continuous refinement for Airbnb, VRBO, and Booking.com algorithms.',
+      title: 'Photography and Listing Optimization',
+      desc: 'Professional photography, conversion-optimized descriptions, and continuous refinement for Airbnb, VRBO, and Booking.com algorithms.',
     },
     {
       icon: '📊',
-      title: 'Owner portal',
-      desc: 'Real-time dashboard showing income, bookings, occupancy, and expenses. Monthly direct deposits to your account with a full itemised report.',
+      title: 'Owner Portal',
+      desc: 'Real-time dashboard showing income, bookings, occupancy, and expenses. Monthly direct deposits to your account with a full itemized report.',
     },
     {
       icon: '⚖️',
-      title: 'Legal compliance',
-      desc: 'Tourist RFC registration, local licences, and tax filing managed. We operate in full compliance with Quintana Roo regulations.',
+      title: 'Legal Compliance',
+      desc: 'Tourist RFC registration, local licenses, and tax filing assistance. We operate in full compliance with Quintana Roo regulations.',
     },
   ]
 }

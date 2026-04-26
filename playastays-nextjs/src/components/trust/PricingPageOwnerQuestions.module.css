@@ -1,0 +1,13 @@
+/* Gold page band: distinct from white FAQ above; not the footer */
+.region {
+  background: var(--gold);
+  border-top: 1px solid rgba(10, 43, 47, 0.12);
+  box-shadow: 0 -4px 20px rgba(10, 43, 47, 0.07);
+  padding: clamp(2.25rem, 4.5vw, 3.25rem) 0;
+}
+
+/* OwnerBanner’s outer section is bg-sand — strip the sand rail; keep the deep card */
+.region :global(> section.pad-sm.bg-sand) {
+  background: transparent;
+  padding: 0;
+}

@@ -8,7 +8,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { buildMetadata } from '@/lib/seo'
-import { OwnerBanner } from '@/components/sections'
 import { PricingGrid } from '@/components/sections/PricingGrid'
 import { FaqAccordion } from '@/components/content/FaqAccordion'
 import { Breadcrumb } from '@/components/layout/Breadcrumb'
@@ -18,6 +17,7 @@ import { PropertyCareCard } from '@/components/sections/PropertyCareCard'
 import { ChannelLogoStrip } from '@/components/trust/ChannelLogoStrip'
 import { StatsBanner } from '@/components/trust/StatsBanner'
 import { OwnerTestimonial } from '@/components/trust/OwnerTestimonial'
+import { PricingPageOwnerQuestions } from '@/components/trust/PricingPageOwnerQuestions'
 
 export const revalidate = 86400
 
@@ -130,15 +130,6 @@ export default function PricingHubPage() {
 
       <ChannelLogoStrip locale="en" />
 
-      <section className="pad-lg bg-sand" aria-label="Context">
-        <div className="container" style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center' }}>
-          <p className="body-text" style={{ margin: 0 }}>
-            From your first live listing to a guest-ready turnover, the same care runs through every
-            plan — it starts on the major booking channels and continues with the work behind each stay.
-          </p>
-        </div>
-      </section>
-
       <section className="pad-lg bg-deep">
         <div className="container">
           <div style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto 32px' }}>
@@ -166,7 +157,7 @@ export default function PricingHubPage() {
             >
               Active Property Management Capabilities
             </h2>
-            <p className="body-text" style={{ maxWidth: 640, margin: '0 auto' }}>
+            <p className="body-text" style={{ maxWidth: 640, margin: '0 auto', color: 'rgba(255, 255, 255, 0.9)' }}>
               Available when your property is earning short-term rental revenue (PLUS and PRO plans).
             </p>
           </div>
@@ -197,7 +188,7 @@ export default function PricingHubPage() {
         </div>
       </section>
 
-      <OwnerBanner
+      <PricingPageOwnerQuestions
         eyebrow="Owners in Quintana Roo"
         headline="Questions about your property or pricing?"
         body="We respond personally — no call centre, no runaround."

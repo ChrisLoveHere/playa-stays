@@ -885,13 +885,15 @@ nav.breadcrumb-nav--light .breadcrumb-sep {
   background: var(--white);
   border-color: var(--sand-dark);
 }
+/* Match default `.service-card-title` (same as Property Care cards, other service grids) */
 .pricing-hub-value-cards .service-card-title {
-  font-family: var(--font-body, 'DM Sans', system-ui, sans-serif);
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-size: 1.12rem;
+  font-weight: 600;
   line-height: 1.3;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   color: var(--charcoal);
+  margin-bottom: 6px;
 }
 .pricing-hub-value-cards .service-card-text {
   font-family: var(--font-body, 'DM Sans', system-ui, sans-serif);
