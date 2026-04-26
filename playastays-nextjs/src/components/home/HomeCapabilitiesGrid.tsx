@@ -10,71 +10,62 @@ const COPY: Record<
   { title: string; sub: string; items: { title: string; body: string }[] }
 > = {
   en: {
-    title: 'What PlayaStays does for owners',
-    sub: 'Full-service vacation rental management — every layer handled by a local team.',
+    title: 'Everything your property needs, run by one team',
+    sub: 'From listing to clean-up. From pricing to legal. PlayaStays handles every layer of vacation rental ownership in Quintana Roo.',
     items: [
       {
         title: 'Multi-channel listing',
-        body:
-          'Listings on Airbnb, VRBO, Booking.com, and direct — synced calendars and pricing across every platform.',
+        body: 'Listings on Airbnb, VRBO, Booking.com, and direct — synced calendars across every platform.',
       },
       {
         title: 'Dynamic pricing',
-        body:
-          'Real-time algorithms adjust your rate based on local demand, events, and competition.',
+        body: 'Real-time algorithms adjust your rate based on local demand and competition.',
       },
       {
         title: '24/7 bilingual support',
-        body:
-          'Every guest enquiry answered in under 5 minutes. Screening, reviews, and conflict resolution included.',
+        body: 'Every guest enquiry answered in under 5 minutes. Screening and reviews included.',
       },
       {
         title: 'In-house cleaning',
-        body: 'Hotel-standard cleaning team. Maintenance coordination with vetted local providers.',
+        body: 'Hotel-standard cleaning team plus vetted local maintenance partners.',
       },
       {
         title: 'Owner portal',
-        body:
-          'Real-time dashboard showing income, bookings, occupancy, and expenses. Monthly direct deposits.',
+        body: 'Real-time dashboard for income, bookings, and expenses. Monthly direct deposits.',
       },
       {
         title: 'Legal compliance',
-        body:
-          'Tourist RFC registration, local licenses, and tax filing managed end-to-end. Full Quintana Roo compliance.',
+        body: 'Tourist RFC, local licenses, and tax filing managed end-to-end. Full Quintana Roo compliance.',
       },
     ],
   },
   es: {
-    title: 'Lo que PlayaStays hace por los propietarios',
-    sub: 'Administración integral de rentas vacacionales — cada capa manejada por un equipo local.',
+    title: 'Todo lo que tu propiedad necesita, manejado por un solo equipo',
+    sub: 'Del listado al cleanup. De los precios a lo legal. PlayaStays maneja cada capa de la propiedad vacacional en Quintana Roo.',
     items: [
       {
         title: 'Listado multicanal',
-        body:
-          'Anuncios en Airbnb, VRBO, Booking.com y directo — calendarios y precios sincronizados en cada plataforma.',
+        body: 'Anuncios en Airbnb, VRBO, Booking.com y directo — calendarios sincronizados en cada plataforma.',
       },
       {
         title: 'Precios dinámicos',
-        body: 'Algoritmos en tiempo real ajustan tu tarifa según demanda local, eventos y competencia.',
+        body: 'Algoritmos en tiempo real ajustan tu tarifa según demanda local y competencia.',
       },
       {
         title: 'Soporte bilingüe 24/7',
-        body:
-          'Cada consulta de huésped respondida en menos de 5 minutos. Filtrado, reseñas y resolución de conflictos incluidos.',
+        body: 'Cada consulta respondida en menos de 5 minutos. Filtrado y reseñas incluidos.',
       },
       {
         title: 'Limpieza interna',
-        body: 'Equipo de limpieza nivel hotelero. Coordinación de mantenimiento con proveedores locales verificados.',
+        body: 'Equipo de limpieza nivel hotelero más socios locales de mantenimiento.',
       },
       {
         title: 'Portal de propietario',
-        body:
-          'Panel en tiempo real con ingresos, reservas, ocupación y gastos. Depósitos directos mensuales.',
+        body: 'Panel en tiempo real para ingresos, reservas y gastos. Depósitos directos mensuales.',
       },
       {
         title: 'Cumplimiento legal',
-        body:
-          'Registro RFC turístico, licencias locales y declaraciones fiscales gestionadas. Cumplimiento total en Quintana Roo.',
+        body: 'RFC turístico, licencias locales y declaraciones fiscales gestionadas. Cumplimiento total en Quintana Roo.',
       },
     ],
   },
@@ -140,7 +131,7 @@ export function HomeCapabilitiesGrid({ locale }: { locale: Locale }) {
   const c = COPY[locale] ?? COPY.en
   return (
     <section
-      className={`pad-lg bg-sand ${styles.root}`}
+      className={`pad-lg bg-white ${styles.root}`}
       aria-label={locale === 'es' ? 'Capacidades' : 'Capabilities'}
     >
       <div className="container">

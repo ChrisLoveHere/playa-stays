@@ -48,9 +48,10 @@
   background: var(--white);
   border: 1px solid var(--sand-dark);
   border-radius: var(--r-lg);
-  padding: 1.35rem 1.4rem 1.25rem;
+  overflow: hidden;
   box-shadow: 0 2px 12px rgba(10, 43, 47, 0.06);
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  padding: 0;
 }
 
 .card:hover {
@@ -58,10 +59,91 @@
   border-color: rgba(24, 104, 112, 0.28);
 }
 
+/* ---- Photo / placeholder strip (top of card) ---- */
+.media {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  flex-shrink: 0;
+  background: var(--sand-dark);
+  overflow: hidden;
+}
+
+@media (min-width: 900px) {
+  .media {
+    height: 200px;
+  }
+}
+
+.mediaImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.mediaFallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mediaFallbackOwner {
+  background: var(--deep);
+}
+
+.mediaFallbackSelling {
+  background: var(--gold);
+}
+
+.mediaFallbackGuest {
+  background: var(--sand);
+}
+
+.mediaDecorLight {
+  color: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mediaDecorNavy {
+  color: rgba(10, 43, 47, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mediaFallbackIcon {
+  width: 56px;
+  height: 56px;
+  display: block;
+}
+
+.cardContent {
+  padding: 1.1rem 1.4rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.titleRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0.55rem;
+  margin-bottom: 0.45rem;
+}
+
 .icon {
   color: var(--deep);
-  margin-bottom: 0.6rem;
+  margin: 0;
   flex-shrink: 0;
+  margin-top: 0.1rem;
 }
 
 .iconSvg {
@@ -76,7 +158,9 @@
   font-weight: 600;
   color: var(--charcoal);
   line-height: 1.3;
-  margin: 0 0 0.5rem;
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .body {

@@ -1,6 +1,7 @@
 // ============================================================
 // HomepageTemplate — server component
-// Streamlined home: hero → segmentation → trust stack → CTA
+// Home: hero (full-bleed photo) → channels → segmentation → founder →
+// capabilities → stats → city grid → testimonial → CTA
 // ============================================================
 
 import Link from 'next/link'
@@ -28,7 +29,7 @@ interface HomepageTemplateProps {
 }
 
 export function HomepageTemplate({
-  config,
+  config: _config,
   cities: _cities,
   services: _services,
   properties: _properties,
@@ -59,15 +60,15 @@ export function HomepageTemplate({
           <div className="hero-bg-right">
             <div
               className="hero-slide active"
-              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=1200&q=80')" }}
+              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=1920&q=80')" }}
             />
             <div
               className="hero-slide"
-              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=1200&q=80')" }}
+              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=1920&q=80')" }}
             />
             <div
               className="hero-slide"
-              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1613977257363-707ba9348227?w=1200&q=80')" }}
+              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1613977257363-707ba9348227?w=1920&q=80')" }}
             />
           </div>
         </div>
@@ -94,32 +95,23 @@ export function HomepageTemplate({
                 {secondaryCtaLabel}
               </Link>
             </div>
-            <div className="hero-trust-row fade-5">
-              {config.trust_stats.slice(0, 4).map((s, i) => (
-                <div key={i} className="hero-trust-item">
-                  <span style={{ fontSize: '0.74rem', color: 'rgba(255,255,255,0.5)' }}>
-                    {s.val} — {s.key}
-                  </span>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </section>
 
-      <CustomerSegmentationCards locale={locale} />
-
-      <HomeStatsBanner locale={locale} />
-
-      <HomeCapabilitiesGrid locale={locale} />
-
       <HomeChannelLogoStrip locale={locale} />
+
+      <CustomerSegmentationCards locale={locale} />
 
       <HomeFounderWidget locale={locale} />
 
-      <HomeOwnerTestimonial locale={locale} />
+      <HomeCapabilitiesGrid locale={locale} />
+
+      <HomeStatsBanner locale={locale} />
 
       <HomeFeaturedCities locale={locale} />
+
+      <HomeOwnerTestimonial locale={locale} />
 
       {/* TODO: Re-add blog section when 3+ real posts exist (exclude placeholder “Hello world” if filtering) */}
 

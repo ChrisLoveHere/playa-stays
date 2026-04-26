@@ -1,10 +1,19 @@
 // ============================================================
 // CustomerSegmentationCards — “Who is PlayaStays for?” (home)
+// Client: per-card <img> onError for /home/segmentation/* photography
 // ============================================================
+'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import type { Locale } from '@/lib/i18n'
 import styles from './CustomerSegmentationCards.module.css'
+
+const SEG_PHOTOS = [
+  { src: '/home/segmentation/owner.jpg', variant: 'owner' as const },
+  { src: '/home/segmentation/selling.jpg', variant: 'selling' as const },
+  { src: '/home/segmentation/guest.jpg', variant: 'guest' as const },
+]
 
 function IconHome() {
   return (
@@ -33,15 +42,40 @@ function IconMapPin() {
   )
 }
 
+function IconHomeMuted() {
+  return (
+    <svg className={styles.mediaFallbackIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      <path d="M9 22V12h6v10" />
+    </svg>
+  )
+}
+function IconDollarMuted() {
+  return (
+    <svg className={styles.mediaFallbackIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+      <path d="M12 1v22" />
+      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+    </svg>
+  )
+}
+function IconMapPinMuted() {
+  return (
+    <svg className={styles.mediaFallbackIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+      <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  )
+}
+
 const ICONS = [IconHome, IconDollar, IconMapPin] as const
+const FALLBACK_DECOR = [IconHomeMuted, IconDollarMuted, IconMapPinMuted] as const
 
-type Card = { title: string; body: string; cta: string; href: string }
+type CardT = { title: string; body: string; cta: string; href: string }
 
-const EN: Card[] = [
+const EN: CardT[] = [
   {
     title: 'I own a property I want managed',
-    body:
-      'Property care, multi-channel listing, and full operations across Quintana Roo.',
+    body: 'Property care, multi-channel listing, and full operations across Quintana Roo.',
     cta: 'Explore management',
     href: '/property-management/',
   },
@@ -59,11 +93,10 @@ const EN: Card[] = [
   },
 ]
 
-const ES: Card[] = [
+const ES: CardT[] = [
   {
     title: 'Tengo una propiedad que quiero administrar',
-    body:
-      'Cuidado de propiedad, listados multicanal y operación integral en Quintana Roo.',
+    body: 'Cuidado de propiedad, listados multicanal y operación integral en Quintana Roo.',
     cta: 'Explorar administración',
     href: '/es/administracion-de-propiedades/',
   },
@@ -94,6 +127,45 @@ const INTRO: Record<Locale, { title: string; sub: string; aria: string }> = {
   },
 }
 
+function CardMedia({ index }: { index: number }) {
+  const [imgOk, setImgOk] = useState(true)
+  const { src, variant } = SEG_PHOTOS[index] ?? SEG_PHOTOS[0]!
+  const Decor = FALLBACK_DECOR[index] ?? IconHomeMuted
+  const fbClass =
+    variant === 'owner'
+      ? styles.mediaFallbackOwner
+      : variant === 'selling'
+        ? styles.mediaFallbackSelling
+        : styles.mediaFallbackGuest
+
+  return (
+    <div className={styles.media}>
+      {/* TODO: Add real photography to /public/home/segmentation/ when available */}
+      {imgOk ? (
+        // eslint-disable-next-line @next/next/no-img-element -- public asset; onError to branded block
+        <img
+          className={styles.mediaImg}
+          src={src}
+          alt=""
+          width={800}
+          height={400}
+          loading="lazy"
+          onError={() => setImgOk(false)}
+        />
+      ) : null}
+      {!imgOk && (
+        <div className={`${styles.mediaFallback} ${fbClass}`} aria-hidden>
+          <div
+            className={variant === 'owner' ? styles.mediaDecorLight : styles.mediaDecorNavy}
+          >
+            <Decor />
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function CustomerSegmentationCards({ locale }: { locale: Locale }) {
   const cards = locale === 'es' ? ES : EN
   const intro = INTRO[locale] ?? INTRO.en
@@ -110,14 +182,19 @@ export function CustomerSegmentationCards({ locale }: { locale: Locale }) {
             const Icon = ICONS[i] ?? IconHome
             return (
               <article key={card.href} className={styles.card}>
-                <div className={styles.icon} aria-hidden>
-                  <Icon />
+                <CardMedia index={i} />
+                <div className={styles.cardContent}>
+                  <div className={styles.titleRow}>
+                    <div className={styles.icon} aria-hidden>
+                      <Icon />
+                    </div>
+                    <h3 className={styles.cardTitle}>{card.title}</h3>
+                  </div>
+                  <p className={styles.body}>{card.body}</p>
+                  <Link href={card.href} className={styles.cta}>
+                    {card.cta}
+                  </Link>
                 </div>
-                <h3 className={styles.cardTitle}>{card.title}</h3>
-                <p className={styles.body}>{card.body}</p>
-                <Link href={card.href} className={styles.cta}>
-                  {card.cta}
-                </Link>
               </article>
             )
           })}

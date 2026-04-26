@@ -640,24 +640,31 @@ nav.breadcrumb-nav--light .breadcrumb-sep {
   z-index: 0;
   pointer-events: none;
 }
+/* Scrim: slightly stronger than “noisy” full-opacity photo; calms contrast without a solid left bar */
 .hero-bg-left {
   position: absolute;
   inset: 0;
-  width: 52%;
-  max-width: 720px;
-  background: linear-gradient(120deg, #0a2b2f 0%, rgba(10, 43, 47, 0.92) 55%, rgba(10, 43, 47, 0.65) 100%);
-  background: linear-gradient(120deg, var(--deep) 0%, rgba(10, 43, 47, 0.92) 55%, rgba(10, 43, 47, 0.65) 100%);
+  width: 100%;
+  max-width: none;
   z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 43, 47, 0.58) 0%,
+    rgba(10, 43, 47, 0.4) 30%,
+    rgba(10, 43, 47, 0.2) 58%,
+    rgba(10, 43, 47, 0.07) 100%
+  );
 }
 .hero-bg-right {
   position: absolute;
   inset: 0;
-  left: 48%;
+  left: 0;
+  right: 0;
   z-index: 0;
   /* Solid base so failed/missing Unsplash requests don’t read as cream/ivory body bleed-through */
   background-color: #0a2b2f;
 }
-/* Darken photo side so white hero copy stays legible even with bright stock photos */
 .hero-bg-right::after {
   content: '';
   position: absolute;
@@ -666,9 +673,9 @@ nav.breadcrumb-nav--light .breadcrumb-sep {
   pointer-events: none;
   background: linear-gradient(
     90deg,
-    rgba(10, 43, 47, 0.88) 0%,
-    rgba(10, 43, 47, 0.5) 38%,
-    rgba(10, 43, 47, 0.25) 100%
+    rgba(10, 43, 47, 0.2) 0%,
+    rgba(10, 43, 47, 0.07) 48%,
+    rgba(0, 0, 0, 0) 100%
   );
 }
 .hero-slide {
@@ -680,10 +687,10 @@ nav.breadcrumb-nav--light .breadcrumb-sep {
   background-color: #0a2b2f;
   opacity: 0;
   transition: opacity 1s ease;
+  filter: saturate(0.9) brightness(0.94);
 }
 .hero-slide.active {
-  /* Was 0.42 — too faint vs pale scrim; photos sit under ::after scrim */
-  opacity: 0.62;
+  opacity: 0.64;
 }
 .hero-content {
   position: relative;
@@ -696,12 +703,16 @@ nav.breadcrumb-nav--light .breadcrumb-sep {
   gap: 40px;
   align-items: start;
 }
-/* Legibility over gradients + bright stock photos (Network 404s still leave dark base + scrim) */
+/* Homepage hero: nudge type slightly left */
+.hero .hero-content {
+  padding-left: 8px;
+  padding-right: 24px;
+}
+/* White type; dark shadow for legibility on variably lit photos */
 .hero-content > div:first-child .hero-tag,
 .hero-content > div:first-child .display-title,
-.hero-content > div:first-child .hero-sub,
-.hero-content > div:first-child .hero-trust-row {
-  text-shadow: 0 2px 18px rgba(10, 43, 47, 0.65);
+.hero-content > div:first-child .hero-sub {
+  text-shadow: 0 2px 20px rgba(6, 20, 22, 0.75), 0 1px 3px rgba(6, 20, 22, 0.5);
 }
 .hero-tag {
   font-size: 0.72rem;
@@ -796,7 +807,12 @@ nav.breadcrumb-nav--light .breadcrumb-sep {
   .hero-bg-left {
     width: 100%;
     max-width: none;
-    background: linear-gradient(180deg, rgba(10, 43, 47, 0.97) 0%, rgba(10, 43, 47, 0.88) 100%);
+    background: linear-gradient(
+      180deg,
+      rgba(10, 43, 47, 0.58) 0%,
+      rgba(10, 43, 47, 0.32) 50%,
+      rgba(10, 43, 47, 0.12) 100%
+    );
   }
   .hero-bg-right {
     left: 0;
@@ -805,14 +821,18 @@ nav.breadcrumb-nav--light .breadcrumb-sep {
   .hero-bg-right::after {
     background: linear-gradient(
       180deg,
-      rgba(10, 43, 47, 0.82) 0%,
-      rgba(10, 43, 47, 0.45) 55%,
-      rgba(10, 43, 47, 0.3) 100%
+      rgba(10, 43, 47, 0.18) 0%,
+      rgba(10, 43, 47, 0.05) 55%,
+      rgba(0, 0, 0, 0) 100%
     );
   }
   .hero-content {
     grid-template-columns: 1fr;
     gap: 32px;
+  }
+  .hero .hero-content {
+    padding-left: 8px;
+    padding-right: 20px;
   }
 }
 

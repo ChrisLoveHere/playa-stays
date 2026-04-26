@@ -1,7 +1,9 @@
 // ============================================================
-// HomeFeaturedCities — lightweight city grid (placeholders for photos)
+// HomeFeaturedCities — city grid; optional /public/home/cities/<slug>.jpg
 // ============================================================
+'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import type { Locale } from '@/lib/i18n'
 import styles from './HomeFeaturedCities.module.css'
@@ -32,6 +34,30 @@ const INTRO: Record<Locale, { title: string; sub: string }> = {
   },
 }
 
+function CityCardMedia({ slug, phClass }: { slug: string; phClass: string }) {
+  const [showPhoto, setShowPhoto] = useState(true)
+  const src = `/home/cities/${slug}.jpg`
+
+  return (
+    <div className={styles.media}>
+      {showPhoto ? (
+        // eslint-disable-next-line @next/next/no-img-element -- public files optional; onError to gradient
+        <img
+          className={styles.mediaImg}
+          src={src}
+          alt=""
+          width={800}
+          height={450}
+          loading="lazy"
+          decoding="async"
+          onError={() => setShowPhoto(false)}
+        />
+      ) : null}
+      {!showPhoto && <span className={`${styles.placeholder} ${phClass}`} aria-hidden />}
+    </div>
+  )
+}
+
 export function HomeFeaturedCities({ locale }: { locale: Locale }) {
   const intro = INTRO[locale] ?? INTRO.en
   return (
@@ -48,10 +74,10 @@ export function HomeFeaturedCities({ locale }: { locale: Locale }) {
             const ph = i % 2 === 0 ? styles.placeholderA : styles.placeholderB
             return (
               <Link key={city.slug} href={href} className={styles.card}>
-                <span className={`${styles.placeholder} ${ph}`} aria-hidden />
+                <CityCardMedia slug={city.slug} phClass={ph} />
                 <div className={styles.body}>
                   <h3 className={styles.city}>{city.name}</h3>
-                  <p className={styles.tagline}>{tag}</p>
+                  <p className={`${styles.tagline} ${styles.taglineItalic}`}>{tag}</p>
                 </div>
               </Link>
             )

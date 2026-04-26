@@ -64,19 +64,39 @@
   transform: translateY(-2px);
 }
 
-.placeholder {
+.media {
+  position: relative;
   width: 100%;
-  min-height: 120px;
+  min-height: 128px;
+  aspect-ratio: 16 / 9;
+  background: var(--sand-dark);
+  overflow: hidden;
+}
+
+.mediaImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Shown when /home/cities/<slug>.jpg is missing (onError) */
+.placeholder {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  min-height: 100%;
   display: block;
 }
 
+/* Deliberate placeholder: vertical gradient, brand tones (0deg: lighter top → deeper bottom) */
 .placeholderA {
-  background: linear-gradient(135deg, var(--deep) 0%, #0d3a40 100%);
+  background: linear-gradient(0deg, var(--deep) 0%, #051a1c 100%);
 }
 
 .placeholderB {
-  background: linear-gradient(135deg, var(--gold) 0%, #a8893a 100%);
-  opacity: 0.95;
+  background: linear-gradient(0deg, var(--gold) 0%, #5c4a1f 100%);
 }
 
 .body {
@@ -96,6 +116,12 @@
   font-family: var(--font-body, 'DM Sans', system-ui, sans-serif);
   font-size: 0.84rem;
   line-height: 1.5;
-  color: var(--mid);
   margin: 0;
+}
+
+.taglineItalic {
+  font-style: italic;
+  color: var(--charcoal);
+  opacity: 0.88;
+  line-height: 1.45;
 }
