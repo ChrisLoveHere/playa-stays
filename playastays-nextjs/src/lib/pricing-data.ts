@@ -65,147 +65,163 @@ export const PRICING_HUB_PRIMARY_SLUGS = [
 
 /** Chetumal remains in CITY_PRICING for calculator + legacy URLs but is a different market profile (state capital / Belize gateway) — see product notes. */
 
-// ── Pricing plans (same structure as ServicePageTemplate) ─
-// Core / Plus / Pro match the existing PricingGrid design exactly.
+// ── Property Care (all tiers) — used on universal pricing hub "What's included" ─
+
+export function getPropertyCareDeliverables(locale: Locale): string[] {
+  if (locale === 'es') {
+    return [
+      'Inspección mensual de la propiedad',
+      'Gestión de servicios y cuotas de condominio',
+      'Manejo de correo y paquetería',
+      'Línea de emergencia 24/7',
+      'Gestión local de llaves y accesos',
+      'Coordinación de proveedores',
+    ]
+  }
+  return [
+    'Monthly property inspection',
+    'Utility & condo fee management',
+    'Mail and package handling',
+    '24/7 emergency line',
+    'Local key & access management',
+    'Vendor coordination',
+  ]
+}
+
+// ── Universal pricing hub: CORE / PLUS / PRO (Property Care + % or custom) ─
 
 export function getPricingPlans(
   locale: Locale,
-  cityName: string,
-  estimateHref: string
+  _cityName: string,
+  contactHref: string
 ): PricingPlan[] {
-  const isEs = locale === 'es'
-  const city  = isEs ? cityName : cityName  // display name same
-
-  if (isEs) {
+  if (locale === 'es') {
     return [
       {
-        tier:  'Core',
-        name:  '10%',
-        unit:  'sobre ingresos brutos',
+        tier: 'CORE',
+        name: '10%',
+        unit: '',
+        hubFeeLayout: true,
+        audience: 'Para quienes rentan su propiedad a largo plazo',
+        commissionAmount: '10%',
+        commissionLabel: 'sobre ingresos de renta a largo plazo',
+        propertyCareAddOnLine: '+ US$125/mes Cuidado de propiedad',
         badge: undefined,
         featured: false,
-        desc:  `Ideal para propietarios que quieren rentar ${city} de forma simple y sin complicaciones.`,
+        desc: '',
         features: [
-          'Anuncio en Airbnb, VRBO y Booking.com',
-          'Precio dinámico básico',
-          'Comunicación con huéspedes',
-          'Coordinación de limpieza',
-          'Reporte mensual de ingresos',
-          'Apoyo con cumplimiento legal',
+          'Inspección mensual de la propiedad',
+          'Selección y colocación de inquilinos a largo plazo',
+          'Cumplimiento y renovación de arrendamientos',
+          'Coordinación de entrada y salida',
         ],
-        cta: { label: 'Comenzar → ', href: estimateHref },
+        cta: { label: 'Comenzar', href: contactHref },
       },
       {
-        tier:  'Plus',
-        name:  '15%',
-        unit:  'sobre ingresos brutos',
+        tier: 'PLUS',
+        name: '15%',
+        unit: '',
+        hubFeeLayout: true,
+        audience: 'Administración activa de renta corta',
+        commissionAmount: '15%',
+        commissionLabel: 'sobre ingresos de renta corta',
+        propertyCareAddOnLine: '+ US$125/mes Cuidado de propiedad',
         badge: 'Más popular',
         featured: true,
-        desc:  `Máxima visibilidad y optimización de tarifas para tu propiedad en ${city}.`,
+        desc: '',
         features: [
-          'Todo lo del plan Core',
-          'Fotografía profesional incluida',
-          'Optimización de precio en tiempo real',
-          'Copywriting y SEO del anuncio',
-          'Limpieza interna (estándar hotelero)',
-          'Línea de emergencia 24/7 para huéspedes',
-          'Coordinación de mantenimiento',
+          'Listado multicanal (Airbnb, VRBO, Booking, directo)',
+          'Precio nocturno dinámico',
+          'Soporte bilingüe 24/7 a huéspedes',
+          'Fotografía profesional y optimización del anuncio',
         ],
-        cta: { label: 'Comenzar →', href: estimateHref },
+        cta: { label: 'Comenzar', href: contactHref },
       },
       {
-        tier:  'Pro',
-        name:  'Personalizado',
-        unit:  'para inversores y portfolios',
+        tier: 'PRO',
+        name: 'Custom',
+        unit: '',
+        hubFeeLayout: true,
+        audience: 'Personalizado para inversionistas y portafolios',
+        commissionAmount: 'A medida',
+        commissionLabel: 'Personalizado para portafolios',
+        propertyCareAddOnLine: '+ US$125/mes Cuidado de propiedad (menor en portafolios grandes)',
         badge: undefined,
         featured: false,
-        desc:  `Para villas de lujo, penthouses y portfolios de propiedades en ${city}.`,
+        desc: '',
         features: [
-          'Todo lo del plan Plus',
+          'Todo lo de PLUS',
           'Gerente de cuenta dedicado',
-          'Servicios de concierge para huéspedes',
-          'Consultoría de diseño de interiores',
-          'Mantenimiento prioritario (< 4 hrs)',
-          'Declaración SAT y contabilidad',
-          'Estrategia de portafolio multi-propiedad',
+          'Estrategia y reportes de portafolio',
+          'Mantenimiento prioritario y coordinación de proveedores',
         ],
-        cta: { label: 'Hablemos →', href: estimateHref },
+        cta: { label: 'Contáctanos', href: contactHref },
       },
     ]
   }
 
   return [
     {
-      tier:  'Core',
-      name:  '10%',
-      unit:  'of gross revenue',
+      tier: 'CORE',
+      name: '10%',
+      unit: '',
+      hubFeeLayout: true,
+      audience: 'For owners renting their property long-term',
+      commissionAmount: '10%',
+      commissionLabel: 'of long-term lease revenue',
+      propertyCareAddOnLine: '+ $125/mo Property Care',
       badge: undefined,
       featured: false,
-      desc:  `For owners who want a simple, hands-off rental in ${city} without complexity.`,
+      desc: '',
       features: [
-        'Airbnb, VRBO & Booking.com listing',
-        'Basic dynamic pricing',
-        'Guest communication & screening',
-        'Cleaning coordination',
-        'Monthly income report',
-        'Legal compliance assistance',
+        'Monthly property inspection',
+        'Long-term tenant placement & screening',
+        'Lease compliance & renewals',
+        'Move-in / move-out coordination',
       ],
-      cta: { label: 'Get Started →', href: estimateHref },
+      cta: { label: 'Get started', href: contactHref },
     },
     {
-      tier:  'Plus',
-      name:  '15%',
-      unit:  'of gross revenue',
+      tier: 'PLUS',
+      name: '15%',
+      unit: '',
+      hubFeeLayout: true,
+      audience: 'Active short-term rental management',
+      commissionAmount: '15%',
+      commissionLabel: 'of short-term rental revenue',
+      propertyCareAddOnLine: '+ $125/mo Property Care',
       badge: 'Most Popular',
       featured: true,
-      desc:  `Maximum visibility and rate optimisation for your ${city} property.`,
+      desc: '',
       features: [
-        'Everything in Core',
-        'Professional photography (included)',
-        'Real-time rate optimisation',
-        'Listing copywriting & SEO',
-        'In-house cleaning (hotel standard)',
-        '24/7 guest emergency line',
-        'Maintenance coordination',
+        'Multi-channel listing (Airbnb, VRBO, Booking, direct)',
+        'Dynamic nightly pricing',
+        '24/7 bilingual guest support',
+        'Professional photography & listing optimization',
       ],
-      cta: { label: 'Get Started →', href: estimateHref },
+      cta: { label: 'Get started', href: contactHref },
     },
     {
-      tier:  'Pro',
-      name:  'Custom',
-      unit:  'for investors & portfolios',
+      tier: 'PRO',
+      name: 'Custom',
+      unit: '',
+      hubFeeLayout: true,
+      audience: 'Tailored for investors and portfolios',
+      commissionAmount: 'Custom',
+      commissionLabel: 'Tailored for portfolios',
+      propertyCareAddOnLine: '+ $125/mo Property Care (lower for larger portfolios)',
       badge: undefined,
       featured: false,
-      desc:  `For luxury villas, penthouses, and multi-property portfolios in ${city}.`,
+      desc: '',
       features: [
-        'Everything in Plus',
+        'Everything in PLUS',
         'Dedicated account manager',
-        'Guest concierge services',
-        'Interior design consultation',
-        'Priority maintenance (< 4hrs)',
-        'SAT tax filing & accounting',
-        'Multi-property portfolio strategy',
+        'Portfolio strategy & reporting',
+        'Priority maintenance & vendor coordination',
       ],
-      cta: { label: 'Talk to Us →', href: estimateHref },
+      cta: { label: 'Talk to us', href: contactHref },
     },
   ]
-}
-
-/** One-line audience under tier name (UI). Same fees everywhere; use on hub and city pages when locale is passed to PricingGrid. */
-const TIER_AUDIENCE_EN: Record<string, string> = {
-  Core: 'For owners who want hands-off ownership without complexity',
-  Plus: 'For owners who want maximum visibility and rate optimization',
-  Pro: 'For investors, luxury villas, and multi-property portfolios',
-}
-const TIER_AUDIENCE_ES: Record<string, string> = {
-  Core: 'Para propietarios que quieren propiedad sin complicaciones',
-  Plus: 'Para propietarios que buscan máxima visibilidad y optimización de tarifas',
-  Pro: 'Para inversionistas, villas de lujo y portafolios de múltiples propiedades',
-}
-
-export function getTierAudienceLabel(locale: Locale, tier: string): string | undefined {
-  const map = locale === 'es' ? TIER_AUDIENCE_ES : TIER_AUDIENCE_EN
-  return map[tier] ?? map[tier.charAt(0).toUpperCase() + tier.slice(1).toLowerCase()]
 }
 
 // ── City-specific market data ─────────────────────────────
@@ -992,7 +1008,7 @@ export function getPricingFAQs(
     return [
       {
         question: `¿Cuánto cobra PlayaStays por administrar una propiedad en ${cityName}?`,
-        answer: `PlayaStays cobra entre el 10% y el 25% de los ingresos brutos de renta dependiendo del plan y el tipo de propiedad. No hay comisión de configuración ni tarifa de retención mensual. Ganamos cuando tú ganas.`,
+        answer: `En todos los planes incluye Cuidado de propiedad: US$125/mes (Core y Plus) o monto a medida en Pro. Sobre eso, Core cobra 10% sobre renta a largo plazo si aplica, Plus 15% sobre renta a corta plazo, y Pro es personalizado. No hay comisión de configuración. Ganamos cuando tú ganas sobre la parte variable.`,
       },
       {
         question: `¿El porcentaje de comisión se aplica sobre los ingresos brutos o netos?`,
@@ -1000,7 +1016,7 @@ export function getPricingFAQs(
       },
       {
         question: `¿Qué incluye la tarifa de administración en ${cityName}?`,
-        answer: `El plan Plus (15%), el más popular, incluye: fotografía profesional, anuncio en Airbnb/VRBO/Booking.com, precio dinámico en tiempo real, comunicación con huéspedes, limpieza interna, coordinación de mantenimiento, portal del propietario y soporte de emergencia 24/7.`,
+        answer: `Toda propiedad bajo Cuidado de propiedad: inspección mensual, servicios, paquetería, línea 24/7, accesos y coordinación de proveedores, más lo que añade cada plan. Plus, el más popular, suma publicación, precio dinámico, fotografía, operación y guest management para renta a corta plazo, además del 15% sobre esos ingresos.`,
       },
       {
         question: `¿Vale la pena la gestión profesional en ${cityName}?`,
@@ -1009,6 +1025,11 @@ export function getPricingFAQs(
       {
         question: `¿Existen contratos de permanencia o penalizaciones?`,
         answer: `No hay contratos de largo plazo. Puedes pausar o cancelar el servicio con 30 días de aviso. No se cobra comisión de salida. Nuestro incentivo es que estés satisfecho, no atrapado.`,
+      },
+      {
+        question: '¿Puedo cambiar de plan si mis necesidades cambian?',
+        answer:
+          'Sí. Si empezaste en CORE para cuidado de propiedad y decides comenzar con renta corta, te movemos a PLUS. Lo opuesto también funciona — si dejas la renta corta y prefieres inquilinos a largo plazo, puedes bajar a CORE. No atamos a los propietarios a planes que ya no encajan con su uso.',
       },
       {
         question: `¿Cómo se compara la tarifa de ${cityName} con otras empresas de administración?`,
@@ -1020,7 +1041,7 @@ export function getPricingFAQs(
   return [
     {
       question: `How much does PlayaStays charge to manage a property in ${cityName}?`,
-      answer: `PlayaStays charges between 10% and 25% of gross rental revenue depending on the plan and property type. There is no setup commission and no monthly retainer. We earn when you earn.`,
+      answer: `Every plan includes Property Care: $125/mo in Core and Plus, or custom in Pro. On top, Core is 10% of long-term lease revenue if you have a tenant; Plus is 15% of short-term rental revenue; Pro is custom. There is no setup fee. The variable part is performance-based where revenue applies.`,
     },
     {
       question: `Is the management fee percentage applied to gross or net revenue?`,
@@ -1028,7 +1049,7 @@ export function getPricingFAQs(
     },
     {
       question: `What's included in the management fee in ${cityName}?`,
-      answer: `The Plus plan (15%), our most popular, includes: professional photography, listing on Airbnb/VRBO/Booking.com, real-time dynamic pricing, guest communication, in-house cleaning, maintenance coordination, owner portal, and 24/7 emergency support.`,
+      answer: `All plans start with the Property Care package (monthly care of the home) plus a plan-specific share of rental revenue. Plus, our most popular tier, adds full short-term management: professional photography, listing on Airbnb/VRBO/Booking.com, dynamic pricing, guest operations, in-house cleaning, and maintenance — plus 15% of short-term rental gross revenue on top of Property Care.`,
     },
     {
       question: `Is professional management worth it in ${cityName}?`,
@@ -1037,6 +1058,10 @@ export function getPricingFAQs(
     {
       question: `Are there long-term contracts or exit penalties?`,
       answer: `No long-term contracts. You can pause or cancel the service with 30 days' notice. No exit fee is charged. Our incentive is that you stay because you're happy, not because you're locked in.`,
+    },
+    {
+      question: 'Can I switch tiers if my needs change?',
+      answer: `Yes. If you started on CORE for property care and decide to start short-term renting, we'll move you to PLUS. The reverse also works — if you stop short-term renting and want long-term tenants, you can drop to CORE. We don't lock owners into tiers that don't fit their use anymore.`,
     },
     {
       question: `How does ${cityName} management pricing compare to other companies?`,

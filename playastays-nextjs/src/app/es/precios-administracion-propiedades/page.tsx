@@ -12,14 +12,22 @@ import { OwnerBanner } from '@/components/sections'
 import { PricingGrid } from '@/components/sections/PricingGrid'
 import { FaqAccordion } from '@/components/content/FaqAccordion'
 import { Breadcrumb } from '@/components/layout/Breadcrumb'
-import { getPricingPlans, getPricingFAQs, getValueItems, CITY_PRICING, PRICING_HUB_PRIMARY_SLUGS } from '@/lib/pricing-data'
+import { FounderWidget } from '@/components/contact/FounderWidget'
+import {
+  getPricingPlans,
+  getPricingFAQs,
+  getValueItems,
+  getPropertyCareDeliverables,
+  CITY_PRICING,
+  PRICING_HUB_PRIMARY_SLUGS,
+} from '@/lib/pricing-data'
 
 export const revalidate = 86400
 
 export const metadata: Metadata = buildMetadata({
   title: 'Precios de administración en Quintana Roo — Core, Plus y Pro',
   description:
-    'Tres niveles de plan: Core (10%), Plus (15%, más popular) y Pro (personalizado). Las mismas tarifas de administración en cada mercado PlayaStays en Quintana Roo. Sin cuotas iniciales ni contratos largos: comisión basada en desempeño.',
+    'Cuidado de propiedad (US$125/mes en Core y Plus) más comisión: 10% sobre renta a largo plazo en Core, 15% sobre renta corta en Plus, y términos a medida en Pro. Misma estructura en todos los mercados PlayaStays en Quintana Roo.',
   canonical: 'https://www.playastays.com/es/precios-administracion-propiedades/',
   hreflangEn: 'https://www.playastays.com/property-management-pricing/',
 })
@@ -35,7 +43,7 @@ const SCHEMA = {
           name: '¿Cómo están estructuradas las comisiones de administración de PlayaStays en Quintana Roo?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'PlayaStays ofrece tres niveles: Core (10% de ingresos brutos por renta), Plus (15%, el más popular) y Pro (personalizado para inversionistas y portafolios multi-propiedad). La misma estructura de tarifas aplica en cada mercado donde operamos en Quintana Roo. No hay comisión de configuración ni contratos largos. El modelo es basado en desempeño: ganamos cuando tú ganas.',
+            text: 'Cada plan incluye Cuidado de propiedad con tarifa fija más una comisión según el tipo de plan. Core: cuidado mensual (US$125 en Core y Plus) + 10% de ingresos de renta a largo plazo si aplica, sin renta a corta plazo. Plus: cuidado mensual (US$125) + 15% de ingresos de renta corta. Pro: términos a medida (la mensualidad puede bajar en portafolios grandes). Misma lógica en todo Quintana Roo.',
           },
         },
         {
@@ -43,7 +51,7 @@ const SCHEMA = {
           name: '¿Vale la pena la gestión profesional de rentas vacacionales en la Riviera Maya?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Sí. Las propiedades gestionadas por PlayaStays generan en promedio un 22–38% más de ingresos netos que las autogestionadas, incluso después de la comisión, gracias al precio dinámico, mayor ocupación y optimización del anuncio.',
+            text: 'Sí. Las propiedades gestionadas por PlayaStays suelen generar 22–38% más de ingresos netos, incluso después de comisiones, con precio dinámico y listados optimizados donde aplica la renta a corta plazo (Plus/Pro).',
           },
         },
       ],
@@ -54,18 +62,19 @@ const SCHEMA = {
       provider: { '@id': 'https://www.playastays.com/#org' },
       areaServed: { '@type': 'State', name: 'Quintana Roo' },
       offers: [
-        { '@type': 'Offer', name: 'Plan Core',  price: '10%', priceCurrency: 'percent' },
-        { '@type': 'Offer', name: 'Plan Plus',  price: '15%', priceCurrency: 'percent' },
-        { '@type': 'Offer', name: 'Plan Pro',   price: 'Personalizado', priceCurrency: 'percent' },
+        { '@type': 'Offer', name: 'Core — Cuidado de propiedad US$125/mes + 10% renta a largo plazo' },
+        { '@type': 'Offer', name: 'Plus — Cuidado de propiedad US$125/mes + 15% renta a corta plazo' },
+        { '@type': 'Offer', name: 'Pro — Cuidado a medida y comisión personalizada por portafolio' },
       ],
     },
   ],
 }
 
 export default function EsPricingHubPage() {
-  const plans = getPricingPlans('es', 'Playa del Carmen', '/es/publica-tu-propiedad/')
+  const plans = getPricingPlans('es', 'Playa del Carmen', '/es/contacto/')
   const faqs = getPricingFAQs('es', 'Playa del Carmen / Riviera Maya')
   const valueItems = getValueItems('es')
+  const propertyCare = getPropertyCareDeliverables('es')
 
   return (
     <>
@@ -99,17 +108,14 @@ export default function EsPricingHubPage() {
                 marginBottom: 24,
               }}
             >
-              Tres niveles de plan. Las mismas tarifas en cada mercado de Quintana Roo.
+              Tres niveles de plan. Misma estructura en cada mercado de Quintana Roo.
               <br />
-              Sin cuotas iniciales. Sin contratos largos. Basado en desempeño — ganamos cuando tú ganas.
+              Sin contratos largos. Cuidado de propiedad incluido; el porcentaje sobre ingresos es basado en desempeño según lo que tú ganas.
             </p>
-            <div className="fade-4" style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              <Link href="/es/publica-tu-propiedad/" className="btn btn-gold btn-lg">
-                Obtener estimado de ingresos gratis →
+            <div className="fade-4">
+              <Link href="/es/contacto/" className="btn btn-gold btn-lg">
+                Habla con un administrador local →
               </Link>
-              <a href="https://wa.me/529841234567" className="btn btn-wa" target="_blank" rel="noopener">
-                Hablar con un asesor local
-              </a>
             </div>
             <div style={{ marginTop: 14 }} className="fade-5">
               <Link href="/es/playa-del-carmen/administracion-de-propiedades/" style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)', textDecoration: 'underline' }}>
@@ -121,37 +127,48 @@ export default function EsPricingHubPage() {
       </section>
 
       <div id="management-plans">
-        <PricingGrid
-          eyebrow="Planes de Administración"
-          headline="Tarifas claras. Sin sorpresas."
-          body="Todos los planes son basados en desempeño — ganamos cuando tú ganas. Sin cuota de instalación, sin retención mensual."
-          plans={plans}
-          locale="es"
-        />
+        <PricingGrid plans={plans} />
       </div>
-
-      <section className="pad-lg bg-ivory">
-        <div className="container" style={{ maxWidth: 720 }}>
-          <FaqAccordion
-            eyebrow="Preguntas frecuentes"
-            headline="FAQ sobre precios"
-            items={faqs}
-          />
-        </div>
-      </section>
 
       <section className="pad-lg bg-sand">
         <div className="container">
-          <div style={{ textAlign: 'center', maxWidth: 560, margin: '0 auto 40px' }}>
+          <div style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto 32px' }}>
             <div className="eyebrow mb-8">En todos los planes</div>
             <h2 className="section-title mt-12 mb-8">Qué incluye cada plan</h2>
             <p className="body-text" style={{ maxWidth: 640, margin: '0 auto' }}>
-              Los niveles (Core, Plus, Pro) añaden servicios y profundidad de apoyo. El porcentaje de comisión no cambia por ciudad dentro de Quintana Roo; lo que varía por destino son los ejemplos e ilustraciones de mercado en cada página local.
+              Los planes (Core, Plus, Pro) añaden servicios. La estructura de tarifas no cambia por ciudad en Quintana Roo: el detalle de mercado está en cada guía. Core es renta a largo plazo o segunda residencia; Plus es explícitamente renta a corta plazo.
             </p>
             <p className="body-text" style={{ maxWidth: 640, margin: '16px auto 0' }}>
-              No subcontratamos. Nuestro equipo local en la Riviera Maya cubre el núcleo operativo en todos los planes.
+              No subcontratamos. Nuestro equipo local en la Riviera Maya cubre la operación en todos los planes.
             </p>
           </div>
+
+          <div
+            style={{
+              maxWidth: 640,
+              margin: '0 auto 40px',
+              background: 'var(--white)',
+              border: '1px solid var(--sand-dark)',
+              borderRadius: 'var(--r-lg)',
+              padding: '24px 28px',
+            }}
+          >
+            <h3
+              className="section-title"
+              style={{ fontSize: 'clamp(1.1rem, 2.1vw, 1.4rem)', marginBottom: 12, textAlign: 'left' }}
+            >
+              En todo plan: Cuidado de propiedad
+            </h3>
+            <p className="body-text" style={{ marginBottom: 16, textAlign: 'left' }}>
+              Una línea mensual para que el hogar esté bajo cuidado local, planteada como valor incluido, no un impuesto añadido a tu comisión.
+            </p>
+            <ul style={{ margin: 0, paddingLeft: 22, color: 'var(--mid)', lineHeight: 1.75, fontSize: '0.92rem' }}>
+              {propertyCare.map((line, j) => (
+                <li key={j} style={{ marginBottom: 8 }}>{line}</li>
+              ))}
+            </ul>
+          </div>
+
           <div className="service-cards">
             {valueItems.map((item, i) => (
               <div key={i} className="service-card">
@@ -164,11 +181,23 @@ export default function EsPricingHubPage() {
         </div>
       </section>
 
+      <FounderWidget locale="es" />
+
+      <section className="pad-lg bg-ivory">
+        <div className="container" style={{ maxWidth: 720 }}>
+          <FaqAccordion
+            eyebrow="Preguntas frecuentes"
+            headline="FAQ sobre precios"
+            items={faqs}
+          />
+        </div>
+      </section>
+
       <OwnerBanner
         eyebrow="Propietarios en Quintana Roo"
-        headline="Obtén un estimado de ingresos gratuito para tu propiedad"
-        body="Comparte unos datos básicos y nuestro equipo local responderá con un panorama de ingresos personalizado, no un resultado genérico de calculadora."
-        primaryCta={{ label: 'Obtener mi estimado gratis →', href: '/es/publica-tu-propiedad/' }}
+        headline="¿Preguntas sobre tu propiedad o los precios?"
+        body="Respondemos de forma directa, sin call center."
+        primaryCta={{ label: 'Contáctame →', href: '/es/contacto/' }}
         secondaryCta={{ label: 'Ver servicios de administración', href: '/es/playa-del-carmen/administracion-de-propiedades/' }}
       />
 

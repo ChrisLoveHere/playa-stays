@@ -5,8 +5,6 @@
 // ============================================================
 
 import Link from 'next/link'
-import type { Locale } from '@/lib/i18n'
-import { getTierAudienceLabel } from '@/lib/pricing-data'
 import type { PricingPlan } from '@/types'
 
 export type { PricingPlan } from '@/types'
@@ -16,15 +14,15 @@ interface PricingGridProps {
   eyebrow?: string
   headline?: string
   body?: string
-  /** When set, shows the one-line audience label under the tier (localized). */
-  locale?: Locale
 }
 
-export function PricingGrid({ plans, eyebrow, headline, body, locale }: PricingGridProps) {
+export function PricingGrid({ plans, eyebrow, headline, body }: PricingGridProps) {
+  const hasIntro = Boolean(eyebrow || headline || body)
+
   return (
     <section className="pad-lg bg-sand">
       <div className="container">
-        {(eyebrow || headline) && (
+        {hasIntro && (
           <div style={{ textAlign: 'center', maxWidth: 520, margin: '0 auto 48px' }}>
             {eyebrow  && <div className="eyebrow mb-8">{eyebrow}</div>}
             {headline && <h2 className="section-title mt-12 mb-8">{headline}</h2>}
@@ -34,7 +32,99 @@ export function PricingGrid({ plans, eyebrow, headline, body, locale }: PricingG
 
         <div className="pricing-grid">
           {plans.map((plan, i) => {
-            const audienceLine = locale ? getTierAudienceLabel(locale, plan.tier) : undefined
+            if (plan.hubFeeLayout && plan.commissionAmount != null && plan.propertyCareAddOnLine) {
+              const isFeatured = plan.featured
+              const featMuted = isFeatured ? 'rgba(255,255,255,0.48)' : 'var(--light)'
+              const audienceColor = isFeatured ? 'rgba(255,255,255,0.55)' : 'var(--mid)'
+              const careColor = isFeatured ? 'rgba(255,255,255,0.6)' : 'var(--mid)'
+              return (
+            <div
+              key={i}
+              className={`pricing-card${isFeatured ? ' featured' : ''}`}
+              style={{ paddingTop: 22, paddingBottom: 26 }}
+            >
+              {plan.badge && (
+                <div className="pricing-badge">{plan.badge}</div>
+              )}
+              <div
+                className="pricing-tier"
+                style={{
+                  fontSize: '0.65rem',
+                  letterSpacing: '0.14em',
+                  marginBottom: 8,
+                  color: featMuted,
+                }}
+              >
+                {plan.tier}
+              </div>
+              {plan.audience && (
+                <div
+                  style={{
+                    fontSize: '0.8rem',
+                    lineHeight: 1.4,
+                    color: audienceColor,
+                    marginBottom: 16,
+                    minHeight: '2.25em',
+                  }}
+                >
+                  {plan.audience}
+                </div>
+              )}
+
+              <div
+                className="pricing-price"
+                style={{
+                  fontSize: plan.tier === 'PRO'
+                    ? 'clamp(2rem, 4.2vw, 2.85rem)'
+                    : 'clamp(2.2rem, 4.5vw, 3rem)',
+                  lineHeight: 1.05,
+                  marginBottom: 6,
+                }}
+              >
+                {plan.commissionAmount}
+              </div>
+              {plan.commissionLabel && (
+                <div
+                  style={{
+                    fontSize: '0.8rem',
+                    lineHeight: 1.45,
+                    color: isFeatured ? 'rgba(255,255,255,0.52)' : 'var(--light)',
+                    marginBottom: 18,
+                  }}
+                >
+                  {plan.commissionLabel}
+                </div>
+              )}
+
+              <div
+                style={{
+                  fontSize: '0.81rem',
+                  lineHeight: 1.45,
+                  color: careColor,
+                  marginBottom: 20,
+                  paddingTop: 4,
+                  borderTop: isFeatured ? '1px solid rgba(255,255,255,0.12)' : '1px solid var(--sand-dark)',
+                  paddingBottom: 2,
+                }}
+              >
+                {plan.propertyCareAddOnLine}
+              </div>
+
+              <ul className="pricing-features" style={{ marginBottom: 22, gap: 10 }}>
+                {plan.features.map((f, fi) => (
+                  <li key={fi} style={{ fontSize: '0.8rem', lineHeight: 1.45 }}>{f}</li>
+                ))}
+              </ul>
+              <Link
+                href={plan.cta.href}
+                className={`btn btn-full${isFeatured ? ' btn-gold' : ' btn-ghost'}`}
+              >
+                {plan.cta.label}
+              </Link>
+            </div>
+              )
+            }
+
             return (
             <div
               key={i}
@@ -44,20 +134,6 @@ export function PricingGrid({ plans, eyebrow, headline, body, locale }: PricingG
                 <div className="pricing-badge">{plan.badge}</div>
               )}
               <div className="pricing-tier">{plan.tier}</div>
-              {audienceLine && (
-                <div
-                  className="pricing-audience"
-                  style={{
-                    fontSize: '0.8rem',
-                    lineHeight: 1.45,
-                    color: plan.featured ? 'rgba(255,255,255,0.55)' : 'var(--light)',
-                    marginTop: 4,
-                    marginBottom: 10,
-                  }}
-                >
-                  {audienceLine}
-                </div>
-              )}
               <div className="pricing-price">{plan.name}</div>
               {plan.unit && <div className="pricing-unit">{plan.unit}</div>}
               <div className="pricing-desc">{plan.desc}</div>

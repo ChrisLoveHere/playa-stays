@@ -86,6 +86,25 @@ export interface PricingPlan {
   cta: { label: string; href: string }
   featured?: boolean
   badge?: string
+  /**
+   * Universal pricing hub: Property Care (monthly) + commission block.
+   * When true, `PricingGrid` renders `propertyCare*`, `commission*`, and `audience` instead of legacy `name`+`unit` as the only price.
+   */
+  hubFeeLayout?: boolean
+  /** Muted one-line audience under tier name. */
+  audience?: string
+  /** Primary price line, e.g. "$125/mo" or "Custom" */
+  propertyCareAmount?: string
+  /** Subline under primary, e.g. "Property Care included" */
+  propertyCareIncludedLabel?: string
+  /** Shown before commission amount, usually "+" */
+  commissionPrefix?: string
+  /** Hub: primary BIG value — revenue % (10%, 15%) or "Custom" on Pro */
+  commissionAmount?: string
+  /** Hub: one line under the primary % (or under "Custom" on Pro) */
+  commissionLabel?: string
+  /** Hub: secondary line, e.g. "+ $125/mo Property Care" */
+  propertyCareAddOnLine?: string
 }
 
 // ── WordPress REST primitives ─────────────────────────────

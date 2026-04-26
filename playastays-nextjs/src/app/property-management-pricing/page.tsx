@@ -12,14 +12,22 @@ import { OwnerBanner } from '@/components/sections'
 import { PricingGrid } from '@/components/sections/PricingGrid'
 import { FaqAccordion } from '@/components/content/FaqAccordion'
 import { Breadcrumb } from '@/components/layout/Breadcrumb'
-import { getPricingPlans, getPricingFAQs, getValueItems, CITY_PRICING, PRICING_HUB_PRIMARY_SLUGS } from '@/lib/pricing-data'
+import { FounderWidget } from '@/components/contact/FounderWidget'
+import {
+  getPricingPlans,
+  getPricingFAQs,
+  getValueItems,
+  getPropertyCareDeliverables,
+  CITY_PRICING,
+  PRICING_HUB_PRIMARY_SLUGS,
+} from '@/lib/pricing-data'
 
 export const revalidate = 86400
 
 export const metadata: Metadata = buildMetadata({
   title: 'Property Management Pricing in Quintana Roo — Core, Plus & Pro',
   description:
-    'Three plan tiers: Core (10%), Plus (15%, most popular), and Pro (custom). Same management fees in every PlayaStays market in Quintana Roo. No setup fees, no long-term contracts — performance-based revenue share.',
+    'Property Care ($125/mo in Core and Plus) plus a performance share: 10% on long-term lease revenue in Core, 15% on short-term revenue in Plus, and custom terms in Pro. Same structure in every PlayaStays market in Quintana Roo.',
   canonical: 'https://www.playastays.com/property-management-pricing/',
   hreflangEs: 'https://www.playastays.com/es/precios-administracion-propiedades/',
 })
@@ -35,7 +43,7 @@ const SCHEMA = {
           name: 'How are PlayaStays property management fees structured in Quintana Roo?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'PlayaStays offers three plan tiers: Core (10% of gross rental revenue), Plus (15%, most popular), and Pro (custom for investors and multi-property portfolios). The same fee structure applies in every market we serve in Quintana Roo. There are no setup fees or long-term contracts. Fees are performance-based — we earn when you earn.',
+            text: 'Every plan includes a monthly Property Care component plus a plan-specific performance share. Core: $125/mo Property Care plus 10% of long-term lease revenue if applicable, without short-term rental management. Plus: $125/mo Property Care plus 15% of short-term rental revenue, our most popular tier. Pro: custom Property Care and custom revenue share, often lower monthly Property Care for large portfolios. The same plan structure applies in every market we serve in Quintana Roo.',
           },
         },
         {
@@ -43,7 +51,7 @@ const SCHEMA = {
           name: 'Is professional management worth the management fee in the Riviera Maya?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Yes. PlayaStays-managed properties earn 22–38% more net income than self-managed equivalents, even after the management fee, due to dynamic pricing, higher occupancy, and premium listing optimisation.',
+            text: 'Yes. PlayaStays-managed properties earn 22–38% more net income than self-managed equivalents, even after the management fee, due to dynamic pricing, higher occupancy, and premium listing optimisation where short-term management applies.',
           },
         },
       ],
@@ -54,18 +62,19 @@ const SCHEMA = {
       provider: { '@id': 'https://www.playastays.com/#org' },
       areaServed: { '@type': 'State', name: 'Quintana Roo' },
       offers: [
-        { '@type': 'Offer', name: 'Core Plan', price: '10%', priceCurrency: 'percent' },
-        { '@type': 'Offer', name: 'Plus Plan', price: '15%', priceCurrency: 'percent' },
-        { '@type': 'Offer', name: 'Pro Plan',  price: 'Custom', priceCurrency: 'percent' },
+        { '@type': 'Offer', name: 'Core — $125/mo Property Care + 10% long-term lease revenue' },
+        { '@type': 'Offer', name: 'Plus — $125/mo Property Care + 15% short-term rental revenue' },
+        { '@type': 'Offer', name: 'Pro — custom Property Care + custom revenue share by portfolio' },
       ],
     },
   ],
 }
 
 export default function PricingHubPage() {
-  const plans = getPricingPlans('en', 'Playa del Carmen', '/list-your-property/')
+  const plans = getPricingPlans('en', 'Playa del Carmen', '/contact/')
   const faqs = getPricingFAQs('en', 'Playa del Carmen / Riviera Maya')
   const valueItems = getValueItems('en')
+  const propertyCare = getPropertyCareDeliverables('en')
 
   return (
     <>
@@ -99,17 +108,14 @@ export default function PricingHubPage() {
                 marginBottom: 24,
               }}
             >
-              Three plan tiers. Same fees in every Quintana Roo market.
+              Three plan tiers. Same structure in every Quintana Roo market.
               <br />
-              No setup fees. No long-term contracts. Performance-based — we earn when you earn.
+              No long-term management contracts. Property Care is included; revenue share is performance-based on what you earn.
             </p>
-            <div className="fade-4" style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              <Link href="/list-your-property/" className="btn btn-gold btn-lg">
-                Get Free Revenue Estimate →
+            <div className="fade-4">
+              <Link href="/contact/" className="btn btn-gold btn-lg">
+                Talk to a local manager →
               </Link>
-              <a href="https://wa.me/529841234567" className="btn btn-wa" target="_blank" rel="noopener">
-                Talk to a Local Manager
-              </a>
             </div>
             <div style={{ marginTop: 14 }} className="fade-5">
               <Link href="/property-management/" style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)', textDecoration: 'underline' }}>
@@ -121,37 +127,48 @@ export default function PricingHubPage() {
       </section>
 
       <div id="management-plans">
-        <PricingGrid
-          eyebrow="Management Plans"
-          headline="Clear fees. No surprises."
-          body="All plans are performance-based — we earn when you earn. No setup fee, no monthly retainer."
-          plans={plans}
-          locale="en"
-        />
+        <PricingGrid plans={plans} />
       </div>
-
-      <section className="pad-lg bg-ivory">
-        <div className="container" style={{ maxWidth: 720 }}>
-          <FaqAccordion
-            eyebrow="Common questions"
-            headline="Pricing FAQ"
-            items={faqs}
-          />
-        </div>
-      </section>
 
       <section className="pad-lg bg-sand">
         <div className="container">
-          <div style={{ textAlign: 'center', maxWidth: 560, margin: '0 auto 40px' }}>
+          <div style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto 32px' }}>
             <div className="eyebrow mb-8">Every plan</div>
             <h2 className="section-title mt-12 mb-8">What&apos;s included in every plan</h2>
             <p className="body-text" style={{ maxWidth: 640, margin: '0 auto' }}>
-              Plan tiers (Core, Plus, Pro) add services and support depth. The fee percentage does not change by city within Quintana Roo — only the local market examples and illustrations on each destination page differ.
+              Plan tiers (Core, Plus, Pro) add services and depth. The fee model does not change by city within Quintana Roo; local market context lives on each destination hub. Core is for long-term and snowbird use; Plus is when you are earning short-term rental income.
             </p>
             <p className="body-text" style={{ maxWidth: 640, margin: '16px auto 0' }}>
-              We don&apos;t outsource. Our local team in the Riviera Maya handles the operational core across plans.
+              We don&apos;t outsource. Our local team in the Riviera Maya delivers the operational layer across all plans.
             </p>
           </div>
+
+          <div
+            style={{
+              maxWidth: 640,
+              margin: '0 auto 40px',
+              background: 'var(--white)',
+              border: '1px solid var(--sand-dark)',
+              borderRadius: 'var(--r-lg)',
+              padding: '24px 28px',
+            }}
+          >
+            <h3
+              className="section-title"
+              style={{ fontSize: 'clamp(1.15rem, 2.2vw, 1.45rem)', marginBottom: 12, textAlign: 'left' }}
+            >
+              Every plan includes Property Care
+            </h3>
+            <p className="body-text" style={{ marginBottom: 16, textAlign: 'left' }}>
+              A fixed monthly line so your home is looked after. Included value, not a hidden tax on top of your revenue share.
+            </p>
+            <ul style={{ margin: 0, paddingLeft: 22, color: 'var(--mid)', lineHeight: 1.75, fontSize: '0.92rem' }}>
+              {propertyCare.map((line, j) => (
+                <li key={j} style={{ marginBottom: 8 }}>{line}</li>
+              ))}
+            </ul>
+          </div>
+
           <div className="service-cards">
             {valueItems.map((item, i) => (
               <div key={i} className="service-card">
@@ -164,11 +181,23 @@ export default function PricingHubPage() {
         </div>
       </section>
 
+      <FounderWidget locale="en" />
+
+      <section className="pad-lg bg-ivory">
+        <div className="container" style={{ maxWidth: 720 }}>
+          <FaqAccordion
+            eyebrow="Common questions"
+            headline="Pricing FAQ"
+            items={faqs}
+          />
+        </div>
+      </section>
+
       <OwnerBanner
         eyebrow="Owners in Quintana Roo"
-        headline="Get a free revenue estimate for your property"
-        body="Share a few details and our local team will reply with a personalised income outlook — not a generic calculator printout."
-        primaryCta={{ label: 'Get My Free Estimate →', href: '/list-your-property/' }}
+        headline="Questions about your property or pricing?"
+        body="We respond personally — no call centre, no runaround."
+        primaryCta={{ label: 'Get in touch →', href: '/contact/' }}
         secondaryCta={{ label: 'See full management services', href: '/property-management/' }}
       />
 
