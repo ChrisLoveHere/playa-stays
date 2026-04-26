@@ -5,12 +5,12 @@
 // ============================================================
 
 import Link from 'next/link'
-import Image from 'next/image'
 import type { City, Service, Testimonial, BlogPost, SiteConfig, FAQ } from '@/types'
 import { TrustBar, ServiceGrid, OwnerBanner, CtaStrip } from '@/components/sections'
 import { FaqAccordion } from '@/components/content/FaqAccordion'
 import { PropertyGrid, TestimonialCard, BlogCard } from '@/components/content/Cards'
 import { LeadForm } from '@/components/forms/LeadForm'
+import { CustomerSegmentationCards } from '@/components/home/CustomerSegmentationCards'
 import type { Property } from '@/types'
 import { PerformanceProof } from '@/components/trust/PerformanceProof'
 import { BeforeAfter } from '@/components/trust/BeforeAfter'
@@ -37,6 +37,17 @@ export function HomepageTemplate({
   const estimateHref = isEs ? '/es/publica-tu-propiedad/' : '/list-your-property/'
   const portfolioStats = getDisplayStats(properties)
 
+  const heroTag = isEs
+    ? '✦ Líder en administración de rentas — Playa del Carmen'
+    : "✦ Playa del Carmen's #1 Property Manager"
+  const heroSub = isEs
+    ? 'Administración de rentas vacacionales de punta a punta: operamos el día a día, tú recibes los ingresos.'
+    : 'Full-service vacation rental management in Playa del Carmen — we run operations, you collect the revenue.'
+  const primaryCtaLabel = isEs ? 'Solicita un Estimado Gratuito' : 'Get Free Estimate'
+  const primaryCtaHref  = isEs ? '/es/contacto/' : '/contact/'
+  const secondaryCtaLabel = isEs ? 'Explorar Rentas' : 'Browse Rentals'
+  const secondaryCtaHref  = isEs ? '/es/rentas/' : '/rentals/'
+
   // Map WP services to ServiceGrid items
   const serviceItems = services.slice(0, 6).map(s => ({
     title: s.title.rendered,
@@ -58,22 +69,27 @@ export function HomepageTemplate({
           </div>
         </div>
 
-        <div className="hero-content">
-          {/* Left — owner pitch */}
+        <div
+          className="hero-content"
+          style={{ gridTemplateColumns: 'minmax(0, 1fr)', maxWidth: 680 }}
+        >
           <div>
-            <div className="hero-tag fade-1">✦ Playa del Carmen's #1 Property Manager</div>
+            <div className="hero-tag fade-1">{heroTag}</div>
             <h1 className="display-title fade-2" style={{ marginBottom: 18 }}>
-              Maximize your<br /><em>rental income</em><br />in paradise
+              {isEs ? (
+                <>Maximiza tus <em>ingresos por renta</em> en el paraíso</>
+              ) : (
+                <>Maximize your <em>rental income</em> in paradise</>
+              )}
             </h1>
-            <p className="hero-sub fade-3">
-              Full-service Airbnb &amp; vacation rental management in Playa del Carmen.
-              We handle everything — you collect the revenue.
-            </p>
+            <p className="hero-sub fade-3">{heroSub}</p>
             <div className="hero-btns fade-4">
-              <Link href="/list-your-property/" className="btn btn-gold btn-lg">
-                Get Free Revenue Estimate
+              <Link href={primaryCtaHref} className="btn btn-gold btn-lg">
+                {primaryCtaLabel}
               </Link>
-              <Link href="/rentals/" className="btn btn-outline">Browse Rentals</Link>
+              <Link href={secondaryCtaHref} className="btn btn-outline">
+                {secondaryCtaLabel}
+              </Link>
             </div>
             <div className="hero-trust-row fade-5">
               {config.trust_stats.slice(0, 4).map((s, i) => (
@@ -85,24 +101,13 @@ export function HomepageTemplate({
               ))}
             </div>
           </div>
-
-          {/* Right — lead form */}
-          <div className="hero-right">
-            <div className="hero-panel-label">Own a property?</div>
-            <div className="hero-form-card" id="estimate-form">
-              <LeadForm
-                variant="dark"
-                source="homepage-hero"
-                title="Get a free revenue estimate"
-                subtitle="Based on real market data. No commitment required."
-              />
-            </div>
-          </div>
         </div>
       </section>
 
+      <CustomerSegmentationCards locale={locale} />
+
       {/* ── TRUST BAR ── */}
-      <TrustBar stats={config.trust_stats} />
+      <TrustBar stats={config.trust_stats} locale={locale} />
 
       {/* ── SERVICES ── */}
       <ServiceGrid
