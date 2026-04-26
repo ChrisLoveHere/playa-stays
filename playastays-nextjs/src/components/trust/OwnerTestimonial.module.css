@@ -1,0 +1,68 @@
+/* Single quote card on light page section; photo left, serif quote. */
+.card {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: clamp(1.1rem, 2.2vw, 1.5rem);
+  padding: clamp(1.1rem, 2.2vw, 1.4rem) clamp(1.2rem, 2.2vw, 1.5rem);
+  background: var(--ivory);
+  border: 1px solid var(--sand-dark);
+  border-radius: var(--r-lg);
+  box-shadow: 0 2px 14px rgba(10, 43, 47, 0.08);
+}
+
+.avatar {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid rgba(200, 164, 74, 0.45);
+  background: var(--sand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(10, 43, 47, 0.08);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatarInitials {
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--deep);
+  line-height: 1;
+}
+
+.body {
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+.quote {
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-size: clamp(0.95rem, 1.2vw, 1.02rem);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--charcoal);
+  line-height: 1.7;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  border: none;
+}
+
+.attrib {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: normal;
+}

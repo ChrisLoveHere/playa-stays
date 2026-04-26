@@ -15,6 +15,9 @@ import { Breadcrumb } from '@/components/layout/Breadcrumb'
 import { FounderWidget } from '@/components/contact/FounderWidget'
 import { getPricingPlans, getPricingFAQs, getValueItems } from '@/lib/pricing-data'
 import { PropertyCareCard } from '@/components/sections/PropertyCareCard'
+import { ChannelLogoStrip } from '@/components/trust/ChannelLogoStrip'
+import { StatsBanner } from '@/components/trust/StatsBanner'
+import { OwnerTestimonial } from '@/components/trust/OwnerTestimonial'
 
 export const revalidate = 86400
 
@@ -125,6 +128,18 @@ export default function EsPricingHubPage() {
 
       <FounderWidget locale="es" />
 
+      <ChannelLogoStrip locale="es" />
+
+      <section className="pad-lg bg-sand" aria-label="Contexto">
+        <div className="container" style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center' }}>
+          <p className="body-text" style={{ margin: 0 }}>
+            Desde que tu anuncio está en línea hasta la entrega lista para el huésped, el mismo cuidado
+            atraviesa cada plan: empieza en los canales de reservas principales y sigue con el trabajo detrás
+            de cada estancia.
+          </p>
+        </div>
+      </section>
+
       <section className="pad-lg bg-deep">
         <div className="container">
           <div style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto 32px' }}>
@@ -168,14 +183,11 @@ export default function EsPricingHubPage() {
         </div>
       </section>
 
-      <OwnerBanner
-        eyebrow="Propietarios en Quintana Roo"
-        headline="¿Preguntas sobre tu propiedad o los precios?"
-        body="Respondemos de forma directa, sin call center."
-        primaryCta={{ label: 'Contáctame →', href: '/es/contacto/' }}
-      />
+      <OwnerTestimonial locale="es" />
 
-      <section className="pad-lg bg-deep pricing-faq-section">
+      <StatsBanner locale="es" />
+
+      <section className="pad-lg bg-ivory" style={{ textAlign: 'center' }}>
         <div className="container" style={{ maxWidth: 900 }}>
           <FaqAccordion
             headline="FAQ sobre precios"
@@ -185,6 +197,13 @@ export default function EsPricingHubPage() {
           />
         </div>
       </section>
+
+      <OwnerBanner
+        eyebrow="Propietarios en Quintana Roo"
+        headline="¿Preguntas sobre tu propiedad o los precios?"
+        body="Respondemos de forma directa, sin call center."
+        primaryCta={{ label: 'Contáctame →', href: '/es/contacto/' }}
+      />
     </>
   )
 }

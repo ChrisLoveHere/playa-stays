@@ -1,0 +1,54 @@
+/* Horizontal partner wordmarks; grayscale / muted. Single row desktop, wraps mobile. */
+.wrap {
+  text-align: center;
+}
+
+.heading {
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+  font-weight: 500;
+  color: var(--charcoal);
+  max-width: 40rem;
+  margin: 0 auto 1.5rem;
+  line-height: 1.2;
+}
+
+.logos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(0.9rem, 2.8vw, 2.25rem);
+  row-gap: 1.1rem;
+}
+
+.wordmark {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-size: clamp(0.8rem, 1.1vw, 0.95rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(10, 43, 47, 0.4);
+  white-space: nowrap;
+}
+
+/* Slight wordmark character without implying official brand fonts */
+.wordmarkVrbo {
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.wordmarkBooking {
+  text-transform: lowercase;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.wordmarkExpedia {
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
