@@ -636,6 +636,12 @@ export async function getBlogSlugs(): Promise<string[]> {
 
 // ── Site config ───────────────────────────────────────────
 
+const DEFAULT_SOCIAL: SiteConfig['social'] = {
+  facebook: 'https://www.facebook.com/PlayaStaysPDC/',
+  instagram: 'https://www.instagram.com/PlayaStays',
+  linkedin: 'https://mx.linkedin.com/company/playastays',
+}
+
 const SITE_CONFIG_FALLBACK: SiteConfig = {
   phone: '+52 984 123 4567',
   whatsapp: SITE_WHATSAPP,
@@ -647,7 +653,7 @@ const SITE_CONFIG_FALLBACK: SiteConfig = {
     { val: '24/7', key: 'Local support' },
     { val: 'ES/EN', key: 'Bilingual team' },
   ],
-  social: {},
+  social: { ...DEFAULT_SOCIAL },
 }
 
 /** WP `/settings` may omit or null `trust_stats` after schema changes — never pass non-arrays to `.map()`. */
@@ -657,10 +663,13 @@ function normalizeSiteConfig(partial: Partial<SiteConfig> | null | undefined): S
     Array.isArray(base.trust_stats) && base.trust_stats.length > 0
       ? base.trust_stats
       : SITE_CONFIG_FALLBACK.trust_stats
-  const social =
-    base.social && typeof base.social === 'object' && !Array.isArray(base.social)
-      ? base.social
-      : {}
+  const rawSocial =
+    base.social && typeof base.social === 'object' && !Array.isArray(base.social) ? base.social : {}
+  const social: SiteConfig['social'] = { ...DEFAULT_SOCIAL }
+  for (const k of ['facebook', 'instagram', 'linkedin'] as const) {
+    const v = rawSocial[k]
+    if (v != null && String(v).trim() !== '') social[k] = v
+  }
   return {
     ...base,
     trust_stats: trust,

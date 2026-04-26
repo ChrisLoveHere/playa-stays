@@ -67,25 +67,89 @@ export const PRICING_HUB_PRIMARY_SLUGS = [
 
 // ── Property Care (all tiers) — used on universal pricing hub "What's included" ─
 
+export type PropertyCareIconId =
+  | 'inspection'
+  | 'utilities'
+  | 'essentials'
+  | 'emergency'
+  | 'keys'
+  | 'vendors'
+
+export interface PropertyCareItemRow {
+  id: PropertyCareIconId
+  title: string
+  description: string
+}
+
+const PROPERTY_CARE_ROWS: {
+  id: PropertyCareIconId
+  title: { en: string; es: string }
+  description: { en: string; es: string }
+}[] = [
+  {
+    id: 'inspection',
+    title: { en: 'Monthly Property Inspection', es: 'Inspección Mensual de la Propiedad' },
+    description: {
+      en: 'Walk-throughs on a regular cadence so issues are caught before they get expensive.',
+      es: 'Recorridos con calendario fijo para detectar problemas antes de que cuesten más.',
+    },
+  },
+  {
+    id: 'utilities',
+    title: { en: 'Utility & Condo Fee Management', es: 'Gestión de Servicios y Cuotas de Condominio' },
+    description: {
+      en: 'Condo / HOA and utility accounts tracked and paid on time — with clear owner visibility.',
+      es: 'Cuentas de condominio, HOA y servicios con seguimiento y pago a tiempo, con visibilidad clara para ti.',
+    },
+  },
+  {
+    id: 'essentials',
+    title: { en: 'Restocking Household Essentials', es: 'Reabastecimiento de Insumos del Hogar' },
+    description: {
+      en: 'Paper products, hand and bath soap, and other consumables that keep the home turn-key for guests and support strong reviews.',
+      es: 'Papel de cocina y baño, jabones para manos y baño, y otros consumibles que mantienen el hogar listo para huéspedes y las reseñas altas.',
+    },
+  },
+  {
+    id: 'emergency',
+    title: { en: '24/7 Emergency Line', es: 'Línea de Emergencia 24/7' },
+    description: {
+      en: 'A real contact path for urgent property issues — not a voicemail black hole.',
+      es: 'Un canal de contacto real para urgencias, no un buzón sin respuesta.',
+    },
+  },
+  {
+    id: 'keys',
+    title: { en: 'Local Key & Access Management', es: 'Gestión Local de Llaves y Accesos' },
+    description: {
+      en: 'Key custody, handoffs, and access aligned with guests, tenants, and your calendar.',
+      es: 'Custodia, entregas y accesos alineados con huéspedes, inquilinos y tu calendario.',
+    },
+  },
+  {
+    id: 'vendors',
+    title: { en: 'Vendor Coordination', es: 'Coordinación de Proveedores' },
+    description: {
+      en: 'Scheduling, access, and follow-up with trusted local trades and service partners.',
+      es: 'Agenda, acceso y seguimiento con técnicos y proveedores locales de confianza.',
+    },
+  },
+]
+
+export function getPropertyCareItems(locale: Locale): PropertyCareItemRow[] {
+  return PROPERTY_CARE_ROWS.map((row) => {
+    const isEs = locale === 'es'
+    return {
+      id: row.id,
+      title: isEs ? row.title.es : row.title.en,
+      description: isEs ? row.description.es : row.description.en,
+    }
+  })
+}
+
+/** One line per item (title only) for lists that expect the legacy string shape. */
 export function getPropertyCareDeliverables(locale: Locale): string[] {
-  if (locale === 'es') {
-    return [
-      'Inspección mensual de la propiedad',
-      'Gestión de servicios y cuotas de condominio',
-      'Manejo de correo y paquetería',
-      'Línea de emergencia 24/7',
-      'Gestión local de llaves y accesos',
-      'Coordinación de proveedores',
-    ]
-  }
-  return [
-    'Monthly property inspection',
-    'Utility & condo fee management',
-    'Mail and package handling',
-    '24/7 emergency line',
-    'Local key & access management',
-    'Vendor coordination',
-  ]
+  return getPropertyCareItems(locale).map((r) => r.title)
 }
 
 // ── Universal pricing hub: CORE / PLUS / PRO (Property Care + % or custom) ─
@@ -105,12 +169,12 @@ export function getPricingPlans(
         audience: 'Para quienes rentan su propiedad a largo plazo',
         commissionAmount: '10%',
         commissionLabel: 'sobre ingresos de renta a largo plazo',
-        propertyCareAddOnLine: '+ US$125/mes Cuidado de propiedad',
+        propertyCareAddOnLine: '+ $2,150 MXN al mes Cuidado de propiedad',
         badge: undefined,
         featured: false,
         desc: '',
         features: [
-          'Inspección mensual de la propiedad',
+          'Inspección Mensual de la Propiedad',
           'Selección y colocación de inquilinos a largo plazo',
           'Cumplimiento y renovación de arrendamientos',
           'Coordinación de entrada y salida',
@@ -125,7 +189,7 @@ export function getPricingPlans(
         audience: 'Administración activa de renta corta',
         commissionAmount: '15%',
         commissionLabel: 'sobre ingresos de renta corta',
-        propertyCareAddOnLine: '+ US$125/mes Cuidado de propiedad',
+        propertyCareAddOnLine: '+ $2,150 MXN al mes Cuidado de propiedad',
         badge: 'Más popular',
         featured: true,
         desc: '',
@@ -145,7 +209,7 @@ export function getPricingPlans(
         audience: 'Personalizado para inversionistas y portafolios',
         commissionAmount: 'A medida',
         commissionLabel: 'Personalizado para portafolios',
-        propertyCareAddOnLine: '+ US$125/mes Cuidado de propiedad (menor en portafolios grandes)',
+        propertyCareAddOnLine: '+ $2,150 MXN al mes Cuidado de propiedad (menor en portafolios grandes)',
         badge: undefined,
         featured: false,
         desc: '',
@@ -174,7 +238,7 @@ export function getPricingPlans(
       featured: false,
       desc: '',
       features: [
-        'Monthly property inspection',
+        'Monthly Property Inspection',
         'Long-term tenant placement & screening',
         'Lease compliance & renewals',
         'Move-in / move-out coordination',
@@ -1002,28 +1066,35 @@ export interface PricingFAQItem {
 
 export function getPricingFAQs(
   locale: Locale,
-  cityName: string,
 ): PricingFAQItem[] {
   if (locale === 'es') {
     return [
       {
-        question: `¿Cuánto cobra PlayaStays por administrar una propiedad en ${cityName}?`,
-        answer: `En todos los planes incluye Cuidado de propiedad: US$125/mes (Core y Plus) o monto a medida en Pro. Sobre eso, Core cobra 10% sobre renta a largo plazo si aplica, Plus 15% sobre renta a corta plazo, y Pro es personalizado. No hay comisión de configuración. Ganamos cuando tú ganas sobre la parte variable.`,
+        question: '¿Cuánto cobra PlayaStays?',
+        answer:
+          'Cada plan incluye una tarifa de $2,150 MXN al mes de Cuidado de Propiedad. Adicionalmente, CORE es 10% sobre ingresos de renta a largo plazo cuando hay inquilino; PLUS es 15% sobre ingresos de renta corta; PRO es personalizado para portafolios. No hay cuotas iniciales ni contratos largos.',
       },
       {
-        question: `¿El porcentaje de comisión se aplica sobre los ingresos brutos o netos?`,
+        question: '¿El porcentaje de comisión se aplica sobre los ingresos brutos o netos?',
         answer: `La comisión se aplica sobre los ingresos brutos — es decir, lo que paga el huésped antes de descontar limpieza u otros gastos. Esto mantiene la estructura simple y completamente transparente.`,
       },
       {
-        question: `¿Qué incluye la tarifa de administración en ${cityName}?`,
-        answer: `Toda propiedad bajo Cuidado de propiedad: inspección mensual, servicios, paquetería, línea 24/7, accesos y coordinación de proveedores, más lo que añade cada plan. Plus, el más popular, suma publicación, precio dinámico, fotografía, operación y guest management para renta a corta plazo, además del 15% sobre esos ingresos.`,
+        question: '¿Qué incluye la tarifa de administración?',
+        answer:
+          'La tarifa de $2,150 MXN al mes de Cuidado de Propiedad incluye inspección mensual, gestión de servicios y cuotas de condominio, reabastecimiento de insumos del hogar (papel, jabones y consumibles esenciales para huéspedes), línea de emergencia 24/7, gestión local de llaves y accesos, y coordinación de proveedores. El porcentaje sobre ingresos de renta cubre la administración activa — listado, precios, comunicación con huéspedes, fotografía, coordinación de limpieza, y reportes.',
       },
       {
-        question: `¿Vale la pena la gestión profesional en ${cityName}?`,
-        answer: `En promedio, los propietarios bajo gestión profesional de PlayaStays generan 22–38% más ingresos netos que autogestionando, incluso después de descontar la comisión. Esto se debe a mejor ocupación, precios dinámicos y mayor calificación de huéspedes.`,
+        question: '¿La limpieza, el mantenimiento y los insumos están incluidos en la tarifa?',
+        answer:
+          'Limpieza y mantenimiento se facturan aparte: los paga el propietario o el huésped, según el caso y cómo esté estructurada la reserva. Sí cubrimos reabastecer lo esencial: papel higiénico y de cocina, jabones de manos y de baño, y demás consumibles que mantengan la propiedad impecable y las reseñas altas — sin sorpresas al inventario básico.',
       },
       {
-        question: `¿Existen contratos de permanencia o penalizaciones?`,
+        question: '¿Vale la pena la administración profesional?',
+        answer:
+          'Para la mayoría de los propietarios, sí. Las propiedades autogestionadas suelen reservar entre 60–70% del ingreso de las gestionadas profesionalmente debido a respuestas inconsistentes con huéspedes, precios mal ajustados y menor velocidad de reseñas. Además del ingreso, el costo de tiempo es significativo — los huéspedes escriben a toda hora, surgen problemas, y los cambios de huésped no se pausan en vacaciones. PlayaStays existe para quitarte eso de encima.',
+      },
+      {
+        question: '¿Existen contratos de permanencia o penalizaciones?',
         answer: `No hay contratos de largo plazo. Puedes pausar o cancelar el servicio con 30 días de aviso. No se cobra comisión de salida. Nuestro incentivo es que estés satisfecho, no atrapado.`,
       },
       {
@@ -1032,31 +1103,40 @@ export function getPricingFAQs(
           'Sí. Si empezaste en CORE para cuidado de propiedad y decides comenzar con renta corta, te movemos a PLUS. Lo opuesto también funciona — si dejas la renta corta y prefieres inquilinos a largo plazo, puedes bajar a CORE. No atamos a los propietarios a planes que ya no encajan con su uso.',
       },
       {
-        question: `¿Cómo se compara la tarifa de ${cityName} con otras empresas de administración?`,
-        answer: `Las empresas de administración de propiedades en la Riviera Maya generalmente cobran entre 15% y 35%. PlayaStays se posiciona en el rango de 10–25% con un nivel de servicio superior al promedio del mercado: equipo local, fotógrafos propios y soporte bilingüe real.`,
+        question: '¿Cómo se compara el precio de PlayaStays con el de otras empresas?',
+        answer:
+          'Las empresas de administración en la Riviera Maya suelen cobrar entre 15–35% del ingreso más cuotas mensuales, frecuentemente atadas a contratos de varios años. PlayaStays cobra 10% sobre rentas a largo plazo, 15% sobre rentas cortas, más una tarifa fija de $2,150 MXN al mes de Cuidado de Propiedad — sin contratos largos. Más un equipo local real, fotógrafos internos y soporte bilingüe real — no un call center.',
       },
     ]
   }
 
   return [
     {
-      question: `How much does PlayaStays charge to manage a property in ${cityName}?`,
-      answer: `Every plan includes Property Care: $125/mo in Core and Plus, or custom in Pro. On top, Core is 10% of long-term lease revenue if you have a tenant; Plus is 15% of short-term rental revenue; Pro is custom. There is no setup fee. The variable part is performance-based where revenue applies.`,
+      question: 'How much does PlayaStays charge?',
+      answer:
+        "Every plan includes a $125/mo Property Care fee. On top of that, CORE is 10% of long-term lease revenue when a tenant is in place; PLUS is 15% of short-term rental revenue; PRO is custom for portfolios. There are no setup fees and no long-term contracts.",
     },
     {
-      question: `Is the management fee percentage applied to gross or net revenue?`,
+      question: 'Is the management fee percentage applied to gross or net revenue?',
       answer: `The fee applies to gross revenue — that is, what the guest pays before cleaning fees or other costs are deducted. This keeps the structure simple and fully transparent.`,
     },
     {
-      question: `What's included in the management fee in ${cityName}?`,
-      answer: `All plans start with the Property Care package (monthly care of the home) plus a plan-specific share of rental revenue. Plus, our most popular tier, adds full short-term management: professional photography, listing on Airbnb/VRBO/Booking.com, dynamic pricing, guest operations, in-house cleaning, and maintenance — plus 15% of short-term rental gross revenue on top of Property Care.`,
+      question: "What's included in the management fee?",
+      answer:
+        "The $125/mo Property Care fee includes monthly property inspection, utility & condo fee management, restocking household essentials (paper products, hand and bath soap, and other consumables for turn-key guest readiness), 24/7 emergency line, local key & access management, and vendor coordination. The percentage on rental revenue covers active management — listing, pricing, guest communication, photography, cleaning coordination, and reporting.",
     },
     {
-      question: `Is professional management worth it in ${cityName}?`,
-      answer: `On average, PlayaStays-managed properties earn 22–38% more net income than self-managed equivalents, even after the management fee. This is driven by better occupancy, dynamic pricing, and higher guest ratings that attract premium bookings.`,
+      question: 'Are cleaning, maintenance, and supplies included in the fee?',
+      answer:
+        "Cleaning and maintenance are billed separately — the owner or the guest covers them, depending on the situation and how the stay is set up. What we do include is restocking household essentials: paper products, hand and bath soap, and other consumables that keep the home turn-key for guests and support strong reviews.",
     },
     {
-      question: `Are there long-term contracts or exit penalties?`,
+      question: 'Is professional management worth it?',
+      answer:
+        "For most owners, yes. Self-managed listings typically book 60–70% as much revenue as professionally managed ones because of inconsistent guest response, undertuned pricing, and lower review velocity. Beyond revenue, the time cost is significant — guests message at every hour, issues happen, and turnovers don't pause for vacations. PlayaStays exists to take that off your plate.",
+    },
+    {
+      question: 'Are there long-term contracts or exit penalties?',
       answer: `No long-term contracts. You can pause or cancel the service with 30 days' notice. No exit fee is charged. Our incentive is that you stay because you're happy, not because you're locked in.`,
     },
     {
@@ -1064,8 +1144,9 @@ export function getPricingFAQs(
       answer: `Yes. If you started on CORE for property care and decide to start short-term renting, we'll move you to PLUS. The reverse also works — if you stop short-term renting and want long-term tenants, you can drop to CORE. We don't lock owners into tiers that don't fit their use anymore.`,
     },
     {
-      question: `How does ${cityName} management pricing compare to other companies?`,
-      answer: `Property management companies in the Riviera Maya typically charge 15–35%. PlayaStays sits in the 10–25% range with above-market service: local team, in-house photographers, and real bilingual support — not a call centre.`,
+      question: "How does PlayaStays' pricing compare to other companies?",
+      answer:
+        "Property management companies in the Riviera Maya typically charge 15–35% of revenue with monthly fees on top, often locked into multi-year contracts. PlayaStays charges 10% on long-term lease revenue, 15% on short-term rentals, plus a flat $125/mo Property Care fee — with no long-term contract. Plus a real local team, in-house photographers, and bilingual support — not a call center.",
     },
   ]
 }

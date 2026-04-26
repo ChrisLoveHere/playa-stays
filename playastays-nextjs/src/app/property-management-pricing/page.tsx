@@ -13,14 +13,8 @@ import { PricingGrid } from '@/components/sections/PricingGrid'
 import { FaqAccordion } from '@/components/content/FaqAccordion'
 import { Breadcrumb } from '@/components/layout/Breadcrumb'
 import { FounderWidget } from '@/components/contact/FounderWidget'
-import {
-  getPricingPlans,
-  getPricingFAQs,
-  getValueItems,
-  getPropertyCareDeliverables,
-  CITY_PRICING,
-  PRICING_HUB_PRIMARY_SLUGS,
-} from '@/lib/pricing-data'
+import { getPricingPlans, getPricingFAQs, getValueItems } from '@/lib/pricing-data'
+import { PropertyCareCard } from '@/components/sections/PropertyCareCard'
 
 export const revalidate = 86400
 
@@ -40,18 +34,18 @@ const SCHEMA = {
       mainEntity: [
         {
           '@type': 'Question',
-          name: 'How are PlayaStays property management fees structured in Quintana Roo?',
+          name: 'How much does PlayaStays charge?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Every plan includes a monthly Property Care component plus a plan-specific performance share. Core: $125/mo Property Care plus 10% of long-term lease revenue if applicable, without short-term rental management. Plus: $125/mo Property Care plus 15% of short-term rental revenue, our most popular tier. Pro: custom Property Care and custom revenue share, often lower monthly Property Care for large portfolios. The same plan structure applies in every market we serve in Quintana Roo.',
+            text: "Every plan includes a $125/mo Property Care fee. On top of that, CORE is 10% of long-term lease revenue when a tenant is in place; PLUS is 15% of short-term rental revenue; PRO is custom for portfolios. There are no setup fees and no long-term contracts.",
           },
         },
         {
           '@type': 'Question',
-          name: 'Is professional management worth the management fee in the Riviera Maya?',
+          name: 'Is professional management worth it?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Yes. PlayaStays-managed properties earn 22–38% more net income than self-managed equivalents, even after the management fee, due to dynamic pricing, higher occupancy, and premium listing optimisation where short-term management applies.',
+            text: "For most owners, yes. Self-managed listings typically book 60–70% as much revenue as professionally managed ones because of inconsistent guest response, undertuned pricing, and lower review velocity. Beyond revenue, the time cost is significant. PlayaStays exists to take that off your plate.",
           },
         },
       ],
@@ -72,9 +66,8 @@ const SCHEMA = {
 
 export default function PricingHubPage() {
   const plans = getPricingPlans('en', 'Playa del Carmen', '/contact/')
-  const faqs = getPricingFAQs('en', 'Playa del Carmen / Riviera Maya')
+  const faqs = getPricingFAQs('en')
   const valueItems = getValueItems('en')
-  const propertyCare = getPropertyCareDeliverables('en')
 
   return (
     <>
@@ -130,46 +123,40 @@ export default function PricingHubPage() {
         <PricingGrid plans={plans} />
       </div>
 
-      <section className="pad-lg bg-sand">
+      <FounderWidget locale="en" />
+
+      <section className="pad-lg bg-deep">
         <div className="container">
           <div style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto 32px' }}>
-            <div className="eyebrow mb-8">Every plan</div>
-            <h2 className="section-title mt-12 mb-8">What&apos;s included in every plan</h2>
-            <p className="body-text" style={{ maxWidth: 640, margin: '0 auto' }}>
-              Plan tiers (Core, Plus, Pro) add services and depth. The fee model does not change by city within Quintana Roo; local market context lives on each destination hub. Core is for long-term and snowbird use; Plus is when you are earning short-term rental income.
-            </p>
-            <p className="body-text" style={{ maxWidth: 640, margin: '16px auto 0' }}>
-              We don&apos;t outsource. Our local team in the Riviera Maya delivers the operational layer across all plans.
-            </p>
-          </div>
-
-          <div
-            style={{
-              maxWidth: 640,
-              margin: '0 auto 40px',
-              background: 'var(--white)',
-              border: '1px solid var(--sand-dark)',
-              borderRadius: 'var(--r-lg)',
-              padding: '24px 28px',
-            }}
-          >
-            <h3
-              className="section-title"
-              style={{ fontSize: 'clamp(1.15rem, 2.2vw, 1.45rem)', marginBottom: 12, textAlign: 'left' }}
+            <h2
+              className="section-title light mt-12 mb-8"
+              style={{ fontSize: 'clamp(1.4rem, 2.6vw, 1.85rem)', textShadow: '0 1px 2px rgba(10, 43, 47, 0.15)' }}
             >
-              Every plan includes Property Care
-            </h3>
-            <p className="body-text" style={{ marginBottom: 16, textAlign: 'left' }}>
-              A fixed monthly line so your home is looked after. Included value, not a hidden tax on top of your revenue share.
+              Property Care, included in every plan
+            </h2>
+            <p className="body-text" style={{ maxWidth: 640, margin: '0 auto', color: 'rgba(255, 255, 255, 0.9)' }}>
+              A fixed monthly line so your home is looked after — included value, not a hidden tax on top of your revenue share.
             </p>
-            <ul style={{ margin: 0, paddingLeft: 22, color: 'var(--mid)', lineHeight: 1.75, fontSize: '0.92rem' }}>
-              {propertyCare.map((line, j) => (
-                <li key={j} style={{ marginBottom: 8 }}>{line}</li>
-              ))}
-            </ul>
           </div>
 
-          <div className="service-cards">
+          <PropertyCareCard locale="en" />
+        </div>
+      </section>
+
+      <section className="pad-lg bg-gold pricing-hub-value-section">
+        <div className="container">
+          <div style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto 32px' }}>
+            <h2
+              className="section-title light mt-12 mb-8"
+              style={{ fontSize: 'clamp(1.4rem, 2.6vw, 1.85rem)', textShadow: '0 1px 2px rgba(10, 43, 47, 0.15)' }}
+            >
+              Active Property Management Capabilities
+            </h2>
+            <p className="body-text" style={{ maxWidth: 640, margin: '0 auto' }}>
+              Available when your property is earning short-term rental revenue (PLUS and PRO plans).
+            </p>
+          </div>
+          <div className="service-cards pricing-hub-value-cards">
             {valueItems.map((item, i) => (
               <div key={i} className="service-card">
                 <div style={{ fontSize: '2rem', marginBottom: 12 }}>{item.icon}</div>
@@ -181,53 +168,21 @@ export default function PricingHubPage() {
         </div>
       </section>
 
-      <FounderWidget locale="en" />
-
-      <section className="pad-lg bg-ivory">
-        <div className="container" style={{ maxWidth: 720 }}>
-          <FaqAccordion
-            eyebrow="Common questions"
-            headline="Pricing FAQ"
-            items={faqs}
-          />
-        </div>
-      </section>
-
       <OwnerBanner
         eyebrow="Owners in Quintana Roo"
         headline="Questions about your property or pricing?"
         body="We respond personally — no call centre, no runaround."
         primaryCta={{ label: 'Get in touch →', href: '/contact/' }}
-        secondaryCta={{ label: 'See full management services', href: '/property-management/' }}
       />
 
-      <section className="pad-lg bg-ivory">
-        <div className="container">
-          <div className="eyebrow mb-8">Local context</div>
-          <h2 className="section-title mt-12 mb-8" style={{ fontSize: 'clamp(1.5rem,2.5vw,2rem)' }}>
-            See pricing in context for your destination
-          </h2>
-          <p className="body-text mb-24" style={{ maxWidth: 560 }}>
-            Each city hub includes market-specific rate and occupancy context, example scenarios, and the same Core / Plus / Pro structure you see here.
-          </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-            {PRICING_HUB_PRIMARY_SLUGS.map(slug => {
-              const cityData = CITY_PRICING[slug]
-              if (!cityData) return null
-              return (
-                <Link
-                  key={cityData.slug}
-                  href={`/${cityData.slug}/`}
-                  className="btn btn-ghost"
-                >
-                  {cityData.name} — destination hub →
-                </Link>
-              )
-            })}
-            <Link href="/chetumal/" className="btn btn-ghost">
-              Chetumal — destination hub →
-            </Link>
-          </div>
+      <section className="pad-lg bg-deep pricing-faq-section">
+        <div className="container" style={{ maxWidth: 900 }}>
+          <FaqAccordion
+            headline="Pricing FAQ"
+            items={faqs}
+            twoColumn
+            initialOpenIndex={null}
+          />
         </div>
       </section>
     </>

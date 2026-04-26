@@ -434,7 +434,6 @@ export interface Strings {
   footerBlog: string
   footerContact: string
   footerAbout: string
-  footerListProperty: string
   footerLogin: string
   footerWhatsAppHours: string
   footerLegalPrivacy: string
@@ -657,14 +656,13 @@ const EN: Strings = {
 
   footerPm: 'Property Management',
   footerAirbnb: 'Airbnb Management',
-  footerVacationRental: 'Vacation rental management',
+  footerVacationRental: 'Vacation Rental Management',
   footerFreeEstimate: 'Free Revenue Estimate',
   footerSellProperty: 'Sell Your Property',
-  footerBrowseRentals: 'Browse Rentals',
+  footerBrowseRentals: 'Browse Vacation Rentals',
   footerBlog: 'Blog',
   footerContact: 'Contact',
   footerAbout: 'About',
-  footerListProperty: 'List Your Property',
   footerLogin: 'Login',
   footerWhatsAppHours: 'WhatsApp (7am – 10pm)',
   footerLegalPrivacy: 'Privacy',
@@ -877,13 +875,12 @@ const ES: Strings = {
   footerPm: 'Administración de propiedades',
   footerAirbnb: 'Administración Airbnb',
   footerVacationRental: 'Gestión de rentas vacacionales',
-  footerFreeEstimate: 'Estimado gratis',
+  footerFreeEstimate: 'Estimado de ingresos gratis',
   footerSellProperty: 'Vender tu propiedad',
-  footerBrowseRentals: 'Ver rentas',
+  footerBrowseRentals: 'Ver rentas vacacionales',
   footerBlog: 'Blog',
   footerContact: 'Contacto',
   footerAbout: 'Acerca de',
-  footerListProperty: 'Publica tu propiedad',
   footerLogin: 'Iniciar sesión',
   footerWhatsAppHours: 'WhatsApp (7am – 10pm)',
   footerLegalPrivacy: 'Privacidad',
