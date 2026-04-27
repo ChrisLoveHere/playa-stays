@@ -13,6 +13,9 @@ import { LeadForm } from '@/components/forms/LeadForm'
 import { ContactFounderWidget } from '@/components/contact/ContactFounderWidget'
 import { TestimonialPlaceholder } from '@/components/contact/TestimonialPlaceholder'
 import { PersonOrganizationSchema } from '@/components/seo/PersonOrganizationSchema'
+import { SwitchingManagersSection } from '@/components/list/SwitchingManagersSection'
+import { ListingFAQ } from '@/components/list/ListingFAQ'
+import { QualitativeTrustBlock } from '@/components/list/QualitativeTrustBlock'
 
 export const revalidate = 86400
 
@@ -39,7 +42,7 @@ export default async function PublicaTuPropiedadPage() {
         ]}
         tag="🏡 Publica tu Propiedad"
         headline="Cuéntanos sobre tu propiedad.<br />Te enviamos un <em>número real de ingresos</em> en 24 horas."
-        sub="Administración integral en la Riviera Maya: fotografía, anuncios, precios y operación con huéspedes."
+        sub="Administración integral de rentas vacacionales en Quintana Roo. Fotografía, listados, precios, operaciones de huéspedes y depósitos directos — atendido."
         stats={config.trust_stats}
         primaryCta={{ label: 'Obtener estimado gratis', href: '#estimate-form' }}
         secondaryCta={{ label: 'Cómo funciona', href: '#how-it-works' }}
@@ -107,6 +110,12 @@ export default async function PublicaTuPropiedadPage() {
           </div>
         </div>
       </section>
+
+      <SwitchingManagersSection locale="es" />
+
+      <ListingFAQ locale="es" />
+
+      <QualitativeTrustBlock locale="es" />
 
       <ContactFounderWidget
         locale="es"

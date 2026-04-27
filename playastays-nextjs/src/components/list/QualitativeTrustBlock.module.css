@@ -1,0 +1,24 @@
+.section {
+  border-top: 1px solid rgba(10, 43, 47, 0.06);
+}
+
+.wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.heading {
+  margin: 0.55rem 0 0.65rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.65rem, 2.7vw, 2.2rem);
+  color: var(--charcoal);
+  line-height: 1.2;
+}
+
+.subhead {
+  margin: 0;
+  color: var(--mid);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}

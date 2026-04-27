@@ -7,6 +7,9 @@ import { LeadForm } from '@/components/forms/LeadForm'
 import { ContactFounderWidget } from '@/components/contact/ContactFounderWidget'
 import { TestimonialPlaceholder } from '@/components/contact/TestimonialPlaceholder'
 import { PersonOrganizationSchema } from '@/components/seo/PersonOrganizationSchema'
+import { SwitchingManagersSection } from '@/components/list/SwitchingManagersSection'
+import { ListingFAQ } from '@/components/list/ListingFAQ'
+import { QualitativeTrustBlock } from '@/components/list/QualitativeTrustBlock'
 
 export const revalidate = 86400
 
@@ -33,7 +36,7 @@ export default async function ListYourPropertyPage() {
         ]}
         tag="🏡 List Your Property"
         headline="Tell us about your property.<br />We'll send a <em>real revenue number</em> in 24 hours."
-        sub="Full-service vacation rental management across the Riviera Maya — photography, listings, pricing, and guest operations."
+        sub="Full-service vacation rental management across Quintana Roo. Photography, listings, pricing, guest operations, and direct deposits — handled."
         stats={config.trust_stats}
         primaryCta={{ label: 'Get Free Estimate', href: '#estimate-form' }}
         secondaryCta={{ label: 'How It Works', href: '#how-it-works' }}
@@ -100,6 +103,12 @@ export default async function ListYourPropertyPage() {
           </div>
         </div>
       </section>
+
+      <SwitchingManagersSection locale="en" />
+
+      <ListingFAQ locale="en" />
+
+      <QualitativeTrustBlock locale="en" />
 
       <ContactFounderWidget
         locale="en"
