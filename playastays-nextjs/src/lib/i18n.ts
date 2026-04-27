@@ -644,7 +644,7 @@ const EN: Strings = {
   homeCoverageEyebrow: 'Where We Operate',
   homeCoverageTitle: 'Across Quintana Roo',
   homeCoverageBody:
-    'PlayaStays manages vacation rental properties across 6 cities in Quintana Roo. One team. One standard. Wherever your property is.',
+    'PlayaStays manages vacation rental properties across 8 cities in Quintana Roo. One team. One standard. Wherever your property is.',
   homeCoverageAvgNight: 'avg/night',
   homeCoverageOccupancy: 'occupancy',
 
@@ -862,7 +862,7 @@ const ES: Strings = {
   homeCoverageEyebrow: 'Dónde operamos',
   homeCoverageTitle: 'En Quintana Roo',
   homeCoverageBody:
-    'PlayaStays administra rentas vacacionales en 6 ciudades de Quintana Roo. Un solo equipo. Un solo estándar. Donde esté tu propiedad.',
+    'PlayaStays administra rentas vacacionales en 8 ciudades de Quintana Roo. Un solo equipo. Un solo estándar. Donde esté tu propiedad.',
   homeCoverageAvgNight: 'prom./noche',
   homeCoverageOccupancy: 'ocupación',
 

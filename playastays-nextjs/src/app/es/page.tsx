@@ -12,6 +12,7 @@ import {
 } from '@/lib/wordpress'
 import { buildMetadata } from '@/lib/seo'
 import { HomepageTemplate } from '@/components/templates/HomepageTemplate'
+import { PersonOrganizationSchema } from '@/components/seo/PersonOrganizationSchema'
 
 export const revalidate = 3600
 
@@ -37,15 +38,18 @@ export default async function EsHomePage() {
   ])
 
   return (
-    <HomepageTemplate
-      config={config}
-      cities={cities}
-      services={services}
-      properties={properties}
-      testimonials={testimonials}
-      posts={posts}
-      faqs={faqs}
-      locale="es"
-    />
+    <>
+      <PersonOrganizationSchema />
+      <HomepageTemplate
+        config={config}
+        cities={cities}
+        services={services}
+        properties={properties}
+        testimonials={testimonials}
+        posts={posts}
+        faqs={faqs}
+        locale="es"
+      />
+    </>
   )
 }

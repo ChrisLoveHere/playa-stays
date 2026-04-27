@@ -18,6 +18,7 @@ import { ChannelLogoStrip } from '@/components/trust/ChannelLogoStrip'
 import { StatsBanner } from '@/components/trust/StatsBanner'
 import { OwnerTestimonial } from '@/components/trust/OwnerTestimonial'
 import { PricingPageOwnerQuestions } from '@/components/trust/PricingPageOwnerQuestions'
+import { PersonOrganizationSchema } from '@/components/seo/PersonOrganizationSchema'
 
 export const revalidate = 86400
 
@@ -74,6 +75,7 @@ export default function EsPricingHubPage() {
 
   return (
     <>
+      <PersonOrganizationSchema />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(SCHEMA) }}
