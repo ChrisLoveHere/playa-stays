@@ -1,11 +1,22 @@
 .shell {
   max-width: 640px;
   margin: 0 auto;
-  background: var(--white);
-  border: 1px solid var(--sand-dark);
-  border-radius: var(--r-lg);
-  box-shadow: 0 2px 16px rgba(10, 43, 47, 0.08);
-  padding: clamp(1rem, 2.2vw, 1.5rem);
+  padding: 0;
+}
+
+.shell :global(.form-label) {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.shell :global(.form-input) {
+  background: var(--sand);
+  color: var(--deep);
+  border: 1px solid rgba(200, 164, 74, 0.45);
+}
+
+.shell :global(.form-input:focus) {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(200, 164, 74, 0.18);
 }
 
 .transition {
@@ -29,7 +40,7 @@
 .disclaimer {
   margin-top: 0.55rem;
   font-size: 0.78rem;
-  color: var(--mid);
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .error {
@@ -46,13 +57,13 @@
 .successTitle {
   font-family: var(--font-display);
   font-size: clamp(1.18rem, 2vw, 1.38rem);
-  color: var(--charcoal);
+  color: var(--white);
   margin: 0 0 0.45rem;
 }
 
 .successBody {
   margin: 0;
-  color: var(--mid);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 0.9rem;
 }
 

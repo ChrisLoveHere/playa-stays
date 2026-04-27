@@ -48,23 +48,37 @@ export default async function ContactoPage() {
         sub="Nuestro equipo está en Playa del Carmen. Escríbenos por WhatsApp, teléfono o correo — respondemos el mismo día."
       />
 
-      <section className="pad-lg bg-white">
+      <section className="bg-sand" style={{ padding: 'clamp(3rem, 8vw, 6rem) 0' }}>
         <div className="container">
-          <div style={{ textAlign: 'center', maxWidth: '46rem', margin: '0 auto 1.4rem' }}>
-            <div className="eyebrow mb-8">ENVÍANOS UN MENSAJE</div>
-            <h2
-              style={{
-                margin: 0,
-                fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(1.75rem, 2.8vw, 2.35rem)',
-                color: 'var(--charcoal)',
-                lineHeight: 1.16,
-              }}
-            >
-              Cuéntanos cómo podemos ayudarte.
-            </h2>
+          <div
+            style={{
+              maxWidth: 640,
+              margin: '0 auto',
+              background: 'var(--deep)',
+              borderRadius: 16,
+              boxShadow: '0 14px 34px rgba(10, 43, 47, 0.2)',
+              padding: 'clamp(2rem, 4.6vw, 3rem) clamp(1.2rem, 3.6vw, 2rem)',
+            }}
+          >
+            <div style={{ textAlign: 'center', margin: '0 auto 1.8rem' }}>
+              <div className="eyebrow mb-8" style={{ color: 'rgba(255,255,255,0.78)' }}>ENVÍANOS UN MENSAJE</div>
+              <h2
+                style={{
+                  margin: 0,
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 'clamp(1.75rem, 2.8vw, 2.35rem)',
+                  color: 'var(--white)',
+                  lineHeight: 1.16,
+                }}
+              >
+                Cuéntanos cómo podemos ayudarte.
+              </h2>
+              <p style={{ margin: '0.75rem auto 0', color: 'rgba(255,255,255,0.78)', fontSize: '0.88rem', lineHeight: 1.55 }}>
+                Respuesta esperada en 24 horas · Lo lee una persona real, no una cola.
+              </p>
+            </div>
+            <SmartLeadForm source="contacto-page-smart" locale="es" />
           </div>
-          <SmartLeadForm source="contacto-page-smart" locale="es" />
         </div>
       </section>
 
