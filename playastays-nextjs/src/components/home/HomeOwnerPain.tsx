@@ -91,11 +91,9 @@ function IconEye() {
 
 export function HomeOwnerPain({ locale }: { locale: Locale }) {
   const c = COPY[locale] ?? COPY.en
-  const [featured, ...rest] = c.items
-  if (!featured) return null
   return (
     <section
-      className={`pad-lg bg-white ${styles.root}`}
+      className={`pad-lg ${styles.root}`}
       aria-labelledby="home-owner-pain-heading"
     >
       <div className="container">
@@ -106,38 +104,20 @@ export function HomeOwnerPain({ locale }: { locale: Locale }) {
           <p className={styles.subhead}>{c.sub}</p>
         </div>
         <div className={styles.layout}>
-          <article className={`${styles.card} ${styles.featuredCard}`}>
-            <div
-              className={`${styles.iconShell} ${styles.featuredIconShell} ${PAIN_TINTS[0]}`}
-              aria-hidden
-            >
-              <div className={`${styles.icon} ${styles.featuredIcon}`}>
-                <IconClock />
-              </div>
-            </div>
-            <h3 className={`${styles.cardTitle} ${styles.featuredTitle}`}>{featured.title}</h3>
-            <p className={styles.body}>{featured.body}</p>
-          </article>
-          <div className={styles.sideStack}>
-            {rest.map((item, i) => {
-              const index = i + 1
-              const Icon = ICONS[index] ?? IconClock
-              return (
-                <article key={item.title} className={`${styles.card} ${styles.smallCard}`}>
-                  <div
-                    className={`${styles.iconShell} ${PAIN_TINTS[index] ?? styles.painTint0}`}
-                    aria-hidden
-                  >
-                    <div className={styles.icon}>
-                      <Icon />
-                    </div>
+          {c.items.map((item, i) => {
+            const Icon = ICONS[i] ?? IconClock
+            return (
+              <article key={item.title} className={styles.card}>
+                <div className={`${styles.iconShell} ${PAIN_TINTS[i] ?? styles.painTint0}`} aria-hidden>
+                  <div className={styles.icon}>
+                    <Icon />
                   </div>
-                  <h3 className={styles.cardTitle}>{item.title}</h3>
-                  <p className={styles.body}>{item.body}</p>
-                </article>
-              )
-            })}
-          </div>
+                </div>
+                <h3 className={styles.cardTitle}>{item.title}</h3>
+                <p className={styles.body}>{item.body}</p>
+              </article>
+            )
+          })}
         </div>
         <p className={styles.transition}>{c.closing}</p>
       </div>

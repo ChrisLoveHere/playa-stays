@@ -74,20 +74,26 @@ export function HomeHowItWorks({ locale }: { locale: Locale }) {
         <div className={styles.row}>
           <article className={styles.card}>
             <div className={styles.badge} aria-hidden>1</div>
-            <h3 className={styles.stepTitle}>{a.title}</h3>
-            <p className={styles.stepBody}>{a.body}</p>
+            <div className={styles.copy}>
+              <h3 className={styles.stepTitle}>{a.title}</h3>
+              <p className={styles.stepBody}>{a.body}</p>
+            </div>
           </article>
           <div className={styles.arrow} aria-hidden>›</div>
           <article className={styles.card}>
             <div className={styles.badge} aria-hidden>2</div>
-            <h3 className={styles.stepTitle}>{b.title}</h3>
-            <p className={styles.stepBody}>{b.body}</p>
+            <div className={styles.copy}>
+              <h3 className={styles.stepTitle}>{b.title}</h3>
+              <p className={styles.stepBody}>{b.body}</p>
+            </div>
           </article>
           <div className={styles.arrow} aria-hidden>›</div>
           <article className={styles.card}>
             <div className={styles.badge} aria-hidden>3</div>
-            <h3 className={styles.stepTitle}>{step3.title}</h3>
-            <p className={styles.stepBody}>{step3.body}</p>
+            <div className={styles.copy}>
+              <h3 className={styles.stepTitle}>{step3.title}</h3>
+              <p className={styles.stepBody}>{step3.body}</p>
+            </div>
           </article>
         </div>
         <div className={styles.ctaWrap}>

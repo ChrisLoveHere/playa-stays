@@ -22,7 +22,7 @@ const COPY: Record<
 > = {
   en: {
     title: 'We do the boring parts. You keep the income.',
-    sub: 'From listing to clean-up. From pricing to legal. PlayaStays handles every layer of vacation rental ownership in Quintana Roo.',
+    sub: 'From listing to clean-up. From pricing to legal compliance. PlayaStays handles every layer of rental management in Playa del Carmen, Tulum, and across Quintana Roo.',
     items: [
       {
         title: 'Multi-channel listing',
@@ -53,7 +53,7 @@ const COPY: Record<
   },
   es: {
     title: 'Hacemos las partes aburridas. Tú te quedas con el ingreso.',
-    sub: 'Del listado al cleanup. De los precios a lo legal. PlayaStays maneja cada capa de la propiedad vacacional en Quintana Roo.',
+    sub: 'Del listado a la limpieza. Del precio al cumplimiento legal. PlayaStays maneja cada capa de la administración de rentas en Playa del Carmen, Tulum, y todo Quintana Roo.',
     items: [
       {
         title: 'Listado multicanal',

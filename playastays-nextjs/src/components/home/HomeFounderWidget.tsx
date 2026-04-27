@@ -71,6 +71,8 @@ export function HomeFounderWidget({ locale }: { locale: Locale }) {
             border: '1px solid rgba(255, 255, 255, 0.1)',
             borderRadius: 'var(--r-lg)',
             boxShadow: '0 12px 32px rgba(10, 43, 47, 0.28), 0 2px 8px rgba(0, 0, 0, 0.12)',
+            maxWidth: 780,
+            margin: '0 auto',
           }}
         >
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 18, flex: '1 1 240px', minWidth: 0 }}>

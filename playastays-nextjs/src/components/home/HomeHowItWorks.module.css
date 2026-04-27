@@ -56,16 +56,25 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
+  justify-content: flex-start;
 }
 
 .badge {
   font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
-  font-size: clamp(4rem, 9vw, 8rem);
+  font-size: clamp(3.25rem, 7vw, 5.4rem);
   font-weight: 600;
-  line-height: 0.9;
+  line-height: 1;
   color: var(--gold);
-  margin-bottom: 0.15rem;
+  margin: 0 0 0.65rem;
   letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .stepTitle {

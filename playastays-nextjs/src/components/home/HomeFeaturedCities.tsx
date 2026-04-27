@@ -47,6 +47,7 @@ function CityCardMedia({ slug }: { slug: string }) {
             fill
             className={styles.mediaImg}
             sizes="(max-width: 519px) 100vw, (max-width: 999px) 50vw, 25vw"
+            unoptimized
             onError={() => setOk(false)}
           />
           <div className={styles.mediaGradient} aria-hidden />
@@ -60,8 +61,6 @@ function CityCardMedia({ slug }: { slug: string }) {
 
 export function HomeFeaturedCities({ locale }: { locale: Locale }) {
   const intro = INTRO[locale] ?? INTRO.en
-  const featuredCity = CITIES[0]
-  const otherCities = CITIES.slice(1)
   return (
     <section className={`pad-lg bg-sand ${styles.root}`} aria-label={intro.title}>
       <div className="container">
@@ -70,23 +69,8 @@ export function HomeFeaturedCities({ locale }: { locale: Locale }) {
           <p className={styles.subhead}>{intro.sub}</p>
         </div>
         <div className={styles.layout}>
-          {featuredCity ? (
-            <Link
-              key={featuredCity.slug}
-              href={locale === 'es' ? `/es/${featuredCity.slug}/` : `/${featuredCity.slug}/`}
-              className={`${styles.card} ${styles.featuredCard}`}
-            >
-              <CityCardMedia slug={featuredCity.slug} />
-              <div className={styles.body}>
-                <h3 className={`${styles.city} ${styles.featuredCity}`}>{featuredCity.name}</h3>
-                <p className={`${styles.tagline} ${styles.taglineItalic} ${styles.featuredTagline}`}>
-                  {locale === 'es' ? featuredCity.es : featuredCity.en}
-                </p>
-              </div>
-            </Link>
-          ) : null}
           <div className={styles.grid}>
-            {otherCities.map(city => {
+            {CITIES.map(city => {
             const href = locale === 'es' ? `/es/${city.slug}/` : `/${city.slug}/`
             const tag = locale === 'es' ? city.es : city.en
             return (

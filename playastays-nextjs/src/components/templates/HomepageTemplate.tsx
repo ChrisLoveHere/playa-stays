@@ -50,8 +50,8 @@ export function HomepageTemplate({
     ? '✦ Líder en administración de rentas — Playa del Carmen'
     : "✦ Playa del Carmen's #1 Property Manager"
   const heroSub = isEs
-    ? 'Administración de rentas vacacionales de punta a punta: operamos el día a día, tú recibes los ingresos.'
-    : 'Full-service vacation rental management in Playa del Carmen — we run operations, you collect the revenue.'
+    ? 'Administración integral de rentas en Playa del Carmen — vacacionales o de largo plazo, según convenga. Nosotros operamos, tú cobras los ingresos.'
+    : 'Full-service rental management in Playa del Carmen — vacation, lease, or somewhere in between. We run operations, you collect the revenue.'
 
   return (
     <>
@@ -93,7 +93,16 @@ export function HomepageTemplate({
               <Link href={primaryCtaHref} className="btn btn-gold btn-lg">
                 {primaryCtaLabel}
               </Link>
-              <Link href={secondaryCtaHref} className="btn btn-outline">
+              <Link
+                href={secondaryCtaHref}
+                className="btn btn-lg"
+                style={{
+                  background: 'var(--teal)',
+                  color: 'var(--white)',
+                  border: '1px solid var(--teal)',
+                  boxShadow: '0 3px 10px rgba(10, 43, 47, 0.18)',
+                }}
+              >
                 {secondaryCtaLabel}
               </Link>
             </div>

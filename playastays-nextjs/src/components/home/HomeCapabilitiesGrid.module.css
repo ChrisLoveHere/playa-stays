@@ -124,10 +124,10 @@
 .productImg {
   width: 100%;
   height: clamp(280px, 55vw, 500px);
-  object-fit: cover;
-  /* Focus the crop on Overview + Net Revenue cards */
-  object-position: 68% 22%;
+  object-fit: contain;
+  object-position: center;
   display: block;
+  background: rgba(10, 43, 47, 0.03);
 }
 
 .productPlaceholder {

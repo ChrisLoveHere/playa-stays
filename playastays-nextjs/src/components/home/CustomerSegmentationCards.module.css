@@ -112,21 +112,33 @@
 .mediaDecorLight {
   color: rgba(255, 255, 255, 0.2);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
 }
 
 .mediaDecorNavy {
   color: rgba(10, 43, 47, 0.2);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
 }
 
 .mediaFallbackIcon {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   display: block;
+}
+
+.mediaFallbackLabel {
+  font-family: var(--font-body, 'DM Sans', system-ui, sans-serif);
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  opacity: 0.72;
 }
 
 .cardContent {

@@ -128,7 +128,7 @@ const INTRO: Record<Locale, { title: string; sub: string; aria: string }> = {
   },
 }
 
-function CardMedia({ index }: { index: number }) {
+function CardMedia({ index, locale }: { index: number; locale: Locale }) {
   const [imgOk, setImgOk] = useState(true)
   const { src, variant } = SEG_PHOTOS[index] ?? SEG_PHOTOS[0]!
   const Decor = FALLBACK_DECOR[index] ?? IconHomeMuted
@@ -138,6 +138,7 @@ function CardMedia({ index }: { index: number }) {
       : variant === 'selling'
         ? styles.mediaFallbackSelling
         : styles.mediaFallbackGuest
+  const label = locale === 'es' ? 'Foto próximamente' : 'Photo coming soon'
 
   return (
     <div className={styles.media}>
@@ -149,15 +150,15 @@ function CardMedia({ index }: { index: number }) {
           fill
           className={styles.mediaImg}
           sizes="(max-width: 599px) 100vw, (max-width: 899px) 50vw, 33vw"
+          unoptimized
           onError={() => setImgOk(false)}
         />
       ) : null}
       {!imgOk && (
         <div className={`${styles.mediaFallback} ${fbClass}`} aria-hidden>
-          <div
-            className={variant === 'owner' ? styles.mediaDecorLight : styles.mediaDecorNavy}
-          >
+          <div className={variant === 'owner' ? styles.mediaDecorLight : styles.mediaDecorNavy}>
             <Decor />
+            <span className={styles.mediaFallbackLabel}>{label}</span>
           </div>
         </div>
       )}
@@ -181,7 +182,7 @@ export function CustomerSegmentationCards({ locale }: { locale: Locale }) {
             const Icon = ICONS[i] ?? IconHome
             return (
               <article key={card.href} className={styles.card}>
-                <CardMedia index={i} />
+                <CardMedia index={i} locale={locale} />
                 <div className={styles.cardContent}>
                   <div className={styles.titleRow}>
                     <div className={styles.icon} aria-hidden>
