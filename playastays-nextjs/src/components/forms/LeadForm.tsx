@@ -25,12 +25,10 @@ interface FormCopy {
   email: string
   phone: string
   propType: string
-  status: string
   city: string
   selectCity: string
   select: string
   types: Array<{ value: string; label: string }>
-  statuses: Array<{ value: string; label: string }>
   cities: string[]
   submit: string
   submitting: string
@@ -48,7 +46,6 @@ function formCopy(locale: Locale = 'en'): FormCopy {
     email:        es ? 'Correo electrónico'       : 'Email',
     phone:        es ? 'Teléfono / WhatsApp'      : 'Phone / WhatsApp',
     propType:     es ? 'Tipo de propiedad'        : 'Property Type',
-    status:       es ? 'Situación actual'         : 'Current Situation',
     city:         es ? 'Ciudad'                   : 'City',
     selectCity:   es ? 'Seleccionar ciudad'       : 'Select city',
     select:       es ? 'Seleccionar'              : 'Select',
@@ -57,12 +54,6 @@ function formCopy(locale: Locale = 'en'): FormCopy {
       { value: '2br',        label: es ? 'Condo 2 Recámaras'    : '2-Bedroom Condo' },
       { value: '3br-villa',  label: es ? 'Villa / 3+ Recámaras' : '3BR+ / Villa' },
       { value: 'penthouse',  label: 'Penthouse' },
-    ],
-    statuses: [
-      { value: 'self-managing', label: es ? 'Autogestionando actualmente' : 'Self-managing now' },
-      { value: 'other-company', label: es ? 'Con otra empresa'            : 'With another company' },
-      { value: 'not-renting',  label: es ? 'Sin rentar actualmente'       : 'Not currently renting' },
-      { value: 'pre-con',      label: es ? 'Preventa / comprando pronto'  : 'Pre-construction / buying soon' },
     ],
     cities: [
       'Playa del Carmen',
@@ -197,16 +188,9 @@ export function LeadForm({
         <div className="form-row">
           <div className="form-group">
             <label className="form-label" htmlFor={id('type')}>{cp.propType}</label>
-            <select id={id('type')} className="form-input" name="property_type" required>
+            <select id={id('type')} className="form-input" name="property_type">
               <option value="">{cp.select}</option>
               {cp.types.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-            </select>
-          </div>
-          <div className="form-group">
-            <label className="form-label" htmlFor={id('status')}>{cp.status}</label>
-            <select id={id('status')} className="form-input" name="current_status" required>
-              <option value="">{cp.select}</option>
-              {cp.statuses.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
             </select>
           </div>
         </div>
@@ -214,7 +198,7 @@ export function LeadForm({
         {!city && (
           <div className="form-group">
             <label className="form-label" htmlFor={id('city')}>{cp.city}</label>
-            <select id={id('city')} className="form-input" name="city" required>
+            <select id={id('city')} className="form-input" name="city">
               <option value="">{cp.selectCity}</option>
               {cp.cities.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
@@ -222,6 +206,8 @@ export function LeadForm({
         )}
 
         {city && <input type="hidden" name="city" value={city} />}
+        {/* Backend compatibility: keep current_status in payload without showing field in UI. */}
+        <input type="hidden" name="current_status" value="not-specified" />
         <input type="hidden" name="source" value={source} />
 
         {status === 'error' && (

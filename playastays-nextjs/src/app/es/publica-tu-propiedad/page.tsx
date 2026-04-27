@@ -5,14 +5,14 @@
 // ============================================================
 
 import type { Metadata } from 'next'
-import { draftMode } from 'next/headers'
-import { getFAQs, getSiteConfig } from '@/lib/wordpress'
+import { getSiteConfig } from '@/lib/wordpress'
 import { buildMetadata } from '@/lib/seo'
 import { Hero } from '@/components/hero/Hero'
-import { TrustBar, StepsGrid, CtaStrip } from '@/components/sections'
-import { FaqAccordion } from '@/components/content/FaqAccordion'
+import { CtaStrip } from '@/components/sections'
 import { LeadForm } from '@/components/forms/LeadForm'
-import { getBilingualFaqItems, limitPublicFaqs } from '@/lib/faq-helpers'
+import { FounderWidget } from '@/components/contact/FounderWidget'
+import { TestimonialPlaceholder } from '@/components/contact/TestimonialPlaceholder'
+import { PersonOrganizationSchema } from '@/components/seo/PersonOrganizationSchema'
 
 export const revalidate = 86400
 
@@ -25,44 +25,11 @@ export const metadata: Metadata = buildMetadata({
 })
 
 export default async function PublicaTuPropiedadPage() {
-  const { isEnabled: preview } = draftMode()
-
-  const [faqs, config] = await Promise.all([
-    getFAQs({ categorySlug: 'list-your-property', preview }),
-    getSiteConfig(),
-  ])
-
-  const steps = [
-    {
-      num: 1,
-      icon: <PhoneIcon />,
-      title: 'Cuéntanos sobre tu propiedad',
-      desc: 'Llena el formulario. Son 2 minutos. Revisamos cada solicitud el mismo día.',
-    },
-    {
-      num: 2,
-      icon: <ChartIcon />,
-      title: 'Te enviamos tu estimado de ingresos',
-      desc: 'Una proyección personalizada basada en datos reales de nuestro portafolio — en 24 horas.',
-    },
-    {
-      num: 3,
-      icon: <CameraIcon />,
-      title: 'Nosotros lo configuramos todo',
-      desc: 'Fotografía, anuncio, precios, cumplimiento legal. En Airbnb, VRBO y Booking.com en 7 días.',
-    },
-    {
-      num: 4,
-      icon: <MoneyIcon />,
-      title: 'Recibes ingresos mensuales',
-      desc: 'Depósitos mensuales en tu cuenta. Transparencia total a través de tu portal de propietario.',
-    },
-  ]
-
-  const faqItems = limitPublicFaqs(getBilingualFaqItems(faqs, 'es'))
+  const config = await getSiteConfig()
 
   return (
     <>
+      <PersonOrganizationSchema />
       <Hero
         variant="split"
         locale="es"
@@ -87,72 +54,67 @@ export default async function PublicaTuPropiedadPage() {
         }
       />
 
-      <TrustBar
-        locale="es"
-        stats={[
-          { val: '4.9★', key: 'Owner satisfaction' },
-          { val: '22%+', key: 'Net income uplift' },
-          { val: '24/7', key: 'Local support' },
-          { val: 'ES/EN', key: 'Bilingual team' },
-        ]}
-      />
-
-      <StepsGrid
-        eyebrow="Cómo Funciona"
-        headline="Del anuncio a los ingresos en 7 días"
-        body="Nuestro proceso de incorporación es rápido, sistemático y sin complicaciones para ti."
-        steps={steps}
-      />
-
-      {faqItems.length > 0 && (
-        <section className="pad-lg bg-sand" id="faq">
-          <div className="container" style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 56,
-            alignItems: 'start',
-          }}>
-            <FaqAccordion
-              eyebrow="Preguntas frecuentes"
-              headline="FAQ"
-              items={faqItems}
-            />
-            <div style={{
-              background: 'var(--white)',
-              borderRadius: 'var(--r-lg)',
-              padding: 32,
-              boxShadow: 'var(--sh-sm)',
-              border: '1px solid var(--sand-dark)',
-            }}>
-              <h3 style={{
+      <section className="pad-lg bg-deep" id="how-it-works" aria-label="Cómo funciona">
+        <div className="container">
+          <div style={{ textAlign: 'center', maxWidth: '40rem', margin: '0 auto 2.5rem' }}>
+            <div className="eyebrow" style={{ color: 'rgba(255,255,255,0.76)' }}>CÓMO FUNCIONA</div>
+            <h2
+              style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: '1.4rem', fontWeight: 600,
-                color: 'var(--charcoal)', marginBottom: 8,
-              }}>
-                ¿Aún tienes preguntas?
-              </h3>
-              <p className="body-sm mb-20">
-                Nuestro equipo está disponible todos los días. Escríbenos por WhatsApp, teléfono o correo.
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-                <a
-                  href={`https://wa.me/${config.whatsapp}`}
-                  className="btn btn-wa btn-full"
-                  target="_blank" rel="noopener"
-                >
-                  Chatear por WhatsApp
-                </a>
-                <a href={`tel:${config.phone.replace(/\s/g, '')}`} className="btn btn-ghost btn-full">
-                  {config.phone}
-                </a>
-                <a href={`mailto:${config.email}`} className="btn btn-ghost btn-full">
-                  {config.email}
-                </a>
-              </div>
-            </div>
+                fontSize: 'clamp(1.75rem, 2.8vw, 2.2rem)',
+                fontWeight: 500,
+                color: 'var(--white)',
+                lineHeight: 1.2,
+                margin: '0.7rem 0 0.65rem',
+              }}
+            >
+              Tres pasos hacia las manos libres.
+            </h2>
+            <p
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: 'clamp(0.9rem, 1.1vw, 0.98rem)',
+                lineHeight: 1.6,
+                color: 'rgba(255, 255, 255, 0.86)',
+                margin: 0,
+              }}
+            >
+              Nuestro proceso de incorporación es rápido, sistemático y sin complicaciones para ti.
+            </p>
           </div>
-        </section>
-      )}
+          <div
+            style={{
+              display: 'grid',
+              gap: '1rem',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            }}
+          >
+            <StepCard
+              num="1"
+              title="Cuéntanos sobre tu propiedad"
+              body="Llena el formulario. Dos minutos. Revisamos cada envío el mismo día."
+            />
+            <StepCard
+              num="2"
+              title="Te enviamos el estimado"
+              body="Una proyección personalizada basada en datos reales del mercado — en 24 horas."
+            />
+            <StepCard
+              num="3"
+              title="PlayaStays se encarga del resto"
+              body="Fotografía, listados, precios, cumplimiento, soporte de huéspedes, limpieza. En Airbnb, VRBO y Booking.com en 7 días. Depósitos directos mensuales."
+            />
+          </div>
+        </div>
+      </section>
+
+      <FounderWidget
+        locale="es"
+        headingOverride="Yo personalmente reviso cada envío de propiedad."
+        bodyOverride="Ya tengas un condominio en Playa o un portafolio de casas por todo Quintana Roo, miro cada envío en 24 horas y envío una proyección honesta. Sin tercerización, sin respuestas plantilla."
+      />
+
+      <TestimonialPlaceholder locale="es" headingOverride="Propietarios reales. Resultados reales." />
 
       <CtaStrip
         eyebrow="¿Listo para empezar?"
@@ -163,8 +125,57 @@ export default async function PublicaTuPropiedadPage() {
   )
 }
 
-// Icons
-function PhoneIcon()  { return <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22"><path strokeLinecap="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 7V6a2 2 0 012-2z"/></svg> }
-function ChartIcon()  { return <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22"><path strokeLinecap="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg> }
-function CameraIcon() { return <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22"><path strokeLinecap="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path strokeLinecap="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg> }
-function MoneyIcon()  { return <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22"><path strokeLinecap="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 1v8m0 0v1"/></svg> }
+function StepCard({ num, title, body }: { num: string; title: string; body: string }) {
+  return (
+    <article
+      style={{
+        background: 'var(--white)',
+        border: '1px solid var(--sand-dark)',
+        borderRadius: 'var(--r-lg)',
+        padding: '1.35rem 1.25rem 1.2rem',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        textAlign: 'center',
+      }}
+    >
+      <div
+        aria-hidden
+        style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: 'clamp(3.25rem, 7vw, 5.4rem)',
+          fontWeight: 600,
+          lineHeight: 1,
+          color: 'var(--gold)',
+          margin: '0 0 0.65rem',
+        }}
+      >
+        {num}
+      </div>
+      <h3
+        style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: '1.1rem',
+          fontWeight: 600,
+          color: 'var(--charcoal)',
+          lineHeight: 1.3,
+          margin: '0 0 0.5rem',
+        }}
+      >
+        {title}
+      </h3>
+      <p
+        style={{
+          fontFamily: 'var(--font-body)',
+          fontSize: '0.86rem',
+          lineHeight: 1.6,
+          color: 'var(--mid)',
+          margin: 0,
+        }}
+      >
+        {body}
+      </p>
+    </article>
+  )
+}

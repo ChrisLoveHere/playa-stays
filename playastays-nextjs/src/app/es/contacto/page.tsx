@@ -9,8 +9,11 @@ import { JsonLd } from '@/components/seo/JsonLd'
 import { Hero } from '@/components/hero/Hero'
 import { LeadForm } from '@/components/forms/LeadForm'
 import { CtaStrip } from '@/components/sections'
+import { FounderWidget } from '@/components/contact/FounderWidget'
 import { ContactDirectColumn } from '@/components/contact/ContactDirectColumn'
 import { ContactLocationSection } from '@/components/contact/ContactLocationSection'
+import { TestimonialPlaceholder } from '@/components/contact/TestimonialPlaceholder'
+import { PersonOrganizationSchema } from '@/components/seo/PersonOrganizationSchema'
 import styles from '@/components/contact/ContactPageLayout.module.css'
 
 export const revalidate = false
@@ -38,6 +41,7 @@ export default async function ContactoPage() {
   return (
     <>
       <JsonLd data={contactPageJsonLd('es')} />
+      <PersonOrganizationSchema />
       <Hero
         variant="centred"
         breadcrumbs={[
@@ -49,12 +53,18 @@ export default async function ContactoPage() {
         sub="Nuestro equipo está en Playa del Carmen. Escríbenos por WhatsApp, teléfono o correo — respondemos el mismo día."
       />
 
+      <FounderWidget
+        locale="es"
+        headingOverride="Habla con un equipo local real — no un call center."
+        bodyOverride="Cada mensaje llega a mí primero. Ya seas un propietario decidiendo qué hacer con tu propiedad o un huésped buscando reservar, leo cada consulta personalmente y la dirijo a quien pueda ayudar más rápido."
+      />
+
       <section className="pad-lg bg-ivory">
         <div className="container">
           <div className={styles.mainGrid}>
             <div>
               <div className="eyebrow mb-8">Envíanos un mensaje</div>
-              <h2 className={styles.channelTitle}>Obtén un estimado de ingresos gratis</h2>
+              <h2 className={styles.channelTitle}>Cuéntanos cómo podemos ayudarte.</h2>
               <LeadForm variant="light" source="contacto-page" locale="es" />
             </div>
 
@@ -74,6 +84,11 @@ export default async function ContactoPage() {
       </section>
 
       <ContactLocationSection copy={LOCATION_COPY_ES} />
+
+      <TestimonialPlaceholder
+        locale="es"
+        headingOverride="Conversaciones reales, resultados reales."
+      />
 
       <CtaStrip
         eyebrow="¿Tienes una propiedad en la Riviera Maya?"

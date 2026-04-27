@@ -1,0 +1,77 @@
+.section {
+  background: var(--gold);
+  border-top: 1px solid rgba(10, 43, 47, 0.1);
+  border-bottom: 1px solid rgba(10, 43, 47, 0.08);
+}
+
+.card {
+  max-width: 780px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(16px, 3vw, 28px);
+  padding: clamp(20px, 3.5vw, 30px);
+  background: var(--deep);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--r-lg);
+  box-shadow: 0 12px 32px rgba(10, 43, 47, 0.28), 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.photoWrap {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 4px solid var(--white);
+  box-shadow: 0 0 0 1px rgba(10, 43, 47, 0.12), 0 8px 24px rgba(10, 43, 47, 0.22);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  transform: scale(1.28);
+  transform-origin: center center;
+  display: block;
+}
+
+.copy {
+  min-width: 0;
+}
+
+.heading {
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+  font-weight: 600;
+  color: var(--white);
+  margin: 0 0 8px;
+  line-height: 1.25;
+  text-shadow: 0 1px 2px rgba(10, 43, 47, 0.12);
+}
+
+.body {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.ctaWrap {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 210px;
+}

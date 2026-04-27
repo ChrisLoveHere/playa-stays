@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
-import { draftMode } from 'next/headers'
-import { getFAQs, getSiteConfig } from '@/lib/wordpress'
+import { getSiteConfig } from '@/lib/wordpress'
 import { buildMetadata } from '@/lib/seo'
 import { Hero } from '@/components/hero/Hero'
-import { TrustBar, StepsGrid, CtaStrip } from '@/components/sections'
-import { FaqAccordion } from '@/components/content/FaqAccordion'
-import { limitPublicFaqs } from '@/lib/faq-helpers'
+import { CtaStrip } from '@/components/sections'
 import { LeadForm } from '@/components/forms/LeadForm'
+import { FounderWidget } from '@/components/contact/FounderWidget'
+import { TestimonialPlaceholder } from '@/components/contact/TestimonialPlaceholder'
+import { PersonOrganizationSchema } from '@/components/seo/PersonOrganizationSchema'
 
 export const revalidate = 86400
 
@@ -19,42 +19,11 @@ export const metadata: Metadata = buildMetadata({
 })
 
 export default async function ListYourPropertyPage() {
-  const { isEnabled: preview } = draftMode()
-
-  const [faqs, config] = await Promise.all([
-    getFAQs({ categorySlug: 'list-your-property', preview }),
-    getSiteConfig(),
-  ])
-
-  const steps = [
-    {
-      num: 1,
-      icon: <PhoneIcon />,
-      title: 'Tell us about your property',
-      desc: 'Fill in the form. It takes 2 minutes. We review every submission the same day.',
-    },
-    {
-      num: 2,
-      icon: <ChartIcon />,
-      title: 'We send your revenue estimate',
-      desc: 'A personalised income projection based on real market data from our managed portfolio — within 24 hours.',
-    },
-    {
-      num: 3,
-      icon: <CameraIcon />,
-      title: 'We set everything up',
-      desc: 'Photography, listing, pricing, compliance. Live on Airbnb, VRBO, and Booking.com within 7 days.',
-    },
-    {
-      num: 4,
-      icon: <MoneyIcon />,
-      title: 'You collect monthly income',
-      desc: 'Monthly deposits to your account. Full transparency via your owner portal.',
-    },
-  ]
+  const config = await getSiteConfig()
 
   return (
     <>
+      <PersonOrganizationSchema />
       <Hero
         variant="split"
         locale="en"
@@ -78,54 +47,67 @@ export default async function ListYourPropertyPage() {
         }
       />
 
-      <TrustBar stats={config.trust_stats} locale="en" />
+      <section className="pad-lg bg-deep" id="how-it-works" aria-label="How it works">
+        <div className="container">
+          <div style={{ textAlign: 'center', maxWidth: '40rem', margin: '0 auto 2.5rem' }}>
+            <div className="eyebrow" style={{ color: 'rgba(255,255,255,0.76)' }}>HOW IT WORKS</div>
+            <h2
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(1.75rem, 2.8vw, 2.2rem)',
+                fontWeight: 500,
+                color: 'var(--white)',
+                lineHeight: 1.2,
+                margin: '0.7rem 0 0.65rem',
+              }}
+            >
+              Three steps to hands-off.
+            </h2>
+            <p
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: 'clamp(0.9rem, 1.1vw, 0.98rem)',
+                lineHeight: 1.6,
+                color: 'rgba(255, 255, 255, 0.86)',
+                margin: 0,
+              }}
+            >
+              Our onboarding process is fast, systematic, and entirely hands-off for you.
+            </p>
+          </div>
+          <div
+            style={{
+              display: 'grid',
+              gap: '1rem',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            }}
+          >
+            <StepCard
+              num="1"
+              title="Tell us about your property"
+              body="Fill the form. Two minutes. We review every submission the same day."
+            />
+            <StepCard
+              num="2"
+              title="We send your revenue estimate"
+              body="A personalized income projection based on real market data — within 24 hours."
+            />
+            <StepCard
+              num="3"
+              title="PlayaStays handles the rest"
+              body="Photography, listings, pricing, compliance, guest support, cleaning. Live on Airbnb, VRBO, and Booking.com within 7 days. Monthly direct deposits."
+            />
+          </div>
+        </div>
+      </section>
 
-      <StepsGrid
-        eyebrow="How It Works"
-        headline="From listing to revenue in 7 days"
-        body="Our onboarding process is fast, systematic, and entirely hands-off for you."
-        steps={steps}
+      <FounderWidget
+        locale="en"
+        headingOverride="I personally review every property submission."
+        bodyOverride="Whether you have one condo in Playa or a portfolio of homes across Quintana Roo, I look at every submission within 24 hours and send back an honest revenue projection. No outsourcing, no template responses."
       />
 
-      {faqs.length > 0 && (
-        <section className="pad-lg bg-sand" id="faq">
-          <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, alignItems: 'start' }}>
-            <FaqAccordion
-              eyebrow="Common Questions"
-              headline="FAQ"
-              items={limitPublicFaqs(
-                faqs.map(f => ({ question: f.title.rendered, answer: f.meta.ps_answer })),
-              )}
-            />
-            <div style={{
-              background: 'var(--white)', borderRadius: 'var(--r-lg)',
-              padding: 32, boxShadow: 'var(--sh-sm)', border: '1px solid var(--sand-dark)',
-            }}>
-              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.4rem', fontWeight: 600, color: 'var(--charcoal)', marginBottom: 8 }}>
-                Still have questions?
-              </h3>
-              <p className="body-sm mb-20">
-                Our team is available every day. Reach us on WhatsApp, phone, or email.
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-                <a
-                  href={`https://wa.me/${config.whatsapp}`}
-                  className="btn btn-wa btn-full"
-                  target="_blank" rel="noopener"
-                >
-                  Chat on WhatsApp
-                </a>
-                <a href={`tel:${config.phone.replace(/\s/g,'')}`} className="btn btn-ghost btn-full">
-                  {config.phone}
-                </a>
-                <a href={`mailto:${config.email}`} className="btn btn-ghost btn-full">
-                  {config.email}
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
+      <TestimonialPlaceholder locale="en" headingOverride="Real owners. Real outcomes." />
 
       <CtaStrip
         eyebrow="Ready to start?"
@@ -136,8 +118,57 @@ export default async function ListYourPropertyPage() {
   )
 }
 
-// Icons
-function PhoneIcon()  { return <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22"><path strokeLinecap="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 7V6a2 2 0 012-2z"/></svg> }
-function ChartIcon()  { return <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22"><path strokeLinecap="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg> }
-function CameraIcon() { return <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22"><path strokeLinecap="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path strokeLinecap="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg> }
-function MoneyIcon()  { return <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22"><path strokeLinecap="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 1v8m0 0v1"/></svg> }
+function StepCard({ num, title, body }: { num: string; title: string; body: string }) {
+  return (
+    <article
+      style={{
+        background: 'var(--white)',
+        border: '1px solid var(--sand-dark)',
+        borderRadius: 'var(--r-lg)',
+        padding: '1.35rem 1.25rem 1.2rem',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        textAlign: 'center',
+      }}
+    >
+      <div
+        aria-hidden
+        style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: 'clamp(3.25rem, 7vw, 5.4rem)',
+          fontWeight: 600,
+          lineHeight: 1,
+          color: 'var(--gold)',
+          margin: '0 0 0.65rem',
+        }}
+      >
+        {num}
+      </div>
+      <h3
+        style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: '1.1rem',
+          fontWeight: 600,
+          color: 'var(--charcoal)',
+          lineHeight: 1.3,
+          margin: '0 0 0.5rem',
+        }}
+      >
+        {title}
+      </h3>
+      <p
+        style={{
+          fontFamily: 'var(--font-body)',
+          fontSize: '0.86rem',
+          lineHeight: 1.6,
+          color: 'var(--mid)',
+          margin: 0,
+        }}
+      >
+        {body}
+      </p>
+    </article>
+  )
+}
