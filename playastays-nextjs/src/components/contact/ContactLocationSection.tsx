@@ -12,12 +12,14 @@ export interface ContactLocationCopy {
 
 export function ContactLocationSection({ copy }: { copy: ContactLocationCopy }) {
   const embedKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_EMBED_KEY?.trim()
-  const gridClass = embedKey ? styles.locationGrid : styles.locationGridSingle
+  const mapSrc = embedKey
+    ? googleMapsEmbedPlaceSrc(embedKey)
+    : `https://www.google.com/maps?q=${encodeURIComponent(SITE_BUSINESS_ADDRESS)}&output=embed`
 
   return (
     <section className={`${styles.locationSection} pad-md bg-sand`}>
       <div className="container">
-        <div className={gridClass}>
+        <div className={styles.locationGrid}>
           <div>
             <div className="eyebrow mb-8">{copy.eyebrow}</div>
             <h2 className={`section-title ${styles.locationTitle}`}>{copy.title}</h2>
@@ -32,19 +34,17 @@ export function ContactLocationSection({ copy }: { copy: ContactLocationCopy }) 
               {copy.directionsLabel}
             </a>
           </div>
-          {embedKey ? (
-            <div className={styles.mapShell}>
-              <div className={styles.mapFrame}>
-                <iframe
-                  title={copy.mapAriaLabel}
-                  src={googleMapsEmbedPlaceSrc(embedKey)}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  allowFullScreen
-                />
-              </div>
+          <div className={styles.mapShell}>
+            <div className={styles.mapFrame}>
+              <iframe
+                title={copy.mapAriaLabel}
+                src={mapSrc}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
             </div>
-          ) : null}
+          </div>
         </div>
       </div>
     </section>

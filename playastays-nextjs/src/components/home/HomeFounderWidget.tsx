@@ -1,47 +1,25 @@
 'use client'
 
 import { useId, useState } from 'react'
-import type { CSSProperties } from 'react'
 import Link from 'next/link'
 import type { Locale } from '@/lib/i18n'
+import styles from './HomeFounderWidget.module.css'
 
 const COPY: Record<Locale, { heading: string; body: string; cta: string; contactHref: string }> = {
   en: {
     heading: "Hi, I'm Chris — founder of PlayaStays.",
     body:
       "We're a small, boutique team based in the Riviera Maya — not a national chain managing your property from another country. Local presence, owner-first transparency, bilingual communication, and a real focus on the guest experience that earns you better reviews. If you own a property in Quintana Roo, I'd love to help you think through it.",
-    cta: 'Get in touch →',
-    contactHref: '/contact/',
+    cta: 'WhatsApp Chris →',
+    contactHref: 'https://wa.me/529841234567?text=Hi%20Chris%2C%20I%20found%20you%20on%20PlayaStays',
   },
   es: {
     heading: 'Hola, soy Chris — fundador de PlayaStays.',
     body:
       'Somos un equipo boutique pequeño basado en la Riviera Maya — no una cadena nacional administrando tu propiedad desde otro país. Presencia local, transparencia para el propietario, comunicación bilingüe, y un enfoque real en la experiencia del huésped que te genera mejores reseñas. Si tienes una propiedad en Quintana Roo, me encantaría ayudarte a pensarla.',
-    cta: 'Contáctame →',
-    contactHref: '/es/contacto/',
+    cta: 'WhatsApp Chris →',
+    contactHref: 'https://wa.me/529841234567?text=Hi%20Chris%2C%20I%20found%20you%20on%20PlayaStays',
   },
-}
-
-const PHOTO_ZOOM = 1.28
-
-const photoFrame: CSSProperties = {
-  width: 80,
-  height: 80,
-  borderRadius: '50%',
-  overflow: 'hidden',
-  flexShrink: 0,
-  border: '4px solid var(--white)',
-  boxShadow: '0 0 0 1px rgba(10, 43, 47, 0.12), 0 8px 24px rgba(10, 43, 47, 0.22)',
-}
-
-const photoInner: CSSProperties = {
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-  objectPosition: 'center center',
-  transform: `scale(${PHOTO_ZOOM})`,
-  transformOrigin: 'center center',
-  display: 'block',
 }
 
 export function HomeFounderWidget({ locale }: { locale: Locale }) {
@@ -50,35 +28,12 @@ export function HomeFounderWidget({ locale }: { locale: Locale }) {
   const hid = useId()
 
   return (
-    <section
-      className="pad-lg"
-      aria-labelledby={`home-founder-widget-heading-${hid}`}
-      style={{
-        background: 'var(--gold)',
-        borderTop: '1px solid rgba(10, 43, 47, 0.1)',
-        borderBottom: '1px solid rgba(10, 43, 47, 0.08)',
-      }}
-    >
+    <section className={styles.section} aria-labelledby={`home-founder-widget-heading-${hid}`}>
       <div className="container" style={{ maxWidth: 900 }}>
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            gap: 'clamp(16px, 3vw, 28px)',
-            justifyContent: 'space-between',
-            padding: 'clamp(20px, 3.5vw, 30px)',
-            background: 'var(--deep)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: 'var(--r-lg)',
-            boxShadow: '0 12px 32px rgba(10, 43, 47, 0.28), 0 2px 8px rgba(0, 0, 0, 0.12)',
-            maxWidth: 780,
-            margin: '0 auto',
-          }}
-        >
-          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 18, flex: '1 1 240px', minWidth: 0 }}>
+        <div className={styles.card}>
+          <div className={styles.main}>
             {photoOk ? (
-              <div style={photoFrame}>
+              <div className={styles.photoFrame}>
                 {/* eslint-disable-next-line @next/next/no-img-element -- public /team asset */}
                 <img
                   src="/team/chris-love.jpg"
@@ -86,48 +41,22 @@ export function HomeFounderWidget({ locale }: { locale: Locale }) {
                   width={80}
                   height={80}
                   loading="lazy"
-                  style={photoInner}
+                  className={styles.photo}
                   onError={() => setPhotoOk(false)}
                 />
               </div>
             ) : (
-              <div
-                aria-hidden
-                style={{
-                  ...photoFrame,
-                  background: 'rgba(255,255,255,0.25)',
-                }}
-              />
+              <div aria-hidden className={`${styles.photoFrame} ${styles.photoPlaceholder}`} />
             )}
-            <div style={{ minWidth: 0 }}>
-              <h2
-                id={`home-founder-widget-heading-${hid}`}
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 'clamp(1.05rem, 2.2vw, 1.25rem)',
-                  fontWeight: 600,
-                  color: 'var(--white)',
-                  margin: '0 0 8px',
-                  lineHeight: 1.25,
-                  textShadow: '0 1px 2px rgba(10, 43, 47, 0.12)',
-                }}
-              >
-                {c.heading}
-              </h2>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  margin: '0 0 8px',
-                }}
-              >
+            <div className={styles.copy}>
+              <h2 id={`home-founder-widget-heading-${hid}`} className={styles.heading}>{c.heading}</h2>
+              <div className={styles.socials}>
                 <a
                   href="https://www.linkedin.com/in/chrislove89"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Chris Love on LinkedIn"
-                  style={{ color: 'rgba(255,255,255,0.82)', display: 'inline-flex' }}
+                  className={styles.socialLink}
                 >
                   <IconLinkedIn />
                 </a>
@@ -136,7 +65,7 @@ export function HomeFounderWidget({ locale }: { locale: Locale }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="PlayaStays on Facebook"
-                  style={{ color: 'rgba(255,255,255,0.82)', display: 'inline-flex' }}
+                  className={styles.socialLink}
                 >
                   <IconFacebook />
                 </a>
@@ -145,25 +74,22 @@ export function HomeFounderWidget({ locale }: { locale: Locale }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="PlayaStays on Instagram"
-                  style={{ color: 'rgba(255,255,255,0.82)', display: 'inline-flex' }}
+                  className={styles.socialLink}
                 >
                   <IconInstagram />
                 </a>
               </div>
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: '0.88rem',
-                  lineHeight: 1.6,
-                  color: 'rgba(255, 255, 255, 0.9)',
-                }}
-              >
-                {c.body}
-              </p>
+              <p className={styles.body}>{c.body}</p>
             </div>
           </div>
-          <div style={{ flexShrink: 0, width: '100%', maxWidth: 200 }} className="home-founder-widget-cta">
-            <Link href={c.contactHref} className="btn btn-white btn-full" style={{ whiteSpace: 'nowrap' }}>
+          <div className={`${styles.ctaWrap} home-founder-widget-cta`}>
+            <Link
+              href={c.contactHref}
+              className="btn btn-white btn-full"
+              style={{ whiteSpace: 'nowrap' }}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {c.cta}
             </Link>
           </div>

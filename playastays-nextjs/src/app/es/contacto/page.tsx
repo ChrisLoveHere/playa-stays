@@ -3,18 +3,16 @@
 // ============================================================
 
 import type { Metadata } from 'next'
-import { getSiteConfig } from '@/lib/wordpress'
-import { buildMetadata, contactPageJsonLd } from '@/lib/seo'
-import { JsonLd } from '@/components/seo/JsonLd'
+import { buildMetadata } from '@/lib/seo'
 import { Hero } from '@/components/hero/Hero'
-import { LeadForm } from '@/components/forms/LeadForm'
 import { CtaStrip } from '@/components/sections'
-import { FounderWidget } from '@/components/contact/FounderWidget'
-import { ContactDirectColumn } from '@/components/contact/ContactDirectColumn'
 import { ContactLocationSection } from '@/components/contact/ContactLocationSection'
 import { TestimonialPlaceholder } from '@/components/contact/TestimonialPlaceholder'
 import { PersonOrganizationSchema } from '@/components/seo/PersonOrganizationSchema'
-import styles from '@/components/contact/ContactPageLayout.module.css'
+import { SmartLeadForm } from '@/components/contact/SmartLeadForm'
+import { ContactMethodsGrid } from '@/components/contact/ContactMethodsGrid'
+import { TeamSection } from '@/components/contact/TeamSection'
+import { MobileWhatsAppSticky } from '@/components/contact/MobileWhatsAppSticky'
 
 export const revalidate = false
 
@@ -36,11 +34,8 @@ const LOCATION_COPY_ES = {
 }
 
 export default async function ContactoPage() {
-  const config = await getSiteConfig()
-
   return (
     <>
-      <JsonLd data={contactPageJsonLd('es')} />
       <PersonOrganizationSchema />
       <Hero
         variant="centred"
@@ -53,35 +48,29 @@ export default async function ContactoPage() {
         sub="Nuestro equipo está en Playa del Carmen. Escríbenos por WhatsApp, teléfono o correo — respondemos el mismo día."
       />
 
-      <FounderWidget
-        locale="es"
-        headingOverride="Habla con un equipo local real — no un call center."
-        bodyOverride="Cada mensaje llega a mí primero. Ya seas un propietario decidiendo qué hacer con tu propiedad o un huésped buscando reservar, leo cada consulta personalmente y la dirijo a quien pueda ayudar más rápido."
-      />
-
-      <section className="pad-lg bg-ivory">
+      <section className="pad-lg bg-white">
         <div className="container">
-          <div className={styles.mainGrid}>
-            <div>
-              <div className="eyebrow mb-8">Envíanos un mensaje</div>
-              <h2 className={styles.channelTitle}>Cuéntanos cómo podemos ayudarte.</h2>
-              <LeadForm variant="light" source="contacto-page" locale="es" />
-            </div>
-
-            <ContactDirectColumn
-              config={config}
-              labels={{
-                eyebrow: 'Contacto directo',
-                title: 'Escríbenos directamente',
-                whatsappTitle: 'WhatsApp',
-                whatsappSub: 'Disponible 7am – 10pm · Respuesta en minutos',
-                phoneSub: 'Lun – Sáb 8am – 8pm hora MX',
-                emailSub: 'Respuesta en 24 horas',
+          <div style={{ textAlign: 'center', maxWidth: '46rem', margin: '0 auto 1.4rem' }}>
+            <div className="eyebrow mb-8">ENVÍANOS UN MENSAJE</div>
+            <h2
+              style={{
+                margin: 0,
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(1.75rem, 2.8vw, 2.35rem)',
+                color: 'var(--charcoal)',
+                lineHeight: 1.16,
               }}
-            />
+            >
+              Cuéntanos cómo podemos ayudarte.
+            </h2>
           </div>
+          <SmartLeadForm source="contacto-page-smart" locale="es" />
         </div>
       </section>
+
+      <ContactMethodsGrid locale="es" />
+
+      <TeamSection locale="es" />
 
       <ContactLocationSection copy={LOCATION_COPY_ES} />
 
@@ -95,6 +84,8 @@ export default async function ContactoPage() {
         headline="Obtén un estimado de ingresos gratis — sin compromisos."
         cta={{ label: 'Obtener mi estimado →', href: '/es/publica-tu-propiedad/' }}
       />
+      {/* Mobile-only WhatsApp shortcut for contact page. Desktop users use the team section's WhatsApp Chris button. */}
+      <MobileWhatsAppSticky locale="es" />
     </>
   )
 }

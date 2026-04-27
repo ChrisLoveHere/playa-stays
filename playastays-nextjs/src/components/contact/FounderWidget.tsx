@@ -1,9 +1,9 @@
 'use client'
 
 import { useId, useState } from 'react'
-import type { CSSProperties } from 'react'
 import Link from 'next/link'
 import type { Locale } from '@/lib/i18n'
+import styles from './FounderWidget.module.css'
 
 const COPY: Record<
   Locale,
@@ -23,29 +23,6 @@ const COPY: Record<
   },
 }
 
-/** Slight zoom (1 = none) so the subject reads larger in a wide shot. Adjust 1.1–1.3 if the source photo changes. */
-const PHOTO_ZOOM = 1.28
-
-const photoFrame: CSSProperties = {
-  width: 80,
-  height: 80,
-  borderRadius: '50%',
-  overflow: 'hidden',
-  flexShrink: 0,
-  border: '4px solid var(--white)',
-  boxShadow: '0 0 0 1px rgba(10, 43, 47, 0.12), 0 8px 24px rgba(10, 43, 47, 0.22)',
-}
-
-const photoInner: CSSProperties = {
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-  objectPosition: 'center center',
-  transform: `scale(${PHOTO_ZOOM})`,
-  transformOrigin: 'center center',
-  display: 'block',
-}
-
 export function FounderWidget({
   locale,
   headingOverride,
@@ -62,33 +39,12 @@ export function FounderWidget({
   const body = bodyOverride ?? c.body
 
   return (
-    <section
-      className="pad-lg"
-      aria-labelledby={`founder-widget-heading-${hid}`}
-      style={{
-        background: 'var(--gold)',
-        borderTop: '1px solid rgba(10, 43, 47, 0.1)',
-        borderBottom: '1px solid rgba(10, 43, 47, 0.08)',
-      }}
-    >
+    <section className={styles.section} aria-labelledby={`founder-widget-heading-${hid}`}>
       <div className="container" style={{ maxWidth: 900 }}>
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            gap: 'clamp(16px, 3vw, 28px)',
-            justifyContent: 'space-between',
-            padding: 'clamp(20px, 3.5vw, 30px)',
-            background: 'var(--deep)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: 'var(--r-lg)',
-            boxShadow: '0 12px 32px rgba(10, 43, 47, 0.28), 0 2px 8px rgba(0, 0, 0, 0.12)',
-          }}
-        >
-          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 18, flex: '1 1 240px', minWidth: 0 }}>
+        <div className={styles.card}>
+          <div className={styles.main}>
             {photoOk ? (
-              <div style={photoFrame}>
+              <div className={styles.photoFrame}>
                 {/* eslint-disable-next-line @next/next/no-img-element -- public asset in /public/team */}
                 <img
                   src="/team/chris-love.jpg"
@@ -96,48 +52,22 @@ export function FounderWidget({
                   width={80}
                   height={80}
                   loading="lazy"
-                  style={photoInner}
+                  className={styles.photo}
                   onError={() => setPhotoOk(false)}
                 />
               </div>
             ) : (
-              <div
-                aria-hidden
-                style={{
-                  ...photoFrame,
-                  background: 'rgba(255,255,255,0.25)',
-                }}
-              />
+              <div aria-hidden className={`${styles.photoFrame} ${styles.photoPlaceholder}`} />
             )}
-            <div style={{ minWidth: 0 }}>
-              <h2
-                id={`founder-widget-heading-${hid}`}
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 'clamp(1.05rem, 2.2vw, 1.25rem)',
-                  fontWeight: 600,
-                  color: 'var(--white)',
-                  margin: '0 0 8px',
-                  lineHeight: 1.25,
-                  textShadow: '0 1px 2px rgba(10, 43, 47, 0.12)',
-                }}
-              >
-                {heading}
-              </h2>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  margin: '0 0 8px',
-                }}
-              >
+            <div className={styles.copy}>
+              <h2 id={`founder-widget-heading-${hid}`} className={styles.heading}>{heading}</h2>
+              <div className={styles.socials}>
                 <a
                   href="https://www.linkedin.com/in/chrislove89"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Chris Love on LinkedIn"
-                  style={{ color: 'rgba(255,255,255,0.82)', display: 'inline-flex' }}
+                  className={styles.socialLink}
                 >
                   <IconLinkedIn />
                 </a>
@@ -146,7 +76,7 @@ export function FounderWidget({
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="PlayaStays on Facebook"
-                  style={{ color: 'rgba(255,255,255,0.82)', display: 'inline-flex' }}
+                  className={styles.socialLink}
                 >
                   <IconFacebook />
                 </a>
@@ -155,24 +85,15 @@ export function FounderWidget({
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="PlayaStays on Instagram"
-                  style={{ color: 'rgba(255,255,255,0.82)', display: 'inline-flex' }}
+                  className={styles.socialLink}
                 >
                   <IconInstagram />
                 </a>
               </div>
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: '0.88rem',
-                  lineHeight: 1.6,
-                  color: 'rgba(255, 255, 255, 0.9)',
-                }}
-              >
-                {body}
-              </p>
+              <p className={styles.body}>{body}</p>
             </div>
           </div>
-          <div style={{ flexShrink: 0, width: '100%', maxWidth: 200 }} className="founder-widget-cta">
+          <div className={`${styles.ctaWrap} founder-widget-cta`}>
             <Link href={c.contactHref} className="btn btn-white btn-full" style={{ whiteSpace: 'nowrap' }}>
               {c.cta}
             </Link>

@@ -10,7 +10,7 @@ import { buildMetadata } from '@/lib/seo'
 import { Hero } from '@/components/hero/Hero'
 import { CtaStrip } from '@/components/sections'
 import { LeadForm } from '@/components/forms/LeadForm'
-import { FounderWidget } from '@/components/contact/FounderWidget'
+import { ContactFounderWidget } from '@/components/contact/ContactFounderWidget'
 import { TestimonialPlaceholder } from '@/components/contact/TestimonialPlaceholder'
 import { PersonOrganizationSchema } from '@/components/seo/PersonOrganizationSchema'
 
@@ -108,10 +108,10 @@ export default async function PublicaTuPropiedadPage() {
         </div>
       </section>
 
-      <FounderWidget
+      <ContactFounderWidget
         locale="es"
-        headingOverride="Yo personalmente reviso cada envío de propiedad."
-        bodyOverride="Ya tengas un condominio en Playa o un portafolio de casas por todo Quintana Roo, miro cada envío en 24 horas y envío una proyección honesta. Sin tercerización, sin respuestas plantilla."
+        heading="Yo personalmente reviso cada envío de propiedad."
+        body="Ya tengas un condominio en Playa o un portafolio de casas por todo Quintana Roo, miro cada envío en 24 horas y envío una proyección honesta. Sin tercerización, sin respuestas plantilla."
       />
 
       <TestimonialPlaceholder locale="es" headingOverride="Propietarios reales. Resultados reales." />

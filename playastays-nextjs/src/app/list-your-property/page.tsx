@@ -4,7 +4,7 @@ import { buildMetadata } from '@/lib/seo'
 import { Hero } from '@/components/hero/Hero'
 import { CtaStrip } from '@/components/sections'
 import { LeadForm } from '@/components/forms/LeadForm'
-import { FounderWidget } from '@/components/contact/FounderWidget'
+import { ContactFounderWidget } from '@/components/contact/ContactFounderWidget'
 import { TestimonialPlaceholder } from '@/components/contact/TestimonialPlaceholder'
 import { PersonOrganizationSchema } from '@/components/seo/PersonOrganizationSchema'
 
@@ -101,10 +101,10 @@ export default async function ListYourPropertyPage() {
         </div>
       </section>
 
-      <FounderWidget
+      <ContactFounderWidget
         locale="en"
-        headingOverride="I personally review every property submission."
-        bodyOverride="Whether you have one condo in Playa or a portfolio of homes across Quintana Roo, I look at every submission within 24 hours and send back an honest revenue projection. No outsourcing, no template responses."
+        heading="I personally review every property submission."
+        body="Whether you have one condo in Playa or a portfolio of homes across Quintana Roo, I look at every submission within 24 hours and send back an honest revenue projection. No outsourcing, no template responses."
       />
 
       <TestimonialPlaceholder locale="en" headingOverride="Real owners. Real outcomes." />

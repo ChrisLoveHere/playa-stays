@@ -73,6 +73,12 @@ export function PersonOrganizationSchema() {
       'https://www.instagram.com/playastays',
       'https://www.linkedin.com/company/playastays/',
       'https://yelp.to/dortY22Uuc',
+      'https://www.reddit.com/user/PlayaStays/',
+    ],
+    employee: [
+      { '@id': 'https://www.playastays.com/#founder' },
+      { '@id': 'https://www.playastays.com/#person-tony-sparks' },
+      { '@id': 'https://www.playastays.com/#person-carmen-castro' },
     ],
     founder: {
       '@id': 'https://www.playastays.com/#founder',
@@ -89,7 +95,36 @@ export function PersonOrganizationSchema() {
     worksFor: {
       '@id': 'https://www.playastays.com/#organization',
     },
-    sameAs: ['https://www.linkedin.com/in/chrislove89'],
+    sameAs: ['https://www.linkedin.com/in/chrislove89', 'https://www.facebook.com/Chrislove89'],
+  }
+
+  const tonySchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': 'https://www.playastays.com/#person-tony-sparks',
+    name: 'Tony Sparks',
+    jobTitle: 'Head of Operations',
+    image: 'https://www.playastays.com/team/tony-sparks.jpg',
+    worksFor: {
+      '@id': 'https://www.playastays.com/#organization',
+    },
+    sameAs: [
+      'https://www.linkedin.com/in/tony-sparks-industries/',
+      'https://www.facebook.com/anthony.sparks1',
+    ],
+  }
+
+  const carmenSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': 'https://www.playastays.com/#person-carmen-castro',
+    name: 'Carmen Castro',
+    jobTitle: 'Housekeeping Manager',
+    image: 'https://www.playastays.com/team/carmen-castro.jpg',
+    worksFor: {
+      '@id': 'https://www.playastays.com/#organization',
+    },
+    sameAs: ['https://www.facebook.com/carmen.castro.735927'],
   }
 
   return (
@@ -101,6 +136,14 @@ export function PersonOrganizationSchema() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(tonySchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(carmenSchema) }}
       />
     </>
   )

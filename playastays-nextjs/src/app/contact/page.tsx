@@ -1,16 +1,14 @@
 import type { Metadata } from 'next'
-import { getSiteConfig } from '@/lib/wordpress'
-import { buildMetadata, contactPageJsonLd } from '@/lib/seo'
-import { JsonLd } from '@/components/seo/JsonLd'
+import { buildMetadata } from '@/lib/seo'
 import { Hero } from '@/components/hero/Hero'
-import { LeadForm } from '@/components/forms/LeadForm'
 import { CtaStrip } from '@/components/sections'
-import { FounderWidget } from '@/components/contact/FounderWidget'
-import { ContactDirectColumn } from '@/components/contact/ContactDirectColumn'
 import { ContactLocationSection } from '@/components/contact/ContactLocationSection'
 import { TestimonialPlaceholder } from '@/components/contact/TestimonialPlaceholder'
 import { PersonOrganizationSchema } from '@/components/seo/PersonOrganizationSchema'
-import styles from '@/components/contact/ContactPageLayout.module.css'
+import { SmartLeadForm } from '@/components/contact/SmartLeadForm'
+import { ContactMethodsGrid } from '@/components/contact/ContactMethodsGrid'
+import { TeamSection } from '@/components/contact/TeamSection'
+import { MobileWhatsAppSticky } from '@/components/contact/MobileWhatsAppSticky'
 
 export const revalidate = false
 
@@ -32,11 +30,8 @@ const LOCATION_COPY_EN = {
 }
 
 export default async function ContactPage() {
-  const config = await getSiteConfig()
-
   return (
     <>
-      <JsonLd data={contactPageJsonLd('en')} />
       <PersonOrganizationSchema />
       <Hero
         variant="centred"
@@ -46,35 +41,29 @@ export default async function ContactPage() {
         sub="Our team is based in Playa del Carmen. Reach us on WhatsApp, phone, or email — we respond the same day."
       />
 
-      <FounderWidget
-        locale="en"
-        headingOverride="Talk to a real local team — not a call center."
-        bodyOverride="Every message comes to me first. Whether you're an owner figuring out what to do with your property or a guest looking to book, I read every inquiry personally and route it to whoever can help fastest."
-      />
-
-      <section className="pad-lg bg-ivory">
+      <section className="pad-lg bg-white">
         <div className="container">
-          <div className={styles.mainGrid}>
-            <div>
-              <div className="eyebrow mb-8">Send us a message</div>
-              <h2 className={styles.channelTitle}>Tell us how we can help.</h2>
-              <LeadForm variant="light" source="contact-page" />
-            </div>
-
-            <ContactDirectColumn
-              config={config}
-              labels={{
-                eyebrow: 'Direct contact',
-                title: 'Reach us directly',
-                whatsappTitle: 'WhatsApp',
-                whatsappSub: 'Available 7am – 10pm · Usually replies in minutes',
-                phoneSub: 'Mon – Sat 8am – 8pm MX',
-                emailSub: 'Response within 24 hours',
+          <div style={{ textAlign: 'center', maxWidth: '46rem', margin: '0 auto 1.4rem' }}>
+            <div className="eyebrow mb-8">SEND US A MESSAGE</div>
+            <h2
+              style={{
+                margin: 0,
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(1.75rem, 2.8vw, 2.35rem)',
+                color: 'var(--charcoal)',
+                lineHeight: 1.16,
               }}
-            />
+            >
+              Tell us how we can help.
+            </h2>
           </div>
+          <SmartLeadForm source="contact-page-smart" />
         </div>
       </section>
+
+      <ContactMethodsGrid locale="en" />
+
+      <TeamSection locale="en" />
 
       <ContactLocationSection copy={LOCATION_COPY_EN} />
 
@@ -88,6 +77,8 @@ export default async function ContactPage() {
         headline="Get a free rental income estimate — no commitment required."
         cta={{ label: 'Get My Free Estimate →', href: '/list-your-property/' }}
       />
+      {/* Mobile-only WhatsApp shortcut for contact page. Desktop users use the team section's WhatsApp Chris button. */}
+      <MobileWhatsAppSticky locale="en" />
     </>
   )
 }
