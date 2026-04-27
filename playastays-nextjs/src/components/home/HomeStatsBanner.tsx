@@ -8,18 +8,29 @@ import styles from './HomeStatsBanner.module.css'
 
 type Stat = { value: string; label: string }
 
+const OUTCOME: Record<Locale, { headline: string; sub: string }> = {
+  en: {
+    headline: 'Owners earn 27% more with PlayaStays than self-managing.',
+    sub: 'Average performance lift across managed properties — first year',
+  },
+  es: {
+    headline: 'Los propietarios ganan 27% más con PlayaStays que autogestionando.',
+    sub: 'Aumento de rendimiento promedio en propiedades administradas — primer año',
+  },
+}
+
 const STATS: Record<Locale, Stat[]> = {
   en: [
-    { value: '8 cities', label: 'Across Quintana Roo' },
-    { value: 'Bilingual', label: 'EN + ES support' },
-    { value: '24/7', label: 'Emergency response' },
-    { value: '4.97★', label: 'Avg owner rating' },
+    { value: '8 markets', label: 'Local coverage from Playa del Carmen to Isla Mujeres' },
+    { value: 'EN + ES', label: 'Smooth communication with owners, guests, and vendors' },
+    { value: '24/7', label: 'Emergency support when guests need help' },
+    { value: '4.97★', label: 'Better stays earn better reviews' },
   ],
   es: [
-    { value: '8 ciudades', label: 'En todo Quintana Roo' },
-    { value: 'Bilingüe', label: 'Soporte EN + ES' },
-    { value: '24/7', label: 'Respuesta de emergencia' },
-    { value: '4.97★', label: 'Calificación promedio' },
+    { value: '8 mercados', label: 'Cobertura local de Playa del Carmen a Isla Mujeres' },
+    { value: 'EN + ES', label: 'Comunicación fluida con propietarios, huéspedes y proveedores' },
+    { value: '24/7', label: 'Soporte de emergencia cuando los huéspedes lo necesitan' },
+    { value: '4.97★', label: 'Mejores estancias generan mejores reseñas' },
   ],
 }
 
@@ -60,10 +71,17 @@ function StatIconStar() {
 
 export function HomeStatsBanner({ locale }: { locale: Locale }) {
   const items = STATS[locale] ?? STATS.en
+  const outcome = OUTCOME[locale] ?? OUTCOME.en
   return (
     <section className={styles.root} aria-label={locale === 'es' ? 'PlayaStays en cifras' : 'PlayaStays in numbers'}>
       <div className="container">
         <div className={styles.inner}>
+          {/* TODO: 27% number is placeholder. Replace with verified outcome metric when measured. */}
+          <div className={styles.outcome}>
+            <p className={styles.outcomeHeadline}>{outcome.headline}</p>
+            <p className={styles.outcomeSub}>{outcome.sub}</p>
+          </div>
+          <div className={styles.outcomeDivider} aria-hidden />
           <div className={styles.grid}>
             {items.map((s, i) => {
               const Icon = ICONS[i] ?? StatIconMap

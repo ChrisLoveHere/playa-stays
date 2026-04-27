@@ -25,24 +25,24 @@
   margin: 0;
 }
 
-.grid {
+.layout {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.25rem;
-  align-items: stretch;
-}
-
-@media (min-width: 600px) {
-  .grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  gap: 1.1rem;
 }
 
 @media (min-width: 1000px) {
-  .grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1.4rem;
+  .layout {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: stretch;
   }
+}
+
+.sideStack {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
 
 .card {
@@ -56,16 +56,63 @@
   flex-direction: column;
 }
 
-.icon {
-  color: var(--gold);
+.featuredCard {
+  min-height: 100%;
+  padding: 1.5rem 1.5rem 1.4rem;
+}
+
+.smallCard {
+  padding: 1.15rem 1.2rem 1.05rem;
+}
+
+/* ~56px tinted circle; gold icon 28px centered */
+.iconShell {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 0.65rem;
   flex-shrink: 0;
+}
+
+.featuredIconShell {
+  width: 84px;
+  height: 84px;
+  margin-bottom: 0.85rem;
+}
+
+.painTint0 {
+  background: rgba(220, 130, 80, 0.12);
+}
+.painTint1 {
+  background: rgba(190, 145, 60, 0.12);
+}
+.painTint2 {
+  background: rgba(60, 130, 100, 0.12);
+}
+.painTint3 {
+  background: rgba(20, 60, 70, 0.12);
+}
+
+.icon {
+  color: var(--gold);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .iconSvg {
   width: 28px;
   height: 28px;
   display: block;
+}
+
+.featuredIcon .iconSvg {
+  width: 50px;
+  height: 50px;
 }
 
 .cardTitle {
@@ -75,6 +122,11 @@
   color: var(--charcoal);
   line-height: 1.3;
   margin: 0 0 0.5rem;
+}
+
+.featuredTitle {
+  font-size: clamp(1.35rem, 2.1vw, 1.65rem);
+  margin-bottom: 0.6rem;
 }
 
 .body {

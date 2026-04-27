@@ -59,14 +59,21 @@
   border-color: rgba(24, 104, 112, 0.28);
 }
 
-/* ---- Photo / placeholder strip (top of card) ---- */
+/* ---- Photo / placeholder strip (top of card) — heights match HomeFeaturedCities ---- */
 .media {
   position: relative;
   width: 100%;
-  height: 160px;
+  height: 140px;
   flex-shrink: 0;
   background: var(--sand-dark);
   overflow: hidden;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+}
+
+@media (min-width: 600px) {
+  .media {
+    height: 160px;
+  }
 }
 
 @media (min-width: 900px) {
@@ -76,11 +83,10 @@
 }
 
 .mediaImg {
-  display: block;
-  width: 100%;
-  height: 100%;
   object-fit: cover;
   object-position: center;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  z-index: 0;
 }
 
 .mediaFallback {

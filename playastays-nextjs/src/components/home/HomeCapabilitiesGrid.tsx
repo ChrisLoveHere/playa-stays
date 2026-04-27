@@ -2,15 +2,26 @@
 // HomeCapabilitiesGrid — "what we do" for homepage (not pricing)
 // ============================================================
 
+'use client'
+
+import { useState } from 'react'
+import Image from 'next/image'
 import type { Locale } from '@/lib/i18n'
 import styles from './HomeCapabilitiesGrid.module.css'
 
+const PORTAL_IMG = '/home/product/owner-portal.png'
+
 const COPY: Record<
   Locale,
-  { title: string; sub: string; items: { title: string; body: string }[] }
+  {
+    title: string
+    sub: string
+    items: { title: string; body: string }[]
+    portalFallback: string
+  }
 > = {
   en: {
-    title: 'Everything your property needs, run by one team',
+    title: 'We do the boring parts. You keep the income.',
     sub: 'From listing to clean-up. From pricing to legal. PlayaStays handles every layer of vacation rental ownership in Quintana Roo.',
     items: [
       {
@@ -38,9 +49,10 @@ const COPY: Record<
         body: 'Tourist RFC, local licenses, and tax filing managed end-to-end. Full Quintana Roo compliance.',
       },
     ],
+    portalFallback: 'Owner portal preview — coming soon',
   },
   es: {
-    title: 'Todo lo que tu propiedad necesita, manejado por un solo equipo',
+    title: 'Hacemos las partes aburridas. Tú te quedas con el ingreso.',
     sub: 'Del listado al cleanup. De los precios a lo legal. PlayaStays maneja cada capa de la propiedad vacacional en Quintana Roo.',
     items: [
       {
@@ -68,7 +80,36 @@ const COPY: Record<
         body: 'RFC turístico, licencias locales y declaraciones fiscales gestionadas. Cumplimiento total en Quintana Roo.',
       },
     ],
+    portalFallback: 'Vista previa del portal — próximamente',
   },
+}
+
+function OwnerPortalSlot({ locale }: { locale: Locale }) {
+  const c = COPY[locale] ?? COPY.en
+  const [ok, setOk] = useState(true)
+
+  return (
+    <div className={styles.product}>
+      {/* TODO: Add real owner portal screenshot to /public/home/product/owner-portal.png */}
+      <div className={styles.productFrame}>
+        {ok ? (
+          <Image
+            src={PORTAL_IMG}
+            alt=""
+            width={1200}
+            height={600}
+            className={styles.productImg}
+            sizes="(max-width: 899px) 100vw, min(1120px, 92vw)"
+            onError={() => setOk(false)}
+          />
+        ) : (
+          <div className={styles.productPlaceholder} role="img" aria-label={c.portalFallback}>
+            <span className={styles.productPlaceholderText}>{c.portalFallback}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  )
 }
 
 const ICONS = [IconGrid, IconTrend, IconHeadset, IconSparkle, IconLayout, IconScale] as const
@@ -135,23 +176,32 @@ export function HomeCapabilitiesGrid({ locale }: { locale: Locale }) {
       aria-label={locale === 'es' ? 'Capacidades' : 'Capabilities'}
     >
       <div className="container">
-        <div className={styles.header}>
-          <h2 className={styles.heading}>{c.title}</h2>
-          <p className={styles.subhead}>{c.sub}</p>
-        </div>
-        <div className={styles.grid}>
-          {c.items.map((item, i) => {
-            const Icon = ICONS[i] ?? IconGrid
-            return (
-              <article key={item.title} className={styles.card}>
-                <div className={styles.icon} aria-hidden>
-                  <Icon />
-                </div>
-                <h3 className={styles.cardTitle}>{item.title}</h3>
-                <p className={styles.body}>{item.body}</p>
-              </article>
-            )
-          })}
+        <div className={styles.split}>
+          <div className={styles.left}>
+            <div className={styles.header}>
+              <h2 className={styles.heading}>{c.title}</h2>
+              <p className={styles.subhead}>{c.sub}</p>
+            </div>
+            <ul className={styles.list}>
+              {c.items.map((item, i) => {
+                const Icon = ICONS[i] ?? IconGrid
+                return (
+                  <li key={item.title} className={styles.listItem}>
+                    <div className={styles.listIcon} aria-hidden>
+                      <Icon />
+                    </div>
+                    <div className={styles.listBody}>
+                      <h3 className={styles.itemTitle}>{item.title}</h3>
+                      <p className={styles.itemText}>{item.body}</p>
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+          <div className={styles.right}>
+            <OwnerPortalSlot locale={locale} />
+          </div>
         </div>
       </div>
     </section>

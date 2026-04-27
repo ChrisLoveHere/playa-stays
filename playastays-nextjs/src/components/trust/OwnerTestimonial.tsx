@@ -13,10 +13,9 @@ import type { Locale } from '@/lib/i18n'
 import styles from './OwnerTestimonial.module.css'
 
 /**
- * Google Maps / Business Profile for PlayaStays (reviews). Replace with your canonical
- * “Get reviews on Google” link from Business Profile if you prefer the long `maps.google.com` URL.
+ * Google Maps / Business Profile for PlayaStays (reviews).
  */
-const MAPS_LISTING_URL = 'https://share.google/SVk2Q2QPrgq524CcE'
+const MAPS_LISTING_URL = 'https://maps.app.goo.gl/5Z9WVrEGUf5y2AiEA'
 
 /** Must match a file in `public/team/` — URL path = `/team/<filename>`. */
 const PHOTO = '/team/peter-langelaar.jpg'

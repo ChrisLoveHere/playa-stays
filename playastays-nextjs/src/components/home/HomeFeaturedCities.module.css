@@ -25,6 +25,20 @@
   margin: 0;
 }
 
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.1rem;
+}
+
+@media (min-width: 1000px) {
+  .layout {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: stretch;
+  }
+}
+
 .grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -39,8 +53,8 @@
 
 @media (min-width: 1000px) {
   .grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1.25rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
   }
 }
 
@@ -64,43 +78,67 @@
   transform: translateY(-2px);
 }
 
+.featuredCard {
+  min-height: 100%;
+}
+
 .media {
   position: relative;
   width: 100%;
-  min-height: 128px;
-  aspect-ratio: 16 / 9;
-  background: var(--sand-dark);
+  height: 140px;
+  background: var(--sand);
   overflow: hidden;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
 }
 
+@media (min-width: 600px) {
+  .media {
+    height: 160px;
+  }
+}
+
+@media (min-width: 1000px) {
+  .media {
+    height: 200px;
+  }
+}
+
+/* next/image fill */
 .mediaImg {
-  display: block;
-  width: 100%;
-  height: 100%;
+  z-index: 0;
   object-fit: cover;
   object-position: center;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
 }
 
-/* Shown when /home/cities/<slug>.jpg is missing (onError) */
-.placeholder {
+/* Bottom read on image (name sits below, but polishes the photo edge) */
+.mediaGradient {
   position: absolute;
   inset: 0;
-  width: 100%;
-  min-height: 100%;
-  display: block;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.3) 0%, transparent 55%);
+  border-radius: inherit;
 }
 
-/* Deliberate placeholder: vertical gradient, brand tones (0deg: lighter top → deeper bottom) */
-.placeholderA {
-  background: linear-gradient(0deg, var(--deep) 0%, #051a1c 100%);
-}
-
-.placeholderB {
-  background: linear-gradient(0deg, var(--gold) 0%, #5c4a1f 100%);
+/* onError: simple sand block, same radii as photo strip top */
+.placeholderFallback {
+  position: absolute;
+  inset: 0;
+  background: var(--sand);
+  border-radius: inherit;
 }
 
 .body {
   padding: 1rem 1.1rem 1.15rem;
+}
+
+.featuredCard .media {
+  height: clamp(220px, 28vw, 320px);
+}
+
+.featuredCard .body {
+  padding: 1.2rem 1.25rem 1.3rem;
 }
 
 .city {
@@ -110,6 +148,10 @@
   color: var(--charcoal);
   margin: 0 0 0.35rem;
   line-height: 1.25;
+}
+
+.featuredCity {
+  font-size: clamp(1.35rem, 2.2vw, 1.65rem);
 }
 
 .tagline {
@@ -124,4 +166,8 @@
   color: var(--charcoal);
   opacity: 0.88;
   line-height: 1.45;
+}
+
+.featuredTagline {
+  font-size: 0.92rem;
 }

@@ -7,7 +7,7 @@ const COPY: Record<
   { title: string; sub: string; closing: string; items: { title: string; body: string }[] }
 > = {
   en: {
-    title: 'Owning the property should be the easy part.',
+    title: 'Stop managing. Start owning.',
     sub: "Vacation rental ownership in the Riviera Maya isn't supposed to feel like a second job.",
     closing: 'PlayaStays handles the daily work — so you can own with confidence, from anywhere.',
     items: [
@@ -30,7 +30,7 @@ const COPY: Record<
     ],
   },
   es: {
-    title: 'Ser dueño de la propiedad debería ser la parte fácil.',
+    title: 'Deja de administrar. Empieza a ser dueño.',
     sub: 'Ser propietario de una renta vacacional en la Riviera Maya no debería sentirse como un segundo trabajo.',
     closing: 'PlayaStays maneja el trabajo diario — para que puedas ser dueño con confianza, desde donde estés.',
     items: [
@@ -55,6 +55,8 @@ const COPY: Record<
 }
 
 const ICONS = [IconClock, IconWrench, IconTrendingDown, IconEye] as const
+
+const PAIN_TINTS = [styles.painTint0, styles.painTint1, styles.painTint2, styles.painTint3] as const
 
 function IconClock() {
   return (
@@ -89,6 +91,8 @@ function IconEye() {
 
 export function HomeOwnerPain({ locale }: { locale: Locale }) {
   const c = COPY[locale] ?? COPY.en
+  const [featured, ...rest] = c.items
+  if (!featured) return null
   return (
     <section
       className={`pad-lg bg-white ${styles.root}`}
@@ -101,19 +105,39 @@ export function HomeOwnerPain({ locale }: { locale: Locale }) {
           </h2>
           <p className={styles.subhead}>{c.sub}</p>
         </div>
-        <div className={styles.grid}>
-          {c.items.map((item, i) => {
-            const Icon = ICONS[i] ?? IconClock
-            return (
-              <article key={item.title} className={styles.card}>
-                <div className={styles.icon} aria-hidden>
-                  <Icon />
-                </div>
-                <h3 className={styles.cardTitle}>{item.title}</h3>
-                <p className={styles.body}>{item.body}</p>
-              </article>
-            )
-          })}
+        <div className={styles.layout}>
+          <article className={`${styles.card} ${styles.featuredCard}`}>
+            <div
+              className={`${styles.iconShell} ${styles.featuredIconShell} ${PAIN_TINTS[0]}`}
+              aria-hidden
+            >
+              <div className={`${styles.icon} ${styles.featuredIcon}`}>
+                <IconClock />
+              </div>
+            </div>
+            <h3 className={`${styles.cardTitle} ${styles.featuredTitle}`}>{featured.title}</h3>
+            <p className={styles.body}>{featured.body}</p>
+          </article>
+          <div className={styles.sideStack}>
+            {rest.map((item, i) => {
+              const index = i + 1
+              const Icon = ICONS[index] ?? IconClock
+              return (
+                <article key={item.title} className={`${styles.card} ${styles.smallCard}`}>
+                  <div
+                    className={`${styles.iconShell} ${PAIN_TINTS[index] ?? styles.painTint0}`}
+                    aria-hidden
+                  >
+                    <div className={styles.icon}>
+                      <Icon />
+                    </div>
+                  </div>
+                  <h3 className={styles.cardTitle}>{item.title}</h3>
+                  <p className={styles.body}>{item.body}</p>
+                </article>
+              )
+            })}
+          </div>
         </div>
         <p className={styles.transition}>{c.closing}</p>
       </div>

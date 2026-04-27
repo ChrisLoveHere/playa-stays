@@ -1,7 +1,34 @@
 /* Match pricing OwnerTestimonial (teal card) — home-specific file */
-.card {
+.list {
+  display: grid;
+  gap: clamp(1.1rem, 2.2vw, 1.5rem);
+}
+
+.listSingle {
+  grid-template-columns: 1fr;
+  justify-items: center;
+}
+
+.listSingle .card {
   max-width: 800px;
-  margin: 0 auto;
+  width: 100%;
+}
+
+.listMulti {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+  .listMulti {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+  }
+}
+
+.card {
+  max-width: none;
+  width: 100%;
+  margin: 0;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;

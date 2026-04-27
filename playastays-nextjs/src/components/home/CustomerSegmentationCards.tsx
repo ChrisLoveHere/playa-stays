@@ -1,10 +1,11 @@
 // ============================================================
 // CustomerSegmentationCards — “Who is PlayaStays for?” (home)
-// Client: per-card <img> onError for /home/segmentation/* photography
+// Client: per-card next/image with onError fallback to branded color blocks
 // ============================================================
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import type { Locale } from '@/lib/i18n'
 import styles from './CustomerSegmentationCards.module.css'
@@ -140,16 +141,14 @@ function CardMedia({ index }: { index: number }) {
 
   return (
     <div className={styles.media}>
-      {/* TODO: Add real photography to /public/home/segmentation/ when available */}
+      {/* TODO: Add real photography to /public/home/segmentation/ — owner.jpg, selling.jpg, guest.jpg */}
       {imgOk ? (
-        // eslint-disable-next-line @next/next/no-img-element -- public asset; onError to branded block
-        <img
-          className={styles.mediaImg}
+        <Image
           src={src}
           alt=""
-          width={800}
-          height={400}
-          loading="lazy"
+          fill
+          className={styles.mediaImg}
+          sizes="(max-width: 599px) 100vw, (max-width: 899px) 50vw, 33vw"
           onError={() => setImgOk(false)}
         />
       ) : null}

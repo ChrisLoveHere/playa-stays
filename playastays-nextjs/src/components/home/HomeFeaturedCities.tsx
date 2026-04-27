@@ -1,9 +1,10 @@
 // ============================================================
-// HomeFeaturedCities — city grid; optional /public/home/cities/<slug>.jpg
+// HomeFeaturedCities — city photos from /public/home/cities/<slug>.jpg
 // ============================================================
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import type { Locale } from '@/lib/i18n'
 import styles from './HomeFeaturedCities.module.css'
@@ -23,43 +24,44 @@ const CITIES: City[] = [
 
 const INTRO: Record<Locale, { title: string; sub: string }> = {
   en: {
-    title: 'Vacation rentals across Quintana Roo',
-    sub:
-      "From Tulum's eco-luxury to Cozumel's reefs to Isla Mujeres' beach culture — local expertise in every market.",
+    title: "Local expertise across all of Quintana Roo's most valuable rental markets",
+    sub: 'Eight cities. One local team. Boutique service in every market.',
   },
   es: {
-    title: 'Rentas vacacionales en todo Quintana Roo',
-    sub:
-      'Desde el eco-lujo de Tulum hasta los arrecifes de Cozumel y la cultura playera de Isla Mujeres — experiencia local en cada mercado.',
+    title: 'Experiencia local en todos los mercados de renta más valiosos de Quintana Roo',
+    sub: 'Ocho ciudades. Un equipo local. Servicio boutique en cada mercado.',
   },
 }
 
-function CityCardMedia({ slug, phClass }: { slug: string; phClass: string }) {
-  const [showPhoto, setShowPhoto] = useState(true)
+function CityCardMedia({ slug }: { slug: string }) {
+  const [ok, setOk] = useState(true)
   const src = `/home/cities/${slug}.jpg`
 
   return (
     <div className={styles.media}>
-      {showPhoto ? (
-        // eslint-disable-next-line @next/next/no-img-element -- public files optional; onError to gradient
-        <img
-          className={styles.mediaImg}
-          src={src}
-          alt=""
-          width={800}
-          height={450}
-          loading="lazy"
-          decoding="async"
-          onError={() => setShowPhoto(false)}
-        />
-      ) : null}
-      {!showPhoto && <span className={`${styles.placeholder} ${phClass}`} aria-hidden />}
+      {ok ? (
+        <>
+          <Image
+            src={src}
+            alt=""
+            fill
+            className={styles.mediaImg}
+            sizes="(max-width: 519px) 100vw, (max-width: 999px) 50vw, 25vw"
+            onError={() => setOk(false)}
+          />
+          <div className={styles.mediaGradient} aria-hidden />
+        </>
+      ) : (
+        <span className={styles.placeholderFallback} aria-hidden />
+      )}
     </div>
   )
 }
 
 export function HomeFeaturedCities({ locale }: { locale: Locale }) {
   const intro = INTRO[locale] ?? INTRO.en
+  const featuredCity = CITIES[0]
+  const otherCities = CITIES.slice(1)
   return (
     <section className={`pad-lg bg-sand ${styles.root}`} aria-label={intro.title}>
       <div className="container">
@@ -67,21 +69,37 @@ export function HomeFeaturedCities({ locale }: { locale: Locale }) {
           <h2 className={styles.heading}>{intro.title}</h2>
           <p className={styles.subhead}>{intro.sub}</p>
         </div>
-        <div className={styles.grid}>
-          {CITIES.map((city, i) => {
+        <div className={styles.layout}>
+          {featuredCity ? (
+            <Link
+              key={featuredCity.slug}
+              href={locale === 'es' ? `/es/${featuredCity.slug}/` : `/${featuredCity.slug}/`}
+              className={`${styles.card} ${styles.featuredCard}`}
+            >
+              <CityCardMedia slug={featuredCity.slug} />
+              <div className={styles.body}>
+                <h3 className={`${styles.city} ${styles.featuredCity}`}>{featuredCity.name}</h3>
+                <p className={`${styles.tagline} ${styles.taglineItalic} ${styles.featuredTagline}`}>
+                  {locale === 'es' ? featuredCity.es : featuredCity.en}
+                </p>
+              </div>
+            </Link>
+          ) : null}
+          <div className={styles.grid}>
+            {otherCities.map(city => {
             const href = locale === 'es' ? `/es/${city.slug}/` : `/${city.slug}/`
             const tag = locale === 'es' ? city.es : city.en
-            const ph = i % 2 === 0 ? styles.placeholderA : styles.placeholderB
             return (
               <Link key={city.slug} href={href} className={styles.card}>
-                <CityCardMedia slug={city.slug} phClass={ph} />
+                <CityCardMedia slug={city.slug} />
                 <div className={styles.body}>
                   <h3 className={styles.city}>{city.name}</h3>
                   <p className={`${styles.tagline} ${styles.taglineItalic}`}>{tag}</p>
                 </div>
               </Link>
             )
-          })}
+            })}
+          </div>
         </div>
       </div>
     </section>

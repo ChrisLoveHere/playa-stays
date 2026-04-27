@@ -13,7 +13,7 @@ const COPY: Record<
   }
 > = {
   en: {
-    title: 'How it works',
+    title: 'Three steps to hands-off.',
     sub: 'From first conversation to handed-off operations — three steps, no commitment to start.',
     cta: 'Get my free estimate →',
     ctaHref: '/contact/',
@@ -35,7 +35,7 @@ const COPY: Record<
     ],
   },
   es: {
-    title: 'Cómo funciona',
+    title: 'Tres pasos hacia las manos libres.',
     sub: 'De la primera conversación a operaciones entregadas — tres pasos, sin compromiso para empezar.',
     cta: 'Obtener mi estimado gratuito →',
     ctaHref: '/es/contacto/',

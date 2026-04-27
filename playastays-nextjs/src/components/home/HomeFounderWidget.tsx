@@ -8,13 +8,15 @@ import type { Locale } from '@/lib/i18n'
 const COPY: Record<Locale, { heading: string; body: string; cta: string; contactHref: string }> = {
   en: {
     heading: "Hi, I'm Chris — founder of PlayaStays.",
-    body: "We're a small, local team in the Riviera Maya. If you own a property in Quintana Roo, I'd love to help you think through it.",
+    body:
+      "We're a small, boutique team based in the Riviera Maya — not a national chain managing your property from another country. Local presence, owner-first transparency, bilingual communication, and a real focus on the guest experience that earns you better reviews. If you own a property in Quintana Roo, I'd love to help you think through it.",
     cta: 'Get in touch →',
     contactHref: '/contact/',
   },
   es: {
     heading: 'Hola, soy Chris — fundador de PlayaStays.',
-    body: 'Somos un equipo local pequeño en la Riviera Maya. Si tienes una propiedad en Quintana Roo, me encantaría ayudarte a pensarla.',
+    body:
+      'Somos un equipo boutique pequeño basado en la Riviera Maya — no una cadena nacional administrando tu propiedad desde otro país. Presencia local, transparencia para el propietario, comunicación bilingüe, y un enfoque real en la experiencia del huésped que te genera mejores reseñas. Si tienes una propiedad en Quintana Roo, me encantaría ayudarte a pensarla.',
     cta: 'Contáctame →',
     contactHref: '/es/contacto/',
   },
