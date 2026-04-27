@@ -3,6 +3,31 @@ import type { NextRequest } from 'next/server'
 
 const PRIVATE_PREFIXES = ['/admin', '/portal']
 
+const WWW_AUTHENTICATE = 'Basic realm="PlayaStays Admin"'
+
+function timingSafeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false
+  let result = 0
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i)
+  }
+  return result === 0
+}
+
+function privateErrorResponse(
+  status: number,
+  body: string,
+  extraHeaders?: Record<string, string>
+): NextResponse {
+  const headers = new Headers({
+    'Content-Type': 'text/plain; charset=utf-8',
+    'X-Robots-Tag': 'noindex, nofollow',
+    'Cache-Control': 'private, no-store',
+    ...extraHeaders,
+  })
+  return new NextResponse(body, { status, headers })
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const requestHeaders = new Headers(request.headers)
@@ -11,16 +36,43 @@ export function middleware(request: NextRequest) {
   const isPrivate = PRIVATE_PREFIXES.some(p => pathname === p || pathname.startsWith(p + '/'))
 
   if (isPrivate) {
-    // AUTH STUB: When a real auth provider is wired (e.g. NextAuth, Clerk,
-    // or a custom JWT/session system), this block should:
-    //   1. Check for a valid session cookie / bearer token
-    //   2. Verify the user's role (ps_admin vs ps_owner)
-    //   3. Redirect unauthenticated users to /login
-    //   4. Redirect owners away from /admin (and vice versa if needed)
-    //
-    // For now, private routes are accessible but explicitly NOT crawled
-    // (robots.txt + metadata noindex). The route shells carry auth-required
-    // messaging so no sensitive data is exposed without backend integration.
+    const expectedUser = (process.env.ADMIN_BASIC_AUTH_USER ?? '').trim()
+    const expectedPassword = (process.env.ADMIN_BASIC_AUTH_PASSWORD ?? '').trim()
+
+    if (!expectedUser || !expectedPassword) {
+      return privateErrorResponse(
+        503,
+        'Service Unavailable: admin auth not configured'
+      )
+    }
+
+    const authHeader = request.headers.get('authorization') ?? ''
+
+    if (!authHeader.startsWith('Basic ')) {
+      return privateErrorResponse(401, 'Unauthorized', {
+        'WWW-Authenticate': WWW_AUTHENTICATE,
+      })
+    }
+
+    const b64 = authHeader.slice(6).trim()
+    let decoded: string
+    try {
+      decoded = atob(b64)
+    } catch {
+      return privateErrorResponse(401, 'Unauthorized', {
+        'WWW-Authenticate': WWW_AUTHENTICATE,
+      })
+    }
+
+    const colonIdx = decoded.indexOf(':')
+    const givenUser = colonIdx === -1 ? decoded : decoded.slice(0, colonIdx)
+    const givenPassword = colonIdx === -1 ? '' : decoded.slice(colonIdx + 1)
+
+    if (!timingSafeEqual(givenUser, expectedUser) || !timingSafeEqual(givenPassword, expectedPassword)) {
+      return privateErrorResponse(401, 'Unauthorized', {
+        'WWW-Authenticate': WWW_AUTHENTICATE,
+      })
+    }
 
     requestHeaders.set('x-ps-private', '1')
 
