@@ -1,6 +1,6 @@
 # PlayaStays Pre-Launch Audit
 
-**Last updated:** April 27, 2026
+**Last updated:** April 28, 2026
 **Target launch:** within 1-2 weeks
 **Architecture:** Next.js 14 on Vercel + Headless WordPress on AWS Lightsail
 **Domain:** playastays.com (DNS access available)
@@ -20,6 +20,115 @@ This audit lives in `docs/` and gets updated as you complete items. Status conve
 Each section is ordered by dependency — earlier items often block later ones. Don't skip ahead unless you've explicitly decided to defer something.
 
 **Realistic effort note:** A 1-2 week launch with self-managed Lightsail WordPress is achievable but tight. Expect 25-40 hours of total work across the next 14 days. If your time budget is much smaller, reconsider managed hosting (Kinsta/WP Engine) — that swap shaves 8-12 hours of WP infrastructure work.
+
+---
+
+## Recently Completed (since checkpoint `b398868`)
+
+### Production Infrastructure (Day 4)
+
+✅ **Lightsail WordPress production server hardened (`cms.playastays.com`)**
+- SSL configured via Let's Encrypt + certbot, with HTTP → HTTPS redirect
+- Squarespace DNS A record pointed to Lightsail (`54.84.210.137`)
+- `WP_HOME` hardcoded HTTPS in `wp-config.php`
+- Backup preserved at `/var/www/wp-config.php.backup-20260427-204720`
+
+✅ **WordPress ↔ Vercel integration and auth unblocked**
+- Wordfence application-password block disabled
+- Application Password generated for Vercel ↔ WP authentication
+- All 11 Vercel env vars configured:
+  - `WP_API_URL`
+  - `NEXT_PUBLIC_WP_API_URL`
+  - `WP_APP_PASSWORD`
+  - `PREVIEW_SECRET`
+  - `REVALIDATION_SECRET`
+  - `HUBSPOT_PORTAL_ID`
+  - `HUBSPOT_FORM_GUID`
+  - `NEXT_PUBLIC_GOOGLE_MAPS_EMBED_KEY`
+  - `NEXT_PUBLIC_DEPLOY_DATE`
+  - `ADMIN_BASIC_AUTH_USER`
+  - `ADMIN_BASIC_AUTH_PASSWORD`
+
+✅ **Pre-launch security + indexing controls shipped**
+- HTTP Basic Auth middleware deployed in `src/middleware.ts` for `/admin` and `/portal`
+- Timing-safe credential comparison + fail-safe `503` fallback when creds are missing
+- `robots.txt` configured to block all crawlers pre-launch
+- Homepage "27%" claim softened to qualitative language for consistency
+- Pre-launch audit checkpoint committed (`b398868`)
+
+### /list-your-property/ Rebuild (Day 4 Part 1)
+
+✅ **Conversion-oriented rebuild completed**
+- New `SwitchingManagersSection`
+- New `ListingFAQ` component
+- New `QualitativeTrustBlock`
+
+### Property Management Hub — 5-Pass Polish (evening completion)
+
+✅ **Pass 5 finalized for EN + ES (`/property-management/` + `/es/administracion-de-propiedades/`)**
+- Final structure now:
+  - Hero → Promise → Founder → Process → Trust → Enhancement → Google Review → Cities → FAQ → Yelp Review → CTA strip
+
+✅ **Major shipped pieces**
+- PlayaStays Property Promise framework (4 pillars):
+  - Property operations
+  - Tenant & guest lifecycle
+  - Marketing & listings
+  - Compliance & reporting
+- Founder card rewritten with operations-accountability angle (distinct from homepage origin story), including WhatsApp + LinkedIn + Facebook + Instagram links
+- 4-step onboarding process section (quarterly review removed for cleaner horizontal layout)
+- TrustBar restructured into one cohesive `bg-deep` block with centered eyebrow + 5 stats (dropped "200+ properties managed")
+- Property Enhancement Packages renamed/refined:
+  - Smart Home Upgrades
+  - Pool & Hot Tub Care
+  - Hurricane Prep & Backup Power
+- Enhancement section now renders as a 3-card desktop row with image-led cards
+- Reusable `ReviewCard` component (Google + Yelp placeholders) aligned to homepage testimonial pattern
+- FAQ "Do you cover all of Quintana Roo?" enriched with 8 clickable city links
+- Hero is now the single form entry point (footer form removed)
+- CTA strip updated to: "Transparent pricing. No surprise fees." → `/property-management-pricing/`
+- Full EN + ES bilingual sync completed
+- New component set now in use:
+  - `ServiceHubCityCards`
+  - `ReviewCard`
+- New asset scaffolds ready for content drops:
+  - `/public/property-care/`
+  - `/public/reviews/`
+
+---
+
+## Remaining work — prioritized tiers
+
+### Tier 1 — Pre-launch must-have (1 week)
+
+- ⬜ Apply Pass 5 design pattern to `/airbnb-management/`, `/vacation-rental-management/`, `/sell-property/` hubs (~3 focused sessions; `ServiceHubCityCards` is hub-aware, `TrustBar` is generic, enhancement-card pattern is reusable)
+- ⬜ Replace placeholder Google + Yelp reviews with real text + reviewer photos in `/public/reviews/`
+- ⬜ Add real Property Promise pillar photos in `/public/property-care/`
+- ⬜ Wire `playastays.com` to Vercel production domain (when ready to remove crawler block)
+- ⬜ Update `robots.txt` to allow crawlers at go-live
+- ⬜ Move admin credentials from `~/Desktop/admin-creds-temp.txt` into Apple Passwords/Keychain, then delete temp file
+
+### Tier 2 — Launch-week polish (can ship without, better with)
+
+- ⬜ WP city/service shell SEO meta + hero content pass (8 cities × 56 services currently shell-heavy)
+- ⬜ City × service page content depth review (32 combinations currently relying on generic `ServicePageTemplate`)
+- ⬜ Image compression pass (Puerto Morelos ~1MB, Tulum/PDC ~680KB, Cozumel ~504KB)
+- ⬜ OG image coverage for major pages
+- ⬜ Build `/about/` page with full team bios
+- ⬜ Review Cursor-generated Isla Mujeres/Cozumel pricing fields
+
+### Tier 3 — Post-launch (iterate after go-live)
+
+- 🟡 Hospitable MCP integration architecture (separate track from launch)
+- 🟡 Real testimonial outreach (replace placeholders with named clients)
+- 🟡 AI chat decision (HubSpot Chat preferred because HubSpot is already in stack)
+- 🟡 Calendly real booking link (replace placeholder in contact methods)
+- 🟡 `/admin` dashboard cleanup informed by Hospitable findings
+- 🟡 Listings/rentals architecture + Google Maps property embed (geocode-on-submit pattern)
+- 🟡 Schema consolidation cleanup (homepage + contact currently emit 4 JSON-LD blocks each)
+- 🟡 Fix `ps_city_tag` REST API exposure in WordPress (non-blocking build warnings)
+- 🟡 Verify "significantemente" Spanish typo fix is actually deployed
+- 🟡 `/admin` module Hospitable integration track
 
 ---
 
@@ -456,22 +565,28 @@ Run this 24 hours before flipping DNS:
 
 ## Realistic timeline estimate
 
-For a 1-2 week launch with Path 1 (Lightsail self-managed WordPress):
+**Site you can launch in 1 week (credible launch baseline):**
+- Complete Tier 1 only:
+  - Finish Pass 5 pattern rollout to the other 3 service hubs
+  - Swap in real reviews
+  - Drop real pillar photos
+  - Wire domain to Vercel
+  - Unblock crawlers for production indexing
+- Outcome: a credible, professional vacation-rental management site ready to convert owners.
 
-**Week 1 — Infrastructure + Content**
-- Day 1-2: Lightsail setup, WP install, security hardening (3-4 hours)
-- Day 3-4: Content migration from LocalWP, plugin transfer, REST API testing (4-5 hours)
-- Day 5-7: Domain config, Vercel env vars, build testing, OG images (4-5 hours)
+**Site fully polished + content-deep (3-4 weeks):**
+- Tier 1 + Tier 2 + select Tier 3 polish items.
+- Outcome: stronger SEO surface area, better content depth, and stronger conversion trust signals.
 
-**Week 2 — Polish + Launch**
-- Day 8-10: Image compression, internal links audit, schema verification, form testing (4-5 hours)
-- Day 11-12: WP city/service shells population (4-8 hours OR defer to post-launch)
-- Day 13: Pre-launch sanity checklist run-through (2 hours)
-- Day 14: DNS flip + monitoring (1 hour + standby)
-
-**Total: 22-30 hours of focused work**
-
-If your daily availability is less than 2 hours, this timeline extends.
+**Site with full Hospitable integration replacing `/admin` modules (6-8 weeks):**
+- Treat as a dedicated project, not a launch blocker.
+- Current `/admin` is functional now; Hospitable would replace ~6 of 12 modules cleanly:
+  - properties
+  - reservations
+  - conversations
+  - cleanings/tasks
+  - payments
+  - calendar
 
 ---
 

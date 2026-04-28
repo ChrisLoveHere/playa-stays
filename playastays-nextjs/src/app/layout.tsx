@@ -2,6 +2,7 @@ import '@/styles/globals.css'
 import type { Metadata } from 'next'
 import { Cormorant_Garamond, DM_Sans } from 'next/font/google'
 import { draftMode } from 'next/headers'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { SITE_URL } from '@/lib/site-url'
 import { getCitiesForNavigation, getSiteConfig } from '@/lib/wordpress'
 import { AppChrome } from '@/components/layout/AppChrome'
@@ -44,6 +45,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <AppChrome cities={cities} config={config} isPreview={isPreview}>
           {children}
         </AppChrome>
+        <SpeedInsights />
       </body>
     </html>
   )
