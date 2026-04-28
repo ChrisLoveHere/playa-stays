@@ -17,7 +17,7 @@ export const SERVICE_HUB_REGISTRY: ServiceHubRegistry = {
       seo: {
         title: 'Property Management in the Riviera Maya | PlayaStays',
         description:
-          'Full-service vacation rental and property management across Quintana Roo. Long-term, short-term, and hybrid strategies—maintenance, compliance, vendors, and owner reporting. Choose your city to go deeper.',
+          'Full-service vacation rental and property management across Quintana Roo. Long-term, short-term, and hybrid strategies—maintenance, compliance, vendors, and owner reporting. Outcomes vary by property versus self-managing; choose your city for local execution and next steps.',
       },
       heroTag: 'Riviera Maya · Owner operations',
       heroHeadline: 'Property Management Across the <em>Riviera Maya</em>',
@@ -130,6 +130,31 @@ export const SERVICE_HUB_REGISTRY: ServiceHubRegistry = {
           answer:
             '<p>See <a href="/property-management-pricing/">management pricing</a> for fee orientation. Final scope is quoted after property review.</p>',
         },
+        {
+          question: 'I currently have another manager — can I switch to PlayaStays?',
+          answer:
+            '<p>Yes. We help owners switch managers regularly. We coordinate the handover—including booking calendar transitions, vendor relationships, and access. Most switches complete within about 30 days.</p>',
+        },
+        {
+          question: 'Do you only manage short-term vacation rentals, or long-term too?',
+          answer:
+            '<p>Both. Some owners prefer the higher revenue of vacation rental management; others prefer the stability of long-term leases (3–12 months). Many use a hybrid: vacation in high season and long-term in low season. We help you choose based on your property and goals.</p>',
+        },
+        {
+          question: 'How are owner reports delivered?',
+          answer:
+            '<p>Monthly reports include income, expenses, occupancy, and any property issues. Direct deposits arrive monthly. Owners on our PRO tier get on-demand reporting through their owner portal.</p>',
+        },
+        {
+          question: 'What if my property has HOA restrictions on rentals?',
+          answer:
+            '<p>We review HOA bylaws before taking on a property. Many Quintana Roo HOAs set rules on minimum stays or rental platforms. We work within those rules and flag conflicts upfront—no surprises.</p>',
+        },
+        {
+          question: 'Do I need an RFC or specific Mexican tax documentation to rent legally?',
+          answer:
+            '<p>For short-term vacation rentals, owners typically need a tourist tax setup, and depending on your structure, an RFC. We help foreign owners coordinate with their Mexican accountant. We don’t provide tax advice, but we can point you to professionals who do.</p>',
+        },
       ],
       finalEyebrow: 'Next step',
       finalTitle: 'Tell us about your property—we’ll propose a clear plan',
@@ -143,7 +168,7 @@ export const SERVICE_HUB_REGISTRY: ServiceHubRegistry = {
       seo: {
         title: 'Administración de propiedades en Riviera Maya | PlayaStays',
         description:
-          'Administración integral de rentas vacacionales en Quintana Roo. Estrategias de renta larga, corta o híbridas; mantenimiento, cumplimiento y reportes. Elige tu ciudad para profundizar.',
+          'Administración integral de rentas vacacionales en Quintana Roo. Estrategias de renta larga, corta o híbridas; mantenimiento, cumplimiento y reportes. Los resultados varían frente a la autogestión según tu inmueble; elige tu ciudad para ejecución local y siguientes pasos.',
       },
       heroTag: 'Riviera Maya · Operación para propietarios',
       heroHeadline: 'Administración de propiedades en la <em>Riviera Maya</em>',
@@ -210,6 +235,31 @@ export const SERVICE_HUB_REGISTRY: ServiceHubRegistry = {
           question: '¿Dónde veo honorarios?',
           answer:
             '<p>Consulta <a href="/es/precios-administracion-propiedades/">precios de administración</a>. La cotización final es tras revisar la propiedad.</p>',
+        },
+        {
+          question: 'Ya tengo otro administrador — ¿puedo cambiarme a PlayaStays?',
+          answer:
+            '<p>Sí. Ayudamos con frecuencia a propietarios que cambian de administrador. Coordinamos la transición: calendario de reservas, proveedores y accesos. La mayoría de los cambios se concretan en unos 30 días.</p>',
+        },
+        {
+          question: '¿Solo administran renta vacacional o también renta larga?',
+          answer:
+            '<p>Ambas. Algunos propietarios priorizan el ingreso de renta vacacional; otros, la estabilidad de arrendamiento de 3 a 12 meses. Muchos combinan: vacacional en temporada alta y largo plazo en baja. Te orientamos según tu propiedad y tus metas.</p>',
+        },
+        {
+          question: '¿Cómo recibo los reportes para el propietario?',
+          answer:
+            '<p>Los reportes mensuales incluyen ingresos, gastos, ocupación e incidencias del inmueble. Los depósitos suelen ser mensuales. En el nivel PRO, el portal del propietario permite consultas bajo demanda.</p>',
+        },
+        {
+          question: '¿Qué pasa si el condominio restringe rentas?',
+          answer:
+            '<p>Revisamos el reglamento antes de asumir una propiedad. En Quintana Roo muchos condominios fijan estancias mínimas o plataformas permitidas. Trabajamos dentro de esas reglas y te advertimos conflictos desde el inicio.</p>',
+        },
+        {
+          question: '¿Necesito RFC u otro trámite fiscal en México para rentar en regla?',
+          answer:
+            '<p>En renta vacacional de corto plazo suele requerirse el esquema de impuesto al hospedaje y, según tu estructura, RFC. Ayudamos a propietarios extranjeros a coordinarse con su contador en México. No damos asesoría fiscal, pero te conectamos con quien sí la brinda.</p>',
         },
       ],
       finalEyebrow: 'Siguiente paso',

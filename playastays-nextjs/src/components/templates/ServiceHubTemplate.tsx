@@ -20,10 +20,60 @@ import { FALLBACK_PORTFOLIO_STATS } from '@/lib/portfolio-stats'
 import { sortCitiesForHub } from '@/lib/city-hub-sort'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { serviceHubPageSchema } from '@/lib/seo'
-import { limitPublicFaqs, PUBLIC_FAQ_LIMIT_CITY } from '@/lib/faq-helpers'
+import { limitPublicFaqs, PUBLIC_FAQ_LIMIT, PUBLIC_FAQ_LIMIT_CITY } from '@/lib/faq-helpers'
 
 function labelSlugForHub(hubId: ServiceHubId): string {
   return hubId === 'vacation-rental-management' ? 'vacation-rentals' : hubId
+}
+
+/** Property-management hub: fixed 8 markets (WP + fallbacks so Cozumel / Isla Mujeres always appear). */
+const PM_HUB_CITY_SLUGS = [
+  'playa-del-carmen',
+  'tulum',
+  'puerto-morelos',
+  'akumal',
+  'xpu-ha',
+  'chetumal',
+  'cozumel',
+  'isla-mujeres',
+] as const
+
+const PM_HUB_FALLBACK_LABEL: Record<string, { en: string; es: string }> = {
+  'playa-del-carmen': { en: 'Playa del Carmen', es: 'Playa del Carmen' },
+  tulum: { en: 'Tulum', es: 'Tulum' },
+  'puerto-morelos': { en: 'Puerto Morelos', es: 'Puerto Morelos' },
+  akumal: { en: 'Akumal', es: 'Akumal' },
+  'xpu-ha': { en: 'Xpu-Ha', es: 'Xpu-Ha' },
+  chetumal: { en: 'Chetumal', es: 'Chetumal' },
+  cozumel: { en: 'Cozumel', es: 'Cozumel' },
+  'isla-mujeres': { en: 'Isla Mujeres', es: 'Isla Mujeres' },
+}
+
+function pmHubSlugLabel(slug: string, isEs: boolean): string {
+  const row = PM_HUB_FALLBACK_LABEL[slug]
+  if (row) return isEs ? row.es : row.en
+  return slug
+    .split('-')
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ')
+}
+
+function fallbackCityForPmHub(slug: string, isEs: boolean): City {
+  const label = pmHubSlugLabel(slug, isEs)
+  return {
+    id: -Math.abs(slug.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0)),
+    slug,
+    title: { rendered: label },
+    excerpt: { rendered: '' },
+    content: { rendered: '' },
+    meta: {},
+    ps_computed: { stats: [], neighborhoods: [] },
+  }
+}
+
+function citiesForPropertyManagementHubGrid(wpCities: City[], isEs: boolean): City[] {
+  const bySlug = new Map(wpCities.map(c => [c.slug, c]))
+  return PM_HUB_CITY_SLUGS.map(slug => bySlug.get(slug) ?? fallbackCityForPmHub(slug, isEs))
 }
 
 interface ServiceHubTemplateProps {
@@ -53,6 +103,8 @@ export function ServiceHubTemplate({ hubId, locale, cities, siteConfig }: Servic
   const waHref = `https://wa.me/${siteConfig.whatsapp}`
 
   const sorted = sortCitiesForHub(cities)
+  const citiesForGrid =
+    hubId === 'property-management' ? citiesForPropertyManagementHubGrid(cities, isEs) : sorted
 
   const secondaryIsWhatsApp =
     t.secondaryCta.toLowerCase().includes('whatsapp') || t.secondaryCta === 'WhatsApp'
@@ -77,6 +129,48 @@ export function ServiceHubTemplate({ hubId, locale, cities, siteConfig }: Servic
   }))
 
   const heroBg = `linear-gradient(105deg, rgba(10,43,47,0.94) 0%, rgba(10,43,47,0.78) 45%, rgba(10,43,47,0.55) 100%), url(${heroImage})`
+
+  const serviceHubCityChooser = (
+    <section className="pad-lg bg-ivory" id="choose-city">
+      <div className="container">
+        <div className="eyebrow mb-8">{t.citiesEyebrow}</div>
+        <h2 className="section-title mt-12 mb-16">{t.citiesTitle}</h2>
+        <p className="body-text mb-32" style={{ maxWidth: 720 }}>
+          {t.citiesIntro}
+        </p>
+        <div className="city-neighborhood-grid">
+          {citiesForGrid.map(c => {
+            const localSvcHref = cityServiceHrefForHub(c.slug, hubId, locale)
+            const cityHubHref = `${base}/${c.slug}/`
+            const svcName = serviceLabel(labelSlugForHub(hubId), locale)
+            return (
+              <article key={c.slug} className="city-neighborhood-card">
+                <h3 className="city-neighborhood-card__title">{c.title.rendered}</h3>
+                <p className="city-neighborhood-card__desc">
+                  {isEs
+                    ? `Ejecución local y operación en ${c.title.rendered}.`
+                    : `Local execution and on-the-ground operations in ${c.title.rendered}.`}
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 10 }}>
+                  <Link href={localSvcHref} className="city-neighborhood-card__link">
+                    {isEs ? `Ver ${svcName} · ${c.title.rendered} →` : `View ${svcName} — ${c.title.rendered} →`}
+                  </Link>
+                  <Link href={cityHubHref} className="btn btn-ghost btn-sm" style={{ padding: '6px 0', fontWeight: 500 }}>
+                    {isEs ? `Explorar mercado de ${c.title.rendered} →` : `Explore ${c.title.rendered} market →`}
+                  </Link>
+                </div>
+              </article>
+            )
+          })}
+        </div>
+        <p className="body-text mt-32" style={{ maxWidth: 720 }}>
+          <Link href={isEs ? '/es/' : '/'} className="btn btn-ghost btn-sm">
+            {isEs ? 'Volver al inicio →' : 'Back to homepage →'}
+          </Link>
+        </p>
+      </div>
+    </section>
+  )
 
   return (
     <>
@@ -120,6 +214,9 @@ export function ServiceHubTemplate({ hubId, locale, cities, siteConfig }: Servic
           }
         />
       </section>
+
+      {/* Property-management: city grid immediately after hero */}
+      {hubId === 'property-management' && serviceHubCityChooser}
 
       {/* What this service is — regional definition (@/content/page-roles) */}
       <section className="pad-lg bg-ivory">
@@ -187,46 +284,8 @@ export function ServiceHubTemplate({ hubId, locale, cities, siteConfig }: Servic
         steps={processSteps}
       />
 
-      {/* Cities — primary: city × service; secondary: city hub (no architecture essay) */}
-      <section className="pad-lg bg-ivory" id="choose-city">
-        <div className="container">
-          <div className="eyebrow mb-8">{t.citiesEyebrow}</div>
-          <h2 className="section-title mt-12 mb-16">{t.citiesTitle}</h2>
-          <p className="body-text mb-32" style={{ maxWidth: 720 }}>
-            {t.citiesIntro}
-          </p>
-          <div className="city-neighborhood-grid">
-            {sorted.map(c => {
-              const localSvcHref = cityServiceHrefForHub(c.slug, hubId, locale)
-              const cityHubHref = `${base}/${c.slug}/`
-              const svcName = serviceLabel(labelSlugForHub(hubId), locale)
-              return (
-                <article key={c.slug} className="city-neighborhood-card">
-                  <h3 className="city-neighborhood-card__title">{c.title.rendered}</h3>
-                  <p className="city-neighborhood-card__desc">
-                    {isEs
-                      ? `Ejecución local y operación en ${c.title.rendered}.`
-                      : `Local execution and on-the-ground operations in ${c.title.rendered}.`}
-                  </p>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 10 }}>
-                    <Link href={localSvcHref} className="city-neighborhood-card__link">
-                      {isEs ? `Ver ${svcName} · ${c.title.rendered} →` : `View ${svcName} — ${c.title.rendered} →`}
-                    </Link>
-                    <Link href={cityHubHref} className="btn btn-ghost btn-sm" style={{ padding: '6px 0', fontWeight: 500 }}>
-                      {isEs ? `Explorar mercado de ${c.title.rendered} →` : `Explore ${c.title.rendered} market →`}
-                    </Link>
-                  </div>
-                </article>
-              )
-            })}
-          </div>
-          <p className="body-text mt-32" style={{ maxWidth: 720 }}>
-            <Link href={isEs ? '/es/' : '/'} className="btn btn-ghost btn-sm">
-              {isEs ? 'Volver al inicio →' : 'Back to homepage →'}
-            </Link>
-          </p>
-        </div>
-      </section>
+      {/* Other hubs: city grid after process (property-management renders this block above) */}
+      {hubId !== 'property-management' && serviceHubCityChooser}
 
       {/* Related services (optional; not a substitute for city cards) */}
       <section className="pad-lg bg-sand">
@@ -252,14 +311,20 @@ export function ServiceHubTemplate({ hubId, locale, cities, siteConfig }: Servic
         cityName="Riviera Maya"
         locale={locale}
         estimateHref={estimateHref}
+        variant={hubId === 'property-management' ? 'qualitative-hub' : 'default'}
       />
 
-      {/* FAQ (max 6) */}
+      {/* FAQ (property-management hub shows up to 8; other hubs capped tighter) */}
       <section className="pad-lg bg-ivory">
         <div className="container">
           <div className="eyebrow mb-8">{t.faqEyebrow}</div>
           <h2 className="section-title mt-12 mb-32">{t.faqTitle}</h2>
-          <FaqAccordion items={limitPublicFaqs(t.faqs, PUBLIC_FAQ_LIMIT_CITY)} />
+          <FaqAccordion
+            items={limitPublicFaqs(
+              t.faqs,
+              hubId === 'property-management' ? PUBLIC_FAQ_LIMIT : PUBLIC_FAQ_LIMIT_CITY,
+            )}
+          />
         </div>
       </section>
 
