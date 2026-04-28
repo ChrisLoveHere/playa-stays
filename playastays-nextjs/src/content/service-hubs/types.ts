@@ -34,6 +34,11 @@ export type ServiceHubLocaleCopy = {
   relatedEyebrow: string
   relatedTitle: string
   relatedIntro: string
+  addOnsEyebrow?: string
+  addOnsTitle?: string
+  addOnsIntro?: string
+  addOnsItems?: Array<{ title: string; desc: string; bullets: string[]; cta: string }>
+  addOnsNote?: string
   faqEyebrow: string
   faqTitle: string
   faqs: ServiceHubFaqItem[]

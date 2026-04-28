@@ -1081,6 +1081,7 @@ a.service-card--link:focus-visible {
 
 /* ── PM Steps ───────────────────────────────────────── */
 .pm-steps-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+.pm-steps-grid--five { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .pm-step {
   text-align: center; padding: 28px 18px;
   background: var(--white); border-radius: var(--r-lg);

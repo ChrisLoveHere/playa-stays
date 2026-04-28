@@ -117,11 +117,12 @@ interface Step {
   desc: string
 }
 
-export function StepsGrid({ steps, eyebrow, headline, body }: {
+export function StepsGrid({ steps, eyebrow, headline, body, gridClassName }: {
   steps: Step[]
   eyebrow?: string
   headline?: string
   body?: string
+  gridClassName?: string
 }) {
   return (
     <section className="pad-lg bg-sand">
@@ -133,7 +134,7 @@ export function StepsGrid({ steps, eyebrow, headline, body }: {
             {body     && <p className="body-text mt-12" style={{ maxWidth: 560 }}>{body}</p>}
           </div>
         )}
-        <div className="pm-steps-grid">
+        <div className={['pm-steps-grid', gridClassName].filter(Boolean).join(' ')}>
           {steps.map(s => (
             <div key={s.num} className="pm-step">
               <div className="pm-step-num">{s.num}</div>
