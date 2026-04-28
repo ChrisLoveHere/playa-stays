@@ -649,9 +649,10 @@ const SITE_CONFIG_FALLBACK: SiteConfig = {
   address: SITE_BUSINESS_ADDRESS,
   trust_stats: [
     { val: '4.9★', key: 'Owner satisfaction' },
-    { val: '20%+', key: 'Revenue uplift' },
+    { val: '22%+', key: 'Net income uplift' },
     { val: '24/7', key: 'Local support' },
     { val: 'ES/EN', key: 'Bilingual team' },
+    { val: '<5min', key: 'Guest inquiry response' },
   ],
   social: { ...DEFAULT_SOCIAL },
 }

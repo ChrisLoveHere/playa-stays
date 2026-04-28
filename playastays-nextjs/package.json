@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "screenshots:site-review": "node scripts/screenshot-site-review.mjs"
+    "screenshots:site-review": "node scripts/screenshot-site-review.mjs",
+    "screenshots:service-pages": "node scripts/screenshot-service-pages.mjs"
   },
   "dependencies": {
     "next": "^14.2.35",

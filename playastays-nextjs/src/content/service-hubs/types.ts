@@ -19,7 +19,7 @@ export type ServiceHubLocaleCopy = {
   includesEyebrow: string
   includesTitle: string
   includesLead: string
-  includesItems: Array<{ title: string; desc: string }>
+  includesItems: Array<{ title: string; desc: string; intro?: string; bullets?: string[]; photo?: string }>
   processEyebrow: string
   processTitle: string
   processLead: string
@@ -37,7 +37,7 @@ export type ServiceHubLocaleCopy = {
   addOnsEyebrow?: string
   addOnsTitle?: string
   addOnsIntro?: string
-  addOnsItems?: Array<{ title: string; desc: string; bullets: string[]; cta: string }>
+  addOnsItems?: Array<{ title: string; desc: string; bullets: string[]; cta: string; photo?: string }>
   addOnsNote?: string
   faqEyebrow: string
   faqTitle: string

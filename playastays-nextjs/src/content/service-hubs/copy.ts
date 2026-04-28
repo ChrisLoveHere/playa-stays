@@ -22,50 +22,71 @@ export const SERVICE_HUB_REGISTRY: ServiceHubRegistry = {
       heroTag: 'Riviera Maya · Owner operations',
       heroHeadline: 'Property Management Across the <em>Riviera Maya</em>',
       heroSub:
-        'Full-service property management across Quintana Roo—maintenance, compliance, vendors, and owner reporting. Choose your city for local execution; this page stays regional.',
-      primaryCta: 'Get a free management quote',
+        'Full-service property management across Quintana Roo—maintenance, compliance, vendors, and owner reporting.',
+      primaryCta: '',
       secondaryCta: 'Choose your city',
       whatEyebrow: 'What this is',
       whatTitle: 'Property management designed for real owner operations',
       whatBody: [
         'This regional page now focuses on the practical baseline every owner gets with PlayaStays. For neighborhood-level dynamics and demand context, use the city cards above and open your local page.',
       ],
-      includesEyebrow: 'Base property care',
-      includesTitle: 'What’s included with every PlayaStays property',
+      includesEyebrow: 'Our promise',
+      includesTitle: 'The PlayaStays Property Promise',
       includesLead:
-        'Your $125/mo Property Care fee covers the operational baseline. Every property we manage gets all of this — no surprises, no upcharges for the basics.',
+        'Every PlayaStays property gets the same accountable operations across four pillars — whether you want to rent your property long-term, short-term, or as a hybrid. The Promise is the framework we adhere to for every owner, every property, $125/month.',
       includesItems: [
         {
-          title: 'Consumables restocking',
-          desc: 'Toiletries, paper goods, and cleaning supplies kept stocked so guests arrive to a ready property. We track usage and replenish during turnovers.',
+          title: 'Property operations',
+          intro: 'The day-to-day work that keeps your asset functioning.',
+          desc: 'Operational baseline and field execution for reliability.',
+          photo: '/property-care/operations.jpg',
+          bullets: [
+            'Consumables restocking (toiletries, paper, cleaning supplies)',
+            'Preventive maintenance and quarterly inspections',
+            'AC system maintenance (filters, condenser, refrigerant)',
+            'Vendor coordination and oversight',
+            'Asset protection and condition standards',
+          ],
         },
         {
-          title: 'Preventive maintenance & quarterly inspections',
-          desc: 'Scheduled walk-throughs catch issues before guests do. Plumbing, electrical, appliances, and structural checks every 90 days.',
+          title: 'Tenant & guest lifecycle',
+          intro: 'From inquiry to move-out, we handle the people side.',
+          desc: 'Structured leasing and hospitality workflows for occupancy quality.',
+          photo: '/property-care/tenant-lifecycle.jpg',
+          bullets: [
+            'Tenant screening and background checks (credit, employment, references, ID)',
+            'Lease drafting and negotiation (Mexican-compliant, bilingual contracts)',
+            'Property showings and tenant viewings',
+            'Move-in and move-out coordination',
+            'Security deposit handling',
+            'Guest screening and 24/7 communication (short-term)',
+          ],
         },
         {
-          title: 'AC system maintenance',
-          desc: 'Filter changes, condenser cleaning, and refrigerant checks. AC failure is the fastest way to a bad review in Quintana Roo — we stay ahead of it.',
+          title: 'Marketing & listings',
+          intro: 'Strong listings on the right platforms for your strategy.',
+          desc: 'Channel-ready listing production for long-term, short-term, and hybrid models.',
+          photo: '/property-care/marketing.jpg',
+          bullets: [
+            'Professional property photography (one-time at onboarding)',
+            'Listing copy and optimization',
+            'Long-term rental portal distribution',
+            'Vacation rental platform listings',
+            'Pricing strategy and seasonal adjustments',
+          ],
         },
         {
-          title: 'Professional photography',
-          desc: 'One professional photoshoot at onboarding. Sharp, well-lit listings outperform amateur photos by a wide margin on every booking platform.',
-        },
-        {
-          title: 'Marketing & listing optimization',
-          desc: 'Listing copy, photo selection, pricing input, and ongoing optimization across the platforms your strategy uses.',
-        },
-        {
-          title: 'Bilingual owner reporting',
-          desc: 'Monthly reports in English or Spanish covering income, expenses, occupancy, and any property issues. Direct deposits arrive monthly.',
-        },
-        {
-          title: 'Vendor coordination & oversight',
-          desc: 'Trusted local trades for cleaning, repairs, and maintenance. We manage them, you do not.',
-        },
-        {
-          title: 'HOA & permit compliance',
-          desc: 'Tourist tax, RFC coordination, HOA bylaw adherence, and insurance documentation. The boring work that protects your asset.',
+          title: 'Compliance & reporting',
+          intro: 'The boring work that protects your asset and your peace of mind.',
+          desc: 'Regulatory and financial clarity that owners can act on quickly.',
+          photo: '/property-care/compliance.jpg',
+          bullets: [
+            'HOA bylaw adherence',
+            'Permit compliance',
+            'Tourist tax and RFC coordination',
+            'Monthly bilingual owner reporting (EN/ES)',
+            'Transparent financial summaries',
+          ],
         },
       ],
       processEyebrow: 'Our process',
@@ -120,13 +141,14 @@ export const SERVICE_HUB_REGISTRY: ServiceHubRegistry = {
       relatedIntro:
         'These services overlap in places—but each page has a distinct job. Use them together when your strategy requires it.',
       addOnsEyebrow: 'Beyond the basics',
-      addOnsTitle: 'Add-on service packages for owners who want more',
+      addOnsTitle: 'Property Enhancement Packages',
       addOnsIntro:
-        'These optional packages layer on top of base Property Care. Each is a complete program — install, configure, monitor, maintain.',
+        'For owners who want to elevate the guest experience and unlock more revenue.',
       addOnsItems: [
         {
-          title: 'Smart Home Package',
+          title: 'Smart Home Upgrades',
           desc: 'Make your property smarter, safer, and more guest-friendly.',
+          photo: 'https://images.unsplash.com/photo-1558002038-1055e2e8f2a2?w=800&auto=format&fit=crop&q=80',
           bullets: [
             'Smart locks & keyless entry',
             'Security cameras (exterior)',
@@ -138,6 +160,7 @@ export const SERVICE_HUB_REGISTRY: ServiceHubRegistry = {
         {
           title: 'Pool & Hot Tub Care',
           desc: 'Properties with water features need specialized attention.',
+          photo: 'https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?w=800&auto=format&fit=crop&q=80',
           bullets: [
             'Weekly chemical balance & cleaning',
             'Equipment monitoring & maintenance',
@@ -149,6 +172,7 @@ export const SERVICE_HUB_REGISTRY: ServiceHubRegistry = {
         {
           title: 'Hurricane Prep & Backup Power',
           desc: 'Quintana Roo’s storm season is real. Be ready before the forecast goes red.',
+          photo: 'https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=800&auto=format&fit=crop&q=80',
           bullets: [
             'Battery backup & generator install',
             'Storm shutter inspection & deployment',
@@ -171,7 +195,7 @@ export const SERVICE_HUB_REGISTRY: ServiceHubRegistry = {
         {
           question: 'Do you cover all of Quintana Roo?',
           answer:
-            '<p>We operate across the markets listed below. If your address is adjacent or emerging, ask—we’ll be direct about coverage and timelines.</p>',
+            '<p>Our property management services cover these markets in Quintana Roo:</p><ul><li><a href="/playa-del-carmen/">Playa del Carmen</a></li><li><a href="/tulum/">Tulum</a></li><li><a href="/puerto-morelos/">Puerto Morelos</a></li><li><a href="/akumal/">Akumal</a></li><li><a href="/xpu-ha/">Xpu-Ha</a></li><li><a href="/chetumal/">Chetumal</a></li><li><a href="/cozumel/">Cozumel</a></li><li><a href="/isla-mujeres/">Isla Mujeres</a></li></ul><p>If your property is in an adjacent or emerging area, ask—we’ll be direct about coverage and timelines.</p>',
         },
         {
           question: 'Where are fees explained?',
@@ -181,7 +205,7 @@ export const SERVICE_HUB_REGISTRY: ServiceHubRegistry = {
         {
           question: 'I currently have another manager — can I switch to PlayaStays?',
           answer:
-            '<p>Yes. We help owners switch managers regularly. We coordinate the handover—including booking calendar transitions, vendor relationships, and access. Most switches complete within about 30 days.</p>',
+            '<p>Yes. We help owners switch property management companies regularly. As an owner, you can change your property manager at any time—we coordinate the handover, including booking calendar transitions, vendor relationships, and access credentials. Most switches from another property management company complete within about 30 days.</p>',
         },
         {
           question: 'Do you only manage short-term vacation rentals, or long-term too?',
@@ -221,26 +245,71 @@ export const SERVICE_HUB_REGISTRY: ServiceHubRegistry = {
       heroTag: 'Riviera Maya · Operación para propietarios',
       heroHeadline: 'Administración de propiedades en la <em>Riviera Maya</em>',
       heroSub:
-        'Administración integral de propiedades en Quintana Roo: mantenimiento, cumplimiento, proveedores y reportes al propietario. Elige tu ciudad para ejecución local; esta página es regional.',
-      primaryCta: 'Solicitar cotización',
+        'Administración integral de propiedades en Quintana Roo: mantenimiento, cumplimiento, proveedores y reportes al propietario.',
+      primaryCta: '',
       secondaryCta: 'Elige tu ciudad',
       whatEyebrow: 'Qué es esto',
       whatTitle: 'Administración diseñada para la operación real del propietario',
       whatBody: [
         'Esta página regional ahora prioriza el piso operativo que recibe cada propietario con PlayaStays. Para dinámica por colonia y contexto local de demanda, usa las tarjetas de ciudad de arriba y abre tu página específica.',
       ],
-      includesEyebrow: 'Base de cuidado del inmueble',
-      includesTitle: 'Qué incluye cada propiedad con PlayaStays',
-      includesLead: 'Tu cuota Property Care de $125/mes cubre la base operativa. Toda propiedad que administramos recibe esto — sin sorpresas ni cargos extra en lo básico.',
+      includesEyebrow: 'Nuestra promesa',
+      includesTitle: 'La Promesa de Propiedad PlayaStays',
+      includesLead: 'Cada propiedad en PlayaStays recibe la misma operación responsable en cuatro pilares — ya sea renta de largo plazo, vacacional o modelo híbrido. La Promesa es el marco que cumplimos con cada propietario, cada propiedad, $125/mes.',
       includesItems: [
-        { title: 'Reposición de consumibles', desc: 'Amenidades, papelería y suministros de limpieza siempre listos para la llegada del huésped. Monitoreamos consumo y reponemos en cada rotación.' },
-        { title: 'Mantenimiento preventivo e inspecciones trimestrales', desc: 'Recorridos programados detectan problemas antes que el huésped. Revisiones de plomería, electricidad, electrodomésticos y estructura cada 90 días.' },
-        { title: 'Mantenimiento de aire acondicionado', desc: 'Cambio de filtros, limpieza de condensador y revisión de refrigerante. En Quintana Roo, una falla de A/C es la vía más rápida a malas reseñas.' },
-        { title: 'Fotografía profesional', desc: 'Una sesión profesional al inicio. Imágenes nítidas y bien iluminadas superan por amplio margen a fotos amateur en cualquier plataforma.' },
-        { title: 'Marketing y optimización del anuncio', desc: 'Copy del listing, selección de fotos, insumos de precios y optimización continua en las plataformas que use tu estrategia.' },
-        { title: 'Reportes bilingües al propietario', desc: 'Reportes mensuales en inglés o español con ingresos, gastos, ocupación e incidencias del inmueble. Depósitos directos cada mes.' },
-        { title: 'Coordinación y supervisión de proveedores', desc: 'Red local de limpieza, reparación y mantenimiento. Nosotros los coordinamos; tú no tienes que hacerlo.' },
-        { title: 'Cumplimiento HOA y permisos', desc: 'Impuesto al hospedaje, coordinación RFC, reglamento de condominio y documentación de seguros. Lo “aburrido” que protege tu activo.' },
+        {
+          title: 'Operaciones de propiedad',
+          intro: 'El trabajo diario que mantiene tu activo funcionando.',
+          desc: 'Ejecución operativa en campo para máxima continuidad.',
+          photo: '/property-care/operations.jpg',
+          bullets: [
+            'Reposición de consumibles (amenidades, papelería y limpieza)',
+            'Mantenimiento preventivo e inspecciones trimestrales',
+            'Mantenimiento de A/C (filtros, condensador, refrigerante)',
+            'Coordinación y supervisión de proveedores',
+            'Protección del activo y estándares de condición',
+          ],
+        },
+        {
+          title: 'Ciclo del inquilino y huésped',
+          intro: 'De la consulta inicial a la salida, gestionamos el lado humano.',
+          desc: 'Flujos de arrendamiento y hospitalidad para ocupación de calidad.',
+          photo: '/property-care/tenant-lifecycle.jpg',
+          bullets: [
+            'Selección de inquilinos y verificación de antecedentes (crédito, empleo, referencias, identificación)',
+            'Redacción y negociación de contratos (cumplimiento mexicano, bilingües)',
+            'Mostrar la propiedad y visitas de prospectos',
+            'Gestión de mudanza y desocupación',
+            'Manejo de depósitos de garantía',
+            'Filtrado de huéspedes y comunicación 24/7 (corto plazo)',
+          ],
+        },
+        {
+          title: 'Marketing y listados',
+          intro: 'Listados sólidos en las plataformas correctas para tu estrategia.',
+          desc: 'Producción y optimización multicanal para modelos largo, corto e híbrido.',
+          photo: '/property-care/marketing.jpg',
+          bullets: [
+            'Fotografía profesional (una vez en onboarding)',
+            'Copy y optimización del anuncio',
+            'Distribución en portales de renta a largo plazo',
+            'Publicación en plataformas de renta vacacional',
+            'Estrategia de precios y ajustes estacionales',
+          ],
+        },
+        {
+          title: 'Cumplimiento y reportes',
+          intro: 'El trabajo “invisible” que protege tu activo y tu tranquilidad.',
+          desc: 'Orden regulatorio y financiero con trazabilidad mensual.',
+          photo: '/property-care/compliance.jpg',
+          bullets: [
+            'Cumplimiento de reglamento de condominio',
+            'Cumplimiento de permisos',
+            'Coordinación de impuesto al hospedaje y RFC',
+            'Reporte mensual bilingüe al propietario (EN/ES)',
+            'Resúmenes financieros transparentes',
+          ],
+        },
       ],
       processEyebrow: 'Nuestro proceso',
       processTitle: 'Cómo incorporamos propietarios y operamos inmuebles',
@@ -268,13 +337,14 @@ export const SERVICE_HUB_REGISTRY: ServiceHubRegistry = {
       relatedTitle: 'Suele combinarse con',
       relatedIntro: 'Cada página tiene un rol distinto; combínalas cuando tu estrategia lo requiera.',
       addOnsEyebrow: 'Más allá de lo básico',
-      addOnsTitle: 'Paquetes adicionales para propietarios que quieren más',
+      addOnsTitle: 'Paquetes de Mejora de Propiedad',
       addOnsIntro:
-        'Estos paquetes opcionales se montan sobre la base Property Care. Cada uno es un programa completo: instalar, configurar, monitorear y mantener.',
+        'Para propietarios que quieren elevar la experiencia del huésped y desbloquear más ingresos.',
       addOnsItems: [
         {
-          title: 'Paquete Smart Home',
+          title: 'Mejoras de Hogar Inteligente',
           desc: 'Haz tu propiedad más inteligente, segura y cómoda para huéspedes.',
+          photo: 'https://images.unsplash.com/photo-1558002038-1055e2e8f2a2?w=800&auto=format&fit=crop&q=80',
           bullets: [
             'Cerraduras inteligentes y acceso sin llaves',
             'Cámaras de seguridad (exterior)',
@@ -286,6 +356,7 @@ export const SERVICE_HUB_REGISTRY: ServiceHubRegistry = {
         {
           title: 'Cuidado de alberca y jacuzzi',
           desc: 'Las propiedades con amenidades de agua requieren atención especializada.',
+          photo: 'https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?w=800&auto=format&fit=crop&q=80',
           bullets: [
             'Balance químico y limpieza semanal',
             'Monitoreo y mantenimiento de equipos',
@@ -297,6 +368,7 @@ export const SERVICE_HUB_REGISTRY: ServiceHubRegistry = {
         {
           title: 'Preparación para huracanes y energía de respaldo',
           desc: 'La temporada de tormentas en Quintana Roo es real. Prepárate antes de que el pronóstico se ponga en rojo.',
+          photo: 'https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=800&auto=format&fit=crop&q=80',
           bullets: [
             'Instalación de baterías de respaldo y generador',
             'Inspección y despliegue de protecciones anticiclónicas',
@@ -319,7 +391,7 @@ export const SERVICE_HUB_REGISTRY: ServiceHubRegistry = {
         {
           question: '¿Cubren todo Quintana Roo?',
           answer:
-            '<p>Operamos en los mercados listados abajo. Si tu dirección es colindante, pregunta: seremos claros sobre cobertura.</p>',
+            '<p>Nuestros servicios de administración de propiedades cubren estos mercados en Quintana Roo:</p><ul><li><a href="/playa-del-carmen/">Playa del Carmen</a></li><li><a href="/tulum/">Tulum</a></li><li><a href="/puerto-morelos/">Puerto Morelos</a></li><li><a href="/akumal/">Akumal</a></li><li><a href="/xpu-ha/">Xpu-Ha</a></li><li><a href="/chetumal/">Chetumal</a></li><li><a href="/cozumel/">Cozumel</a></li><li><a href="/isla-mujeres/">Isla Mujeres</a></li></ul><p>Si tu propiedad está en una zona colindante o emergente, pregúntanos: seremos directos sobre cobertura y tiempos.</p>',
         },
         {
           question: '¿Dónde veo honorarios?',
@@ -329,7 +401,7 @@ export const SERVICE_HUB_REGISTRY: ServiceHubRegistry = {
         {
           question: 'Ya tengo otro administrador — ¿puedo cambiarme a PlayaStays?',
           answer:
-            '<p>Sí. Ayudamos con frecuencia a propietarios que cambian de administrador. Coordinamos la transición: calendario de reservas, proveedores y accesos. La mayoría de los cambios se concretan en unos 30 días.</p>',
+            '<p>Sí. Ayudamos con frecuencia a propietarios que cambian de empresa de administración de propiedades. Como propietario, puedes cambiar de administrador en cualquier momento; coordinamos toda la transición, incluyendo calendario de reservas, proveedores y credenciales de acceso. La mayoría de cambios desde otra empresa de administración se concretan en unos 30 días.</p>',
         },
         {
           question: '¿Solo administran renta vacacional o también renta larga?',
