@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Cormorant_Garamond, DM_Sans } from 'next/font/google'
 import { draftMode } from 'next/headers'
 import { headers } from 'next/headers'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { getCities, getSiteConfig } from '@/lib/wordpress'
 import { getAltLangHref, serviceLabel, t } from '@/lib/i18n'
 import { Nav } from '@/components/layout/Nav'
@@ -97,6 +98,7 @@ export default async function EsLayout({ children }: { children: React.ReactNode
             {s.ctaWhatsApp}
           </a>
         </div>
+        <SpeedInsights />
       </body>
     </html>
   )
