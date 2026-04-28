@@ -10,12 +10,12 @@ type Stat = { value: string; label: string }
 
 const OUTCOME: Record<Locale, { headline: string; sub: string }> = {
   en: {
-    headline: 'Owners earn 27% more with PlayaStays than self-managing.',
-    sub: 'Average performance lift across managed properties — first year',
+    headline: 'Owners earn meaningfully more with PlayaStays than self-managing.',
+    sub: 'Boutique-managed properties consistently outperform self-managed across our markets — talk to us about your specific numbers.',
   },
   es: {
-    headline: 'Los propietarios ganan 27% más con PlayaStays que autogestionando.',
-    sub: 'Aumento de rendimiento promedio en propiedades administradas — primer año',
+    headline: 'Los propietarios ganan significativamente más con PlayaStays que autogestionando.',
+    sub: 'Las propiedades con gestión boutique superan consistentemente a las autogestionadas en nuestros mercados — hablemos sobre tus números específicos.',
   },
 }
 
@@ -76,7 +76,6 @@ export function HomeStatsBanner({ locale }: { locale: Locale }) {
     <section className={styles.root} aria-label={locale === 'es' ? 'PlayaStays en cifras' : 'PlayaStays in numbers'}>
       <div className="container">
         <div className={styles.inner}>
-          {/* TODO: 27% number is placeholder. Replace with verified outcome metric when measured. */}
           <div className={styles.outcome}>
             <p className={styles.outcomeHeadline}>{outcome.headline}</p>
             <p className={styles.outcomeSub}>{outcome.sub}</p>
